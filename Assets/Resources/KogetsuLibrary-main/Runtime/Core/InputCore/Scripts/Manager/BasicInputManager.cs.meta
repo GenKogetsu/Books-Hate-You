@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 76b009f9d1be08f42a278d3353443bb1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - MoveInputChannel: {fileID: 11400000, guid: c0d221c124409de48bd4b9fb75a4b3b1, type: 2}
+  - JumpEventChannel: {fileID: 11400000, guid: e3cbb54ea52459a4a9369adb23f4f931, type: 2}
+  - InteractionInput: {fileID: 11400000, guid: 8908e434c01279b49b8197f779ad3985, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

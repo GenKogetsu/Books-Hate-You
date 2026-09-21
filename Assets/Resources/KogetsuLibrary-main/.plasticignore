@@ -1,0 +1,29 @@
+# Unity
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+UserSettings/
+MemoryCaptures/
+Recordings/
+*.log
+*.tmp
+
+# Claude Code
+.claude/worktrees/
+.claude/settings.local.json
+
+# Git
+.git/
+*.orig
+
+# IDE
+.vs/
+.gradle/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
