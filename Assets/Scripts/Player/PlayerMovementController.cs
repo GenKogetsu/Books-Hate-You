@@ -9,6 +9,9 @@ public class PlayerMovementController : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField, EditOnInspector] private PlayerStats _playerStats;
 
+    [Header("Camera Reference")]
+    [SerializeField] private Transform _cameraReference;
+
     [Header("Input Action")]
     [SerializeField] private InputActionReference _moveActionReference;
     [SerializeField] private InputActionReference _jumpActionReference;
@@ -20,7 +23,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Reset()
     {
-        _characterController = GetComponent<CharacterController>();
+        this.TryGetComponent(out _characterController);
     }
 
     private void OnEnable()
@@ -86,10 +89,28 @@ public class PlayerMovementController : MonoBehaviour
             _velocity.y = -2f;
         }
 
-        Vector3 move = new(_moveInput.x, 0f, _moveInput.y);
+        Vector3 move = GetCameraRelativeMove();
         _characterController.Move(_playerStats.MoveSpeed * Time.deltaTime * move);
 
         _velocity.y += _playerStats.Gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
+    }
+
+    private Vector3 GetCameraRelativeMove()
+    {
+        if (!_cameraReference)
+            return new Vector3(_moveInput.x, 0f, _moveInput.y);
+
+        // ตัดแกน Y ออก ให้เหลือแค่ทิศบนระนาบพื้น
+        Vector3 forward = _cameraReference.forward;
+        forward.y = 0f;
+        forward.Normalize();
+
+        Vector3 right = _cameraReference.right;
+        right.y = 0f;
+        right.Normalize();
+
+        Vector3 move = forward * _moveInput.y + right * _moveInput.x;
+        return Vector3.ClampMagnitude(move, 1f);
     }
 }
