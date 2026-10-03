@@ -5798,8 +5798,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.26085007, y: -0, z: -0, w: 0.96537936}
+  m_LocalPosition: {x: 0, y: 4.04, z: -6.93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20874,7 +20874,7 @@ Transform:
   m_GameObject: {fileID: 1159438473}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2, y: 1, z: 6}
+  m_LocalPosition: {x: 2, y: 1, z: 18.82}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20892,11 +20892,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11a0a77803de85347a6661efc0347aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementController
-  _moveSpeed: 5
-  _gravity: -9.81
-  _jumpHeight: 1.2
+  _playerStats: {fileID: 11400000, guid: 4489a973160a995488f9eaa1af68d496, type: 2}
   _moveActionReference: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _jumpActionReference: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  _characterController: {fileID: 1159438479}
+  _moveInput: {x: 0, y: 0}
+  _velocity: {x: 0, y: 0, z: 0}
+  _isGrounded: 0
 --- !u!143 &1159438479
 CharacterController:
   m_ObjectHideFlags: 0
@@ -33729,6 +33731,7 @@ MonoBehaviour:
     value: 0
   _followTarget: {fileID: 1159438477}
   _isFollowing: 1
+  _executeAlways: 1
 --- !u!4 &1583167949
 Transform:
   m_ObjectHideFlags: 0
@@ -33738,7 +33741,7 @@ Transform:
   m_GameObject: {fileID: 1583167947}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 2, y: 1, z: 18.82}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

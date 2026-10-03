@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[ExecuteAlways]
 public class CameraController : MonoBehaviour
 {
     [Header("Target Settings")]
@@ -10,6 +11,8 @@ public class CameraController : MonoBehaviour
 
     [Header("Camera Settings")]
     [SerializeField] private bool _isFollowing = true;
+    [SerializeField] private bool _executeAlways = true;
+
 
     private enum CameraType
     {
@@ -30,17 +33,17 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!_executeAlways && !Application.isPlaying) return;
+
         if (_followTarget && _isFollowing)
         {
-            Vector3 targetPosition = Vector3.Lerp(_cameraBox.transform.position, _followTarget.position , Time.deltaTime);
-
-            _cameraBox.transform.position = targetPosition;
+            _cameraBox.transform.position = _followTarget.position;
 
             foreach (var camera in _cameras)
             {
                 if (!camera.Key) continue;
 
-                camera.Key.transform.LookAt(targetPosition);
+                camera.Key.transform.LookAt(_followTarget);
             }
         }
     }

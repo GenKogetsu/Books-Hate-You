@@ -1,14 +1,13 @@
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Kogetsu.Library.Attribute;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovementController : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [SerializeField] private float _moveSpeed = 5f;
-    [SerializeField] private float _gravity = -9.81f;
-    [SerializeField] private float _jumpHeight = 1.2f;
+    [SerializeField, EditOnInspector] private PlayerStats _playerStats;
 
     [Header("Input Action")]
     [SerializeField] private InputActionReference _moveActionReference;
@@ -75,7 +74,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (_isGrounded)
         {
-            _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+            _velocity.y = Mathf.Sqrt(_playerStats.JumpHeight * -2f * _playerStats.Gravity);
         }
     }
 
@@ -87,10 +86,10 @@ public class PlayerMovementController : MonoBehaviour
             _velocity.y = -2f;
         }
 
-        Vector3 move = new Vector3(_moveInput.x, 0f, _moveInput.y);
-        _characterController.Move(move * _moveSpeed * Time.deltaTime);
+        Vector3 move = new(_moveInput.x, 0f, _moveInput.y);
+        _characterController.Move(_playerStats.MoveSpeed * Time.deltaTime * move);
 
-        _velocity.y += _gravity * Time.deltaTime;
+        _velocity.y += _playerStats.Gravity * Time.deltaTime;
         _characterController.Move(_velocity * Time.deltaTime);
     }
 }
