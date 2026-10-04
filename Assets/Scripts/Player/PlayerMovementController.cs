@@ -2,6 +2,7 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Kogetsu.Library.Attribute;
+using Kogetsu.Library.DesignPatternCore;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovementController : MonoBehaviour
@@ -40,6 +41,11 @@ public class PlayerMovementController : MonoBehaviour
             _jumpActionReference.action.Enable();
             _jumpActionReference.action.performed += OnJumpPerformed;
         }
+
+        if (EventBus.Instance)
+        {
+            EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
+        }
     }
 
     private void OnDisable()
@@ -55,6 +61,11 @@ public class PlayerMovementController : MonoBehaviour
         {
             _jumpActionReference.action.performed -= OnJumpPerformed;
             _jumpActionReference.action.Disable();
+        }
+
+        if (EventBus.Instance)
+        {
+            EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
         }
     }
 
@@ -112,5 +123,10 @@ public class PlayerMovementController : MonoBehaviour
 
         Vector3 move = forward * _moveInput.y + right * _moveInput.x;
         return Vector3.ClampMagnitude(move, 1f);
+    }
+
+    private void OnGameover(GameoverEvent gameoverEvent)
+    {
+        this.enabled = false;
     }
 }

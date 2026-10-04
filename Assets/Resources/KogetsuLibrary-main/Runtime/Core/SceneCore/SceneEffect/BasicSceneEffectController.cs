@@ -79,7 +79,7 @@ namespace Kogetsu.Library.Core
             if (loadSceneEvent.SceneIndex < 0 || loadSceneEvent.SceneName == "Reload")
             {
                 ReloadScene();
-                Debug.LogWarning($"LoadSceneEvent: Invalid scene index: {loadSceneEvent.SceneIndex}. Loading current scene instead.");
+                Debug.Log($"LoadSceneEvent: Reload scene: {SceneManager.GetActiveScene().name}");
             }
 
             else if (!string.IsNullOrEmpty(loadSceneEvent.SceneName))
