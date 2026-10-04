@@ -9,8 +9,8 @@ namespace Kogetsu.Library.Core
     [CreateHierarchyMenu("KogetsuLibrary/Core/Manager")]
     public class TimeManager : Singleton<TimeManager>
     {
-
-        [SerializeField] protected TimeScaleDataSO ScaleData;
+        
+        [EditOnInspector, SerializeField] protected TimeScaleDataSO ScaleData;
 
         [field: Header("Calendar")]
         [field: SerializeField, ReadOnly]
@@ -18,8 +18,7 @@ namespace Kogetsu.Library.Core
         public DateTime LocalGameTime { get; protected set; } = new(hour: 08, minute: 00, second: 00, day: 01, month: 01, year: 2026);
 
         [Header("TimerScale")]
-        [ReadOnly]
-        [SerializeField] protected double TimePerFrame;
+        [SerializeField, ReadOnly] protected double TimePerFrame;
 
         [field: SerializeField, ReadOnly]
         public double CurrentTimeScale { get; protected set; }
@@ -38,11 +37,9 @@ namespace Kogetsu.Library.Core
         protected StringBuilder TimeBuilder = new();
 
         [Header("Debug")]
-        [ReadOnly]
-        [SerializeField] protected string RunningTimeDisplay = $"0s 0ms";
+        [SerializeField, ReadOnly] protected string RunningTimeDisplay = $"0s 0ms";
 
-        [ReadOnly]
-        [SerializeField] protected string RunningGameTimeDisplay = $"0s 0ms";
+        [SerializeField, ReadOnly] protected string RunningGameTimeDisplay = $"0s 0ms";
 
         protected virtual void OnEnable()
         {

@@ -36,7 +36,7 @@ namespace Kogetsu.Library.Core
         {
             if (EventBus.Instance)
             {
-                EventBus.Instance.Subscribe<EventName>(OnEventName);
+                EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
             }
 
         }
@@ -45,24 +45,13 @@ namespace Kogetsu.Library.Core
         {
             if (EventBus.Instance)
             {
-                EventBus.Instance.Unsubscribe<EventName>(OnEventName);
+                EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
             }
         }
 
         protected virtual void AssignComponent()
         {
             if (!SceneEffectAnimator) SceneEffectAnimator = this.GetComponent<Animator>();
-        }
-
-        protected virtual void OnEventName(EventName eventName)
-        {
-            Action action = eventName.Name switch
-            {
-                "LoadNextScene" => () => LoadNextScene(1),
-                _ => () => Debug.LogWarning("Unknown Event")
-            };
-
-            action?.Invoke();
         }
 
         protected virtual IEnumerator LoadSceneRotine(int sceneBulidIndex)
@@ -85,6 +74,29 @@ namespace Kogetsu.Library.Core
             GameManager.Instance.SetGameState(GameState.Normal);
         }
 
+        private void OnLoadSceneEvent(LoadSceneEvent loadSceneEvent)
+        {
+            if (loadSceneEvent.SceneIndex < 0 || loadSceneEvent.SceneName == "Reload")
+            {
+                ReloadScene();
+                Debug.LogWarning($"LoadSceneEvent: Invalid scene index: {loadSceneEvent.SceneIndex}. Loading current scene instead.");
+            }
+
+            else if (!string.IsNullOrEmpty(loadSceneEvent.SceneName))
+            {
+                LoadScene(loadSceneEvent.SceneName);
+                Debug.Log($"LoadSceneEvent: Load scene by name: {loadSceneEvent.SceneName}");
+            }
+
+            else if (loadSceneEvent.SceneIndex >= 0 && loadSceneEvent.SceneIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                LoadScene(loadSceneEvent.SceneIndex);
+                Debug.Log($"LoadSceneEvent: Load scene by index: {loadSceneEvent.SceneIndex}");
+            }
+
+            
+        }
+
         public void LoadScene(string sceneName)
         {
             Time.timeScale = 1f;
@@ -96,6 +108,13 @@ namespace Kogetsu.Library.Core
         {
             Time.timeScale = 1f;
             StartCoroutine(LoadSceneRotine(buildIndex));
+        }
+
+        public void ReloadScene()
+        {
+            Time.timeScale = 1f;
+            int sceneBulidIndex = SceneManager.GetActiveScene().buildIndex;
+            StartCoroutine(LoadSceneRotine(sceneBulidIndex));
         }
 
         public void LoadNextScene(int next)
