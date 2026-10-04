@@ -1,37 +1,40 @@
 using UnityEngine;
-using NaughtyAttributes;
 using Kogetsu.Library.DesignPatternCore;
 
+[RequireComponent(typeof(PlayerStatus))]
 public class PlayerHpController : MonoBehaviour
 {
-    [SerializeField] private float _startHp = 100f;
-    [SerializeField] private float _maxHp = 100f;
-    [SerializeField, ReadOnly] private float _currentHp;
+    [SerializeField] private PlayerStatus _playerStatus;
 
-    private void Awake()
+    private void Reset()
     {
-        _currentHp = _startHp;
+        TryGetComponent(out _playerStatus);
     }
-
-    public float GetPlayerHp() => _currentHp;
 
     public void TakeDamage(float damage)
     {
-        _currentHp -= damage;
-        _currentHp = Mathf.Clamp(_currentHp, 0f, _maxHp);
+        if (_playerStatus.GetIsDead()) return;
 
-        if (_currentHp > 0f && !EventBus.Instance) return;
+        _playerStatus.SetCurrentHp(_playerStatus.GetCurrentHp() - damage);
 
-        EventBus.Instance.Publish(new GameoverEvent());
+        if (_playerStatus.GetIsDead())
+        {
+            PublishGameover();
+        }
     }
 
     public void KillPlayer()
     {
-        _currentHp = 0f;
+        if (_playerStatus.GetIsDead()) return;
 
+        _playerStatus.SetCurrentHp(0f);
+        PublishGameover();
+    }
+
+    private void PublishGameover()
+    {
         if (!EventBus.Instance) return;
 
         EventBus.Instance.Publish(new GameoverEvent());
-        //Debug.Log("Player has been killed.");
     }
 }

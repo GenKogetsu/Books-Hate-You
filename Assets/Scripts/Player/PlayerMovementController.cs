@@ -1,31 +1,66 @@
-using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Kogetsu.Library.Attribute;
 using Kogetsu.Library.DesignPatternCore;
 
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(CharacterController), typeof(PlayerStatus))]
 public class PlayerMovementController : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    [SerializeField, EditOnInspector] private PlayerStats _playerStats;
+    #region Constants
 
-    [Header("Camera Reference")]
+    private const float MoveThreshold = 0.0001f;
+    private const float GroundedStickVelocity = -2f;
+
+    #endregion
+
+    #region Serialized Fields
+
+    [Header("References")]
+    [SerializeField] private PlayerStatus _playerStatus;
+    [SerializeField] private CharacterController _characterController;
     [SerializeField] private Transform _cameraReference;
+    [SerializeField] private Transform _modelTransform;
 
     [Header("Input Action")]
     [SerializeField] private InputActionReference _moveActionReference;
     [SerializeField] private InputActionReference _jumpActionReference;
+    [SerializeField] private InputActionReference _runActionReference;
+    [SerializeField] private InputActionReference _crouchActionReference;
 
-    [SerializeField] private CharacterController _characterController;
-    [SerializeField, ReadOnly] private Vector2 _moveInput;
-    [SerializeField, ReadOnly] private Vector3 _velocity;
-    [SerializeField, ReadOnly] private bool _isGrounded;
+    [Header("Crouch")]
+    [SerializeField] private LayerMask _ceilingMask = ~0;
+
+    [Header("Model Rotation")]
+    [SerializeField, Min(0.1f)] private float _modelRotationSpeed = 10f;
+
+    #endregion
+
+    #region Private Fields
+
+    private float _standingHeight;
+    private Vector3 _standingCenter;
+
+    #endregion
+
+    #region Setup
 
     private void Reset()
     {
-        this.TryGetComponent(out _characterController);
+        TryGetComponent(out _characterController);
+        TryGetComponent(out _playerStatus);
+        if (!_modelTransform) _modelTransform = transform;
     }
+
+    private void Awake()
+    {
+        _standingHeight = _characterController.height;
+        _standingCenter = _characterController.center;
+
+        if (!_modelTransform) _modelTransform = transform;
+    }
+
+    #endregion
+
+    #region Event Subscription
 
     private void OnEnable()
     {
@@ -40,6 +75,20 @@ public class PlayerMovementController : MonoBehaviour
         {
             _jumpActionReference.action.Enable();
             _jumpActionReference.action.performed += OnJumpPerformed;
+        }
+
+        if (_runActionReference != null)
+        {
+            _runActionReference.action.Enable();
+            _runActionReference.action.performed += OnRunPerformed;
+            _runActionReference.action.canceled += OnRunCanceled;
+        }
+
+        if (_crouchActionReference != null)
+        {
+            _crouchActionReference.action.Enable();
+            _crouchActionReference.action.performed += OnCrouchPerformed;
+            _crouchActionReference.action.canceled += OnCrouchCanceled;
         }
 
         if (EventBus.Instance)
@@ -63,56 +112,178 @@ public class PlayerMovementController : MonoBehaviour
             _jumpActionReference.action.Disable();
         }
 
+        if (_runActionReference != null)
+        {
+            _runActionReference.action.performed -= OnRunPerformed;
+            _runActionReference.action.canceled -= OnRunCanceled;
+            _runActionReference.action.Disable();
+        }
+
+        if (_crouchActionReference != null)
+        {
+            _crouchActionReference.action.performed -= OnCrouchPerformed;
+            _crouchActionReference.action.canceled -= OnCrouchCanceled;
+            _crouchActionReference.action.Disable();
+        }
+
         if (EventBus.Instance)
         {
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
         }
     }
 
+    #endregion
+
+    #region Main Loop
+
     private void Update()
     {
+        if (!_playerStatus.GetIsAlive()) return;
+
         ApplyMovement();
     }
 
+    #endregion
+
+    #region Input Callbacks
+
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
-        _moveInput = context.ReadValue<Vector2>();
+        _playerStatus.SetMoveInput(context.ReadValue<Vector2>());
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
-        _moveInput = Vector2.zero;
+        _playerStatus.SetMoveInput(Vector2.zero);
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
-        if (_isGrounded)
-        {
-            _velocity.y = Mathf.Sqrt(_playerStats.JumpHeight * -2f * _playerStats.Gravity);
-        }
+        if (!_playerStatus.GetIsAlive()) return;
+        if (!_playerStatus.GetIsGrounded()) return;
+        if (_playerStatus.GetIsCrouching()) return;
+
+        Vector3 velocity = _playerStatus.GetVelocity();
+        velocity.y = Mathf.Sqrt(_playerStatus.GetJumpHeight() * -2f * _playerStatus.GetGravity());
+        _playerStatus.SetVelocity(velocity);
+        _playerStatus.SetIsJumping(true);
     }
+
+    private void OnRunPerformed(InputAction.CallbackContext context)
+    {
+        _playerStatus.SetIsRunInputHeld(true);
+    }
+
+    private void OnRunCanceled(InputAction.CallbackContext context)
+    {
+        _playerStatus.SetIsRunInputHeld(false);
+    }
+
+    private void OnCrouchPerformed(InputAction.CallbackContext context)
+    {
+        _playerStatus.SetIsCrouchInputHeld(true);
+    }
+
+    private void OnCrouchCanceled(InputAction.CallbackContext context)
+    {
+        _playerStatus.SetIsCrouchInputHeld(false);
+    }
+
+    #endregion
+
+    #region Movement
 
     private void ApplyMovement()
     {
-        _isGrounded = _characterController.isGrounded;
-        if (_isGrounded && _velocity.y < 0)
+        bool isGrounded = _characterController.isGrounded;
+        _playerStatus.SetIsGrounded(isGrounded);
+
+        UpdateCrouchState();
+        UpdateMoveStates();
+
+        Vector3 velocity = _playerStatus.GetVelocity();
+
+        if (isGrounded && velocity.y < 0f)
         {
-            _velocity.y = -2f;
+            velocity.y = GroundedStickVelocity;
+            _playerStatus.SetIsJumping(false);
         }
 
         Vector3 move = GetCameraRelativeMove();
-        _characterController.Move(_playerStats.MoveSpeed * Time.deltaTime * move);
+        _characterController.Move(_playerStatus.GetCurrentMoveSpeed() * Time.deltaTime * move);
 
-        _velocity.y += _playerStats.Gravity * Time.deltaTime;
-        _characterController.Move(_velocity * Time.deltaTime);
+        RotateModelTowardsMovement(move);
+
+        velocity.y += _playerStatus.GetGravity() * Time.deltaTime;
+        _characterController.Move(velocity * Time.deltaTime);
+
+        _playerStatus.SetVelocity(velocity);
+    }
+
+    private void UpdateMoveStates()
+    {
+        bool isMoving = _playerStatus.GetMoveInput().sqrMagnitude > MoveThreshold;
+        bool isRunning = isMoving && _playerStatus.GetIsRunInputHeld();
+
+        _playerStatus.SetIsMoving(isMoving);
+        _playerStatus.SetIsRunning(isRunning);
+    }
+
+    private void UpdateCrouchState()
+    {
+        bool wantsCrouch = _playerStatus.GetIsCrouchInputHeld();
+        bool isCrouching = _playerStatus.GetIsCrouching();
+
+        if (wantsCrouch && !isCrouching)
+        {
+            SetCrouch(true);
+        }
+        else if (!wantsCrouch && isCrouching && CanStandUp())
+        {
+            SetCrouch(false);
+        }
+    }
+
+    private void SetCrouch(bool crouch)
+    {
+        float targetHeight = crouch ? _playerStatus.GetCrouchHeight() : _standingHeight;
+        targetHeight = Mathf.Min(targetHeight, _standingHeight);
+
+        float feetY = _standingCenter.y - _standingHeight * 0.5f;
+        Vector3 center = _standingCenter;
+        center.y = feetY + targetHeight * 0.5f;
+
+        _characterController.height = targetHeight;
+        _characterController.center = center;
+        _playerStatus.SetIsCrouching(crouch);
+    }
+
+    private bool CanStandUp()
+    {
+        float radius = _characterController.radius;
+        float crouchHeight = _characterController.height;
+        float checkDistance = _standingHeight - crouchHeight;
+
+        Vector3 feet = transform.position + _characterController.center
+                       + Vector3.down * (crouchHeight * 0.5f);
+        Vector3 origin = feet + Vector3.up * (crouchHeight - radius);
+
+        return !Physics.SphereCast(
+            origin,
+            radius * 0.95f,
+            Vector3.up,
+            out _,
+            checkDistance,
+            _ceilingMask,
+            QueryTriggerInteraction.Ignore);
     }
 
     private Vector3 GetCameraRelativeMove()
     {
-        if (!_cameraReference)
-            return new Vector3(_moveInput.x, 0f, _moveInput.y);
+        Vector2 input = _playerStatus.GetMoveInput();
 
-        // ตัดแกน Y ออก ให้เหลือแค่ทิศบนระนาบพื้น
+        if (!_cameraReference) return new Vector3(input.x, 0f, input.y);
+
         Vector3 forward = _cameraReference.forward;
         forward.y = 0f;
         forward.Normalize();
@@ -121,12 +292,35 @@ public class PlayerMovementController : MonoBehaviour
         right.y = 0f;
         right.Normalize();
 
-        Vector3 move = forward * _moveInput.y + right * _moveInput.x;
+        Vector3 move = forward * input.y + right * input.x;
+
         return Vector3.ClampMagnitude(move, 1f);
     }
 
+    #endregion
+
+    #region Model Rotation
+
+    private void RotateModelTowardsMovement(Vector3 moveDirection)
+    {
+        if (!_modelTransform || moveDirection.sqrMagnitude < MoveThreshold) return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+        _modelTransform.rotation = Quaternion.Lerp(
+            _modelTransform.rotation,
+            targetRotation,
+            _modelRotationSpeed * Time.deltaTime);
+    }
+
+    #endregion
+
+    #region Event Handlers
+
     private void OnGameover(GameoverEvent gameoverEvent)
     {
-        this.enabled = false;
+        _playerStatus.ResetMovementState();
+        enabled = false;
     }
+
+    #endregion
 }
