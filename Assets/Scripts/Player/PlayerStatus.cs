@@ -14,6 +14,8 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField, Range(0.1f, 1f)] private float _crouchSpeedMultiplier = 0.5f;
     [SerializeField, Range(0.1f, 1f)] private float _crouchRunSpeedMultiplier = 0.8f;
     [SerializeField, Range(0.5f, 1.5f)] private float _crouchHeight = 1f;
+    [SerializeField, Range(0.5f, 1f)] private float _jumpMoveSpeedMultiplier = 0.85f;
+    [SerializeField, Min(0f)] private float _jumpPrepareDuration = 0.2f;
 
     [Header("Health")]
     [SerializeField] private float _startHp = 100f;
@@ -35,6 +37,7 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField, ReadOnly] private bool _isRunning;
     [SerializeField, ReadOnly] private bool _isCrouching;
     [SerializeField, ReadOnly] private bool _isJumping;
+    [SerializeField, ReadOnly] private bool _isPreparingJump;
 
     #endregion
 
@@ -82,6 +85,8 @@ public class PlayerStatus : MonoBehaviour
         else if (_isRunning)
             speed *= _runSpeedMultiplier;
 
+        if (_isJumping) speed *= _jumpMoveSpeedMultiplier;
+
         return speed;
     }
 
@@ -126,6 +131,13 @@ public class PlayerStatus : MonoBehaviour
 
     public bool GetIsCrouchRunning() => _isCrouching && _isRunning;
 
+    public float GetJumpMoveSpeedMultiplier() => _jumpMoveSpeedMultiplier;
+    public float GetJumpPrepareDuration() => _jumpPrepareDuration;
+
+
+    public bool GetIsPreparingJump() => _isPreparingJump;
+    public void SetIsPreparingJump(bool value) => _isPreparingJump = value;
+
     #endregion
 
     #region Reset
@@ -138,6 +150,7 @@ public class PlayerStatus : MonoBehaviour
         _isMoving = false;
         _isRunning = false;
         _isJumping = false;
+        _isPreparingJump = false;
     }
 
     #endregion

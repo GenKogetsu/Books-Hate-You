@@ -38,6 +38,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private float _standingHeight;
     private Vector3 _standingCenter;
+    private float _jumpPrepareTimer;
 
     #endregion
 
@@ -140,6 +141,7 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (!_playerStatus.GetIsAlive()) return;
 
+        UpdateJumpPrepare();
         ApplyMovement();
     }
 
@@ -162,11 +164,10 @@ public class PlayerMovementController : MonoBehaviour
         if (!_playerStatus.GetIsAlive()) return;
         if (!_playerStatus.GetIsGrounded()) return;
         if (_playerStatus.GetIsCrouching()) return;
+        if (_playerStatus.GetIsPreparingJump()) return;
 
-        Vector3 velocity = _playerStatus.GetVelocity();
-        velocity.y = Mathf.Sqrt(_playerStatus.GetJumpHeight() * -2f * _playerStatus.GetGravity());
-        _playerStatus.SetVelocity(velocity);
-        _playerStatus.SetIsJumping(true);
+        _jumpPrepareTimer = _playerStatus.GetJumpPrepareDuration();
+        _playerStatus.SetIsPreparingJump(true);
     }
 
     private void OnRunPerformed(InputAction.CallbackContext context)
@@ -209,7 +210,7 @@ public class PlayerMovementController : MonoBehaviour
             _playerStatus.SetIsJumping(false);
         }
 
-        Vector3 move = GetCameraRelativeMove();
+        Vector3 move = _playerStatus.GetIsPreparingJump() ? Vector3.zero : GetCameraRelativeMove();
         _characterController.Move(_playerStatus.GetCurrentMoveSpeed() * Time.deltaTime * move);
 
         RotateModelTowardsMovement(move);
@@ -222,7 +223,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private void UpdateMoveStates()
     {
-        bool isMoving = _playerStatus.GetMoveInput().sqrMagnitude > MoveThreshold;
+        bool isMoving = !_playerStatus.GetIsPreparingJump() && _playerStatus.GetMoveInput().sqrMagnitude > MoveThreshold;
         bool isRunning = isMoving && _playerStatus.GetIsRunInputHeld();
 
         _playerStatus.SetIsMoving(isMoving);
@@ -295,6 +296,22 @@ public class PlayerMovementController : MonoBehaviour
         Vector3 move = forward * input.y + right * input.x;
 
         return Vector3.ClampMagnitude(move, 1f);
+    }
+    private void UpdateJumpPrepare()
+    {
+        if (!_playerStatus.GetIsPreparingJump()) return;
+
+        _jumpPrepareTimer -= Time.deltaTime;
+        if (_jumpPrepareTimer > 0f) return;
+
+        _playerStatus.SetIsPreparingJump(false);
+
+        if (!_playerStatus.GetIsGrounded() || _playerStatus.GetIsCrouching()) return;
+
+        Vector3 velocity = _playerStatus.GetVelocity();
+        velocity.y = Mathf.Sqrt(_playerStatus.GetJumpHeight() * -2f * _playerStatus.GetGravity());
+        _playerStatus.SetVelocity(velocity);
+        _playerStatus.SetIsJumping(true);
     }
 
     #endregion
