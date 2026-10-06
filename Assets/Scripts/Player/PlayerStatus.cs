@@ -38,6 +38,11 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField, ReadOnly] private bool _isCrouching;
     [SerializeField, ReadOnly] private bool _isJumping;
     [SerializeField, ReadOnly] private bool _isPreparingJump;
+    [SerializeField, ReadOnly] private bool _isLanding;
+
+    [Header("Abilities")]
+    [SerializeField, ReadOnly] private bool _canMove = true;
+    [SerializeField, ReadOnly] private bool _canJump = true;
 
     #endregion
 
@@ -103,6 +108,9 @@ public class PlayerStatus : MonoBehaviour
     public bool GetIsGrounded() => _isGrounded;
     public void SetIsGrounded(bool value) => _isGrounded = value;
 
+    public bool GetIsRising() => _isJumping && _velocity.y > 0f;
+    public bool GetIsFalling() => _isJumping && _velocity.y <= 0f;
+
     #endregion
 
     #region Input Intent
@@ -138,6 +146,24 @@ public class PlayerStatus : MonoBehaviour
     public bool GetIsPreparingJump() => _isPreparingJump;
     public void SetIsPreparingJump(bool value) => _isPreparingJump = value;
 
+    public bool GetIsLanding() => _isLanding;
+    public void SetIsLanding(bool value) => _isLanding = value;
+
+    #endregion
+
+    #region Abilities
+
+    public bool GetCanMove() => _canMove;
+    public void SetCanMove(bool value) => _canMove = value;
+
+    public bool GetCanJump() => _canJump;
+    public void SetCanJump(bool value) => _canJump = value;
+
+    public bool GetIsMovementLocked() => !_canMove || _isPreparingJump || _isLanding;
+
+    public bool GetCanJumpNow() =>
+        _canJump && _isAlive && _isGrounded && !_isCrouching && !_isJumping && !_isPreparingJump && !_isLanding;
+
     #endregion
 
     #region Reset
@@ -151,6 +177,7 @@ public class PlayerStatus : MonoBehaviour
         _isRunning = false;
         _isJumping = false;
         _isPreparingJump = false;
+        _isLanding = false;
     }
 
     #endregion

@@ -69,7 +69,7 @@ ModelImporter:
       name: Player_Walking
       takeName: Player_Walking
       internalID: 2843297402335657026
-      firstFrame: 350
+      firstFrame: 351.5
       lastFrame: 374
       wrapMode: 0
       orientationOffsetY: 0
@@ -98,7 +98,7 @@ ModelImporter:
       name: Player_Run
       takeName: Player_Run
       internalID: 6599214315619726264
-      firstFrame: 375
+      firstFrame: 376
       lastFrame: 389
       wrapMode: 0
       orientationOffsetY: 0

@@ -39,6 +39,7 @@ public class PlayerMovementController : MonoBehaviour
     private float _standingHeight;
     private Vector3 _standingCenter;
     private float _jumpPrepareTimer;
+    private float _landingTimer;
 
     #endregion
 
@@ -142,6 +143,7 @@ public class PlayerMovementController : MonoBehaviour
         if (!_playerStatus.GetIsAlive()) return;
 
         UpdateJumpPrepare();
+        UpdateLanding();
         ApplyMovement();
     }
 
@@ -161,10 +163,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
-        if (!_playerStatus.GetIsAlive()) return;
-        if (!_playerStatus.GetIsGrounded()) return;
-        if (_playerStatus.GetIsCrouching()) return;
-        if (_playerStatus.GetIsPreparingJump()) return;
+        if (!_playerStatus.GetCanJumpNow()) return;
 
         _jumpPrepareTimer = _playerStatus.GetJumpPrepareDuration();
         _playerStatus.SetIsPreparingJump(true);
@@ -207,10 +206,13 @@ public class PlayerMovementController : MonoBehaviour
         if (isGrounded && velocity.y < 0f)
         {
             velocity.y = GroundedStickVelocity;
+
+            if (_playerStatus.GetIsJumping()) StartLanding();
+
             _playerStatus.SetIsJumping(false);
         }
 
-        Vector3 move = _playerStatus.GetIsPreparingJump() ? Vector3.zero : GetCameraRelativeMove();
+        Vector3 move = _playerStatus.GetIsMovementLocked() ? Vector3.zero : GetCameraRelativeMove();
         _characterController.Move(_playerStatus.GetCurrentMoveSpeed() * Time.deltaTime * move);
 
         RotateModelTowardsMovement(move);
@@ -223,19 +225,19 @@ public class PlayerMovementController : MonoBehaviour
 
     private void UpdateMoveStates()
     {
-        bool isMoving = !_playerStatus.GetIsPreparingJump() && _playerStatus.GetMoveInput().sqrMagnitude > MoveThreshold;
+        bool isMoving = !_playerStatus.GetIsMovementLocked() && _playerStatus.GetMoveInput().sqrMagnitude > MoveThreshold;
         bool isRunning = isMoving && _playerStatus.GetIsRunInputHeld();
 
         _playerStatus.SetIsMoving(isMoving);
         _playerStatus.SetIsRunning(isRunning);
     }
 
-    private void UpdateCrouchState()
+    private void  UpdateCrouchState()
     {
         bool wantsCrouch = _playerStatus.GetIsCrouchInputHeld();
         bool isCrouching = _playerStatus.GetIsCrouching();
 
-        if (wantsCrouch && !isCrouching)
+        if (wantsCrouch && !isCrouching && !_playerStatus.GetIsPreparingJump() && !_playerStatus.GetIsLanding())
         {
             SetCrouch(true);
         }
@@ -301,17 +303,46 @@ public class PlayerMovementController : MonoBehaviour
     {
         if (!_playerStatus.GetIsPreparingJump()) return;
 
+        bool canceled = !_playerStatus.GetCanJump()
+                        || !_playerStatus.GetIsGrounded()
+                        || _playerStatus.GetIsCrouching();
+
+        if (canceled)
+        {
+            _playerStatus.SetIsPreparingJump(false);
+            return;
+        }
+
         _jumpPrepareTimer -= Time.deltaTime;
         if (_jumpPrepareTimer > 0f) return;
 
-        _playerStatus.SetIsPreparingJump(false);
+        LaunchJump();
+    }
 
-        if (!_playerStatus.GetIsGrounded() || _playerStatus.GetIsCrouching()) return;
-
+    private void LaunchJump()
+    {
         Vector3 velocity = _playerStatus.GetVelocity();
         velocity.y = Mathf.Sqrt(_playerStatus.GetJumpHeight() * -2f * _playerStatus.GetGravity());
         _playerStatus.SetVelocity(velocity);
+
+        _playerStatus.SetIsPreparingJump(false);
         _playerStatus.SetIsJumping(true);
+    }
+
+    private void StartLanding()
+    {
+        _landingTimer = _playerStatus.GetJumpPrepareDuration();
+        _playerStatus.SetIsLanding(true);
+    }
+
+    private void UpdateLanding()
+    {
+        if (!_playerStatus.GetIsLanding()) return;
+
+        _landingTimer -= Time.deltaTime;
+        if (_landingTimer > 0f) return;
+
+        _playerStatus.SetIsLanding(false);
     }
 
     #endregion

@@ -16,6 +16,9 @@ public class PlayerAnimationController : MonoBehaviour
     [SerializeField, KeyFromName] private Dictionary<string, AnimationClip> _runClips = new();
     [SerializeField, KeyFromName] private Dictionary<string, AnimationClip> _jumpClips = new();
 
+    [SerializeField] private bool _fallReversesJump;
+    [SerializeField, KeyFromName] private Dictionary<string, AnimationClip> _fallClips = new();
+
     [Header("Crouch Clips")]
     [SerializeField, KeyFromName] private Dictionary<string, AnimationClip> _crouchIdleClips = new();
     [SerializeField, KeyFromName] private Dictionary<string, AnimationClip> _crouchWalkClips = new();
@@ -42,6 +45,11 @@ public class PlayerAnimationController : MonoBehaviour
     private LivingAnimState _currentState = LivingAnimState.None;
     private bool _wasCrouching;
     private float _transitionEndTime;
+
+    private AnimationClip _currentJumpClip;
+    private bool _jumpHeldAtEnd;
+
+    private static readonly int SpeedMultiplierHash = Animator.StringToHash("SpeedMultiplier");
 
     #endregion
 
@@ -73,6 +81,8 @@ public class PlayerAnimationController : MonoBehaviour
 
     private void Update()
     {
+        HoldJumpAtEnd();
+
         LivingAnimState targetState = ResolveState();
 
         if (targetState == _currentState) return;
@@ -88,7 +98,21 @@ public class PlayerAnimationController : MonoBehaviour
     {
         if (_playerStatus.GetIsDead()) return LivingAnimState.Death;
 
-        if (_playerStatus.GetIsJumping()) return LivingAnimState.Jump;
+        if (_playerStatus.GetIsPreparingJump()) return LivingAnimState.Jump;
+
+        if (_playerStatus.GetIsJumping())
+        {
+            if (_playerStatus.GetIsFalling() && HasClip(LivingAnimState.Fall))
+                return LivingAnimState.Fall;
+
+            return LivingAnimState.Jump;
+        }
+
+        if (_playerStatus.GetIsLanding() && IsAirState(_currentState))
+            return _currentState;
+
+        if (!_playerStatus.GetIsGrounded() && _currentState != LivingAnimState.None)
+            return _currentState;
 
         bool isCrouching = _playerStatus.GetIsCrouching();
 
@@ -154,13 +178,26 @@ public class PlayerAnimationController : MonoBehaviour
             ? _standingToCrouchClips
             : _crouchToStandingClips,
         LivingAnimState.Jump => _jumpClips,
+        LivingAnimState.Fall => _fallReversesJump ? _jumpClips : _fallClips,
         LivingAnimState.Death => _deathClips,
         _ => null
     };
 
     private bool ShouldPlayReversed(LivingAnimState state)
     {
-        return state == LivingAnimState.CrouchToStanding && _crouchToStandingReversesStandingToCrouch;
+        return (state == LivingAnimState.CrouchToStanding && _crouchToStandingReversesStandingToCrouch)
+               || (state == LivingAnimState.Fall && _fallReversesJump);
+    }
+
+    private static bool IsTransitionState(LivingAnimState state)
+    {
+        return state == LivingAnimState.StandingToCrouch
+               || state == LivingAnimState.CrouchToStanding;
+    }
+
+    private static bool IsAirState(LivingAnimState state)
+    {
+        return state == LivingAnimState.Jump || state == LivingAnimState.Fall;
     }
 
     #endregion
@@ -171,31 +208,44 @@ public class PlayerAnimationController : MonoBehaviour
     {
         if (!_animator) return;
 
-        AnimationClip clip = PickRandomClip(GetClips(state));
+        AnimationClip clip = ResolveClip(state);
         if (!clip) return;
 
         if (IsTransitionState(state)) _transitionEndTime = Time.time + clip.length;
 
-        float blend = _currentState == LivingAnimState.Jump ? 0f : _transitionDuration;
+        float blend = (IsAirState(_currentState) || IsAirState(state)) ? 0f : _transitionDuration;
 
         if (ShouldPlayReversed(state))
         {
-            _animator.speed = -1f;
+            _animator.SetFloat(SpeedMultiplierHash, -1f);
             _animator.CrossFade(clip.name, blend, -1, 1f);
         }
         else
         {
-            _animator.speed = 1f;
+            _animator.SetFloat(SpeedMultiplierHash, 1f);
             _animator.CrossFade(clip.name, blend);
+        }
+
+        if (state == LivingAnimState.Jump)
+        {
+            _currentJumpClip = clip;
+            _jumpHeldAtEnd = false;
+        }
+        else if (state != LivingAnimState.Fall)
+        {
+            _currentJumpClip = null;
+            _jumpHeldAtEnd = false;
         }
 
         _currentState = state;
     }
 
-    private static bool IsTransitionState(LivingAnimState state)
+    private AnimationClip ResolveClip(LivingAnimState state)
     {
-        return state == LivingAnimState.StandingToCrouch
-               || state == LivingAnimState.CrouchToStanding;
+        if (state == LivingAnimState.Fall && _fallReversesJump && _currentJumpClip)
+            return _currentJumpClip;
+
+        return PickRandomClip(GetClips(state));
     }
 
     private AnimationClip PickRandomClip(Dictionary<string, AnimationClip> clips)
@@ -212,6 +262,19 @@ public class PlayerAnimationController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void HoldJumpAtEnd()
+    {
+        if (_currentState != LivingAnimState.Jump || !_currentJumpClip || _jumpHeldAtEnd) return;
+        if (!_animator) return;
+
+        AnimatorStateInfo info = _animator.GetCurrentAnimatorStateInfo(0);
+        if (!info.IsName(_currentJumpClip.name)) return;
+        if (info.normalizedTime < 1f) return;
+
+        _jumpHeldAtEnd = true;
+        _animator.SetFloat(SpeedMultiplierHash, 0f);
     }
 
     public bool TryGetClip(LivingAnimState state, string clipName, out AnimationClip clip)
@@ -237,5 +300,6 @@ public enum LivingAnimState
     StandingToCrouch,
     CrouchToStanding,
     Jump,
+    Fall,
     Death
 }
