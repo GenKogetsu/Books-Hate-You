@@ -3,19 +3,27 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class KillPlayerOnHit : MonoBehaviour
 {
-    [SerializeField] private Animator _hitEffectAnimator;
-    [SerializeField] private AnimationClip _hitEffectClip;
+    [SerializeField] private ParticleSystem _effectOnHit;
+
+    private void Awake()
+    {
+        if (_effectOnHit)
+        {
+            _effectOnHit.gameObject.SetActive(false);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        
-        Debug.Log($"Trigger with player detected: {other.name}");
 
-        if (other.TryGetComponent<PlayerHpController>(out var playerHpController))
+        Debug.Log("OnTriggerEnter KillPlayerOnHit");
+
+        var playerHpController = other.GetComponentInParent<PlayerHpController>();
+
+        if (playerHpController)
         {
             playerHpController.KillPlayer();
-            //Debug.Log($"Player killed: {other.name}");
             PlayHitEffect();
         }
     }
@@ -24,22 +32,23 @@ public class KillPlayerOnHit : MonoBehaviour
     {
         if (!collision.collider.CompareTag("Player")) return;
 
-        Debug.Log($"Collision with player detected: {collision.collider.name}");
+        Debug.Log("OnCollisionEnter KillPlayerOnHit");
 
-        if (collision.collider.TryGetComponent<PlayerHpController>(out var playerHpController))
+        var playerHpController = collision.collider.GetComponentInParent<PlayerHpController>();
+
+        if (playerHpController)
         {
             playerHpController.KillPlayer();
-            //Debug.Log($"Player killed: {collision.collider.name}");
             PlayHitEffect();
         }
     }
 
     private void PlayHitEffect()
     {
-        if (_hitEffectAnimator && _hitEffectClip)
+        if (_effectOnHit)
         {
-            _hitEffectAnimator.speed = 1f / _hitEffectClip.length;
-            _hitEffectAnimator.CrossFade(_hitEffectClip.name, 0f);
+            _effectOnHit.gameObject.SetActive(true);
         }
     }
 }
+
