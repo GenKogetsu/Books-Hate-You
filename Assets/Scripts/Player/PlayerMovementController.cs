@@ -15,6 +15,7 @@ public class PlayerMovementController : MonoBehaviour
     #region Serialized Fields
 
     [Header("References")]
+    [SerializeField] private CameraController _cameraController;
     [SerializeField] private PlayerStatus _playerStatus;
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private Transform _cameraReference;
@@ -285,18 +286,31 @@ public class PlayerMovementController : MonoBehaviour
     {
         Vector2 input = _playerStatus.GetMoveInput();
 
-        if (!_cameraReference) return new Vector3(input.x, 0f, input.y);
+        Vector3 forward;
+        Vector3 right;
 
-        Vector3 forward = _cameraReference.forward;
+        if (_cameraController)
+        {
+            Quaternion yaw = _cameraController.LookYawRotation;
+            forward = yaw * Vector3.forward;
+            right = yaw * Vector3.right;
+        }
+        else if (_cameraReference)
+        {
+            forward = _cameraReference.forward;
+            right = _cameraReference.right;
+        }
+        else
+        {
+            return new Vector3(input.x, 0f, input.y);
+        }
+
         forward.y = 0f;
-        forward.Normalize();
-
-        Vector3 right = _cameraReference.right;
         right.y = 0f;
+        forward.Normalize();
         right.Normalize();
 
         Vector3 move = forward * input.y + right * input.x;
-
         return Vector3.ClampMagnitude(move, 1f);
     }
     private void UpdateJumpPrepare()

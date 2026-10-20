@@ -7,6 +7,16 @@
             "id": "df70fa95-8a34-4494-b137-73ab6b9c7d37",
             "actions": [
                 {
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "897d3cc4-26bd-4a3b-8dd7-da75409dd475",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
                     "name": "Move",
                     "type": "Value",
                     "id": "351f2ccd-1f9f-44bf-9bec-d62ac5c5f408",
@@ -70,6 +80,16 @@
                     "name": "RotateCounterClockwise (Q)",
                     "type": "Button",
                     "id": "64264762-3556-4cf5-8656-755b88f84397",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "FPP&TPP (TAP)",
+                    "type": "Button",
+                    "id": "4246ba75-9fe7-40be-8716-5242241ef571",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -339,6 +359,50 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "RotateCounterClockwise (Q)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "54b87bc6-aa4a-4039-a110-3a6dff86cac3",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "FPP&TPP (TAP)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "20932bb5-14bb-441c-85ca-bb613f3124b6",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fd61ee56-2f95-49a4-a133-96be435ceba2",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse;Touch",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "40dde7b9-ab0f-47b8-b7b5-71b2f3975af5",
+                    "path": "<Joystick>/{Hatswitch}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -52,7 +52,6 @@ public class PlayerAnimationController : MonoBehaviour
     private static readonly int SpeedMultiplierHash = Animator.StringToHash("SpeedMultiplier");
 
     #endregion
-
     #region Validation
 
 #if UNITY_EDITOR
@@ -74,9 +73,17 @@ public class PlayerAnimationController : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        if (!_playerStatus) return;
+
+        _currentState = LivingAnimState.None;
+        _currentJumpClip = null;
+        _jumpHeldAtEnd = false;
+        _transitionEndTime = 0f;
         _wasCrouching = _playerStatus.GetIsCrouching();
+
+        PlayState(ResolveState(), true);
     }
 
     private void Update()
@@ -204,7 +211,7 @@ public class PlayerAnimationController : MonoBehaviour
 
     #region Animation
 
-    private void PlayState(LivingAnimState state)
+    private void PlayState(LivingAnimState state, bool instant = false)
     {
         if (!_animator) return;
 
@@ -213,7 +220,7 @@ public class PlayerAnimationController : MonoBehaviour
 
         if (IsTransitionState(state)) _transitionEndTime = Time.time + clip.length;
 
-        float blend = (IsAirState(_currentState) || IsAirState(state)) ? 0f : _transitionDuration;
+        float blend = (instant || IsAirState(_currentState) || IsAirState(state)) ? 0f : _transitionDuration;
 
         if (ShouldPlayReversed(state))
         {

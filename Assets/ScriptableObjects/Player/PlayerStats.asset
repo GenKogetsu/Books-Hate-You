@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b25578a3451a79b4889808261fbab095, type: 3}
   m_Name: PlayerStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
-  MoveSpeed: 5
+  MoveSpeed: 3
   Gravity: -9.81
   JumpHeight: 1.2

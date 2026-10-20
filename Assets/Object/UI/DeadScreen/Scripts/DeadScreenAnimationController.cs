@@ -25,6 +25,8 @@ public class DeadScreenAnimationController : MonoBehaviour
 
     private void OnGameoverEvent(GameoverEvent e)
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         _animator.speed = 1f / _deadScreenClip.length;
         _animator.CrossFade(_deadScreenClip.name, 0f);
     }

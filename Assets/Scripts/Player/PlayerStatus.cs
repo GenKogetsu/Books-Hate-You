@@ -164,6 +164,17 @@ public class PlayerStatus : MonoBehaviour
     public bool GetCanJumpNow() =>
         _canJump && _isAlive && _isGrounded && !_isCrouching && !_isJumping && !_isPreparingJump && !_isLanding;
 
+    public bool GetIsIdle()
+    {
+        return _isAlive
+               && _isGrounded
+               && !_isMoving
+               && !_isCrouching
+               && !_isJumping
+               && !_isPreparingJump
+               && !_isLanding;
+    }
+
     #endregion
 
     #region Reset
