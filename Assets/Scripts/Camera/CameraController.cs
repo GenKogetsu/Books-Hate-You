@@ -25,7 +25,7 @@ public class CameraController : MonoBehaviour
 
     [Header("View Settings")]
     [SerializeField] private bool _startInFirstPerson = false;
-    [SerializeField] private Vector3 _firstPersonLocalOffset = new Vector3(0f, 1.6f, 0f);
+    [SerializeField] private Vector3 _firstPersonLocalOffset = new(0f, 1.6f, 0f);
     [SerializeField, Min(0.01f)] private float _viewTransitionDuration = 0.5f;
     [SerializeField] private AnimationCurve _viewCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
