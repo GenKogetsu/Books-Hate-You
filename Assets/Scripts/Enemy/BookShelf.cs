@@ -11,15 +11,16 @@ public class BookShelf : MonoBehaviour
     [SerializeField, Range(1f, 179f)] private float _viewAngle = 60f;
     [SerializeField] private Vector3 _eyeOffset = new(0f, 1.5f, 0.5f);
 
-    [Tooltip("ตรวจเฉพาะ Object ที่อยู่ใน Layer Living และมี Tag Player")]
+    [Tooltip("ตรวจเฉพาะ Object ใน Layer Living ที่มี Tag ตรงกับ Target Tags")]
     [SerializeField] private LayerMask _livingMask;
+
+    [Tooltip("เลือก Tag ของเป้าหมายที่ชั้นหนังสือจะตรวจจับได้")]
+    [SerializeField] private TargetTag _targetTags = TargetTag.Player;
 
     [Tooltip("เลือกเฉพาะ Layer ของกำแพงหรือสิ่งกีดขวาง")]
     [SerializeField] private LayerMask _visionBlockMask;
 
     [SerializeField] private Vector3 _aimOffset = new(0f, 1f, 0f);
-    private string _playerTag = "Player";
-
     [Header("Throw")]
     [Tooltip("ใช้ Prefab นี้อ้างอิงชื่อ Key ที่ลงทะเบียนใน Pool")]
     [SerializeField] private Book _bookPrefab;
@@ -207,7 +208,7 @@ public class BookShelf : MonoBehaviour
             QueryTriggerInteraction.Ignore);
 
         string lastReason =
-            "ไม่พบ Tag Player ใน Collider หรือ Parent";
+            "ไม่พบ Tag ของ Target ใน Collider หรือ Parent";
 
         foreach (Collider candidate in candidates)
         {
@@ -215,7 +216,7 @@ public class BookShelf : MonoBehaviour
                 continue;
 
             Transform playerRoot =
-                FindPlayerRoot(candidate.transform);
+                FindTargetRoot(candidate.transform);
 
             if (!playerRoot)
                 continue;
@@ -239,6 +240,12 @@ public class BookShelf : MonoBehaviour
                 continue;
             }
 
+            if (!HasLineOfSight(origin, aimPoint, playerRoot, out string blocker))
+            {
+                lastReason = $"มีสิ่งกีดขวาง: {blocker}";
+                continue;
+            }
+
 
             _targetRoot = playerRoot;
             _playerDetected = true;
@@ -251,13 +258,13 @@ public class BookShelf : MonoBehaviour
 
     }
 
-    private Transform FindPlayerRoot(Transform candidate)
+    private Transform FindTargetRoot(Transform candidate)
     {
         Transform current = candidate;
 
         while (current != null)
         {
-            if (current.CompareTag(_playerTag))
+            if (_targetTags.MatchesUnityTag(current.tag))
                 return current;
 
             current = current.parent;

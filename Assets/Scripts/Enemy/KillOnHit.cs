@@ -19,6 +19,7 @@ public class KillOnHit : MonoBehaviour
 
     [Header("Layer Detection")]
     [SerializeField] private LayerMask _livingMask;
+    [SerializeField] private TargetTag _targetTags = TargetTag.Player;
 
     [Header("Debug")]
     [SerializeField] private bool _debugLog = false;
@@ -93,13 +94,14 @@ public class KillOnHit : MonoBehaviour
         if (_hasHitPlayer || !other)
             return;
 
-        if (!IsLivingLayer(other.transform))
-            return;
-
         Transform playerRoot = FindPlayerRoot(other.transform);
 
         if (!playerRoot)
             return;
+
+        // Tag is the authoritative target filter. Some player setups keep the
+        // CharacterController on the default layer, so requiring the Living
+        // layer before checking the tag would silently ignore valid hits.
 
         LivingHpController livingHpController =
             playerRoot.GetComponent<LivingHpController>();
@@ -151,11 +153,14 @@ public class KillOnHit : MonoBehaviour
 
     private Transform FindPlayerRoot(Transform candidate)
     {
+        if (_targetTags == TargetTag.None)
+            return null;
+
         Transform current = candidate;
 
         while (current != null)
         {
-            if (current.CompareTag("Player"))
+            if (_targetTags.MatchesUnityTag(current.tag))
                 return current;
 
             current = current.parent;

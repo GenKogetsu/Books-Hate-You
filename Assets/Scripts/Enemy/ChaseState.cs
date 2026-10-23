@@ -20,7 +20,7 @@ public sealed class ChaseState : EnemyState
     {
         _chaseDuration = 0f;
         _chaseStartPosition = Controller.transform.position;
-        _lastSeenPosition = Controller.PlayerStatus.transform.position;
+        _lastSeenPosition = Controller.PlayerTransform.position;
         _phase = ChasePhase.Chasing;
 
         Controller.Agent.isStopped = false;
@@ -41,7 +41,7 @@ public sealed class ChaseState : EnemyState
         if (Controller.CanDetectPlayer())
         {
             _phase = ChasePhase.Chasing;
-            _lastSeenPosition = Controller.PlayerStatus.transform.position;
+            _lastSeenPosition = Controller.PlayerTransform.position;
             _chaseDuration += Time.deltaTime;
 
             Controller.Agent.speed = Mathf.Min(

@@ -25,6 +25,8 @@ public class CameraController : MonoBehaviour
 
     [Header("View Settings")]
     [SerializeField] private bool _startInFirstPerson = false;
+    [SerializeField] private bool _startInTopView = false;
+    [SerializeField, Min(0.1f)] private float _topViewHeight = 12f;
     [SerializeField] private Vector3 _firstPersonLocalOffset = new(0f, 1.6f, 0f);
     [SerializeField, Min(0.01f)] private float _viewTransitionDuration = 0.5f;
     [SerializeField] private AnimationCurve _viewCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
@@ -51,6 +53,7 @@ public class CameraController : MonoBehaviour
     private bool _snapYawOnTransition;
 
     private bool _isFirstPerson;
+    private bool _isTopView;
 
     private float _viewT = 1f;
 
@@ -66,6 +69,7 @@ public class CameraController : MonoBehaviour
 
     public bool IsRotating => _rotationRoutine != null;
     public bool IsFirstPerson => _isFirstPerson;
+    public bool IsTopView => _isTopView;
     public bool IsViewTransitioning => _viewRoutine != null;
 
 
@@ -90,6 +94,8 @@ public class CameraController : MonoBehaviour
         if (!Application.isPlaying) return;
 
         _isFirstPerson = _startInFirstPerson;
+        _isTopView = _startInTopView;
+        if (_isTopView) _isFirstPerson = false;
         _viewT = _isFirstPerson ? 0f : 1f;
         _lookYaw = 0f;
         _lookPitch = 0f;
@@ -210,7 +216,7 @@ public class CameraController : MonoBehaviour
 
     private void ApplyLook()
     {
-        if (!Application.isPlaying || !_isFirstPerson || IsViewTransitioning || !_lookInput) return;
+        if (!Application.isPlaying || !_isFirstPerson || _isTopView || IsViewTransitioning || !_lookInput) return;
 
         Vector2 delta = _lookInput.action.ReadValue<Vector2>();
 
@@ -223,6 +229,21 @@ public class CameraController : MonoBehaviour
         if (!_cameraBox || !_followTarget || !_isFollowing) return;
 
         _cameraBox.position = _followTarget.position;
+
+        if (_isTopView)
+        {
+            Vector3 topPosition = _followTarget.position + Vector3.up * _topViewHeight;
+            Quaternion topRotation = Quaternion.Euler(90f, _cameraBox.eulerAngles.y, 0f);
+
+            foreach (var pair in _cameras)
+            {
+                if (!pair.Key) continue;
+                pair.Key.transform.position = topPosition;
+                pair.Key.transform.rotation = topRotation;
+            }
+
+            return;
+        }
 
         Quaternion firstPersonRotation = LookYawRotation * Quaternion.Euler(_lookPitch, 0f, 0f);
 
@@ -254,6 +275,9 @@ public class CameraController : MonoBehaviour
         if (!Application.isPlaying) return;
         if (!CanToggleView()) return;
 
+        if (_isTopView)
+            SetTopView(false);
+
         _isFirstPerson = !_isFirstPerson;
 
         if (_viewRoutine != null) StopCoroutine(_viewRoutine);
@@ -284,6 +308,56 @@ public class CameraController : MonoBehaviour
         }
 
         _viewRoutine = StartCoroutine(ViewTransitionRoutine(_isFirstPerson ? 0f : 1f));
+    }
+
+    public void SetTopView(bool enabled)
+    {
+        if (!Application.isPlaying || !CanToggleView()) return;
+
+        _isTopView = enabled;
+        if (enabled)
+        {
+            _isFirstPerson = false;
+            if (_viewRoutine != null) StopCoroutine(_viewRoutine);
+            _viewRoutine = null;
+            _viewT = 1f;
+            ApplyModelVisibility(false);
+        }
+        else
+        {
+            ApplyModelVisibility(false);
+        }
+    }
+
+    public void ToggleTopView()
+    {
+        SetTopView(!_isTopView);
+    }
+
+    public void SetTPP()
+    {
+        if (_isTopView)
+        {
+            _isTopView = false;
+            _viewT = 1f;
+            ApplyModelVisibility(false);
+        }
+
+        if (_isFirstPerson)
+            ToggleView();
+    }
+
+    public void SetFPP()
+    {
+        if (_isTopView)
+        {
+            _isTopView = false;
+            _viewT = 1f;
+            ApplyModelVisibility(false);
+        }
+
+        if (!_isFirstPerson)
+            ToggleView();
     }
 
     private void ApplyModelVisibility(bool firstPerson)
