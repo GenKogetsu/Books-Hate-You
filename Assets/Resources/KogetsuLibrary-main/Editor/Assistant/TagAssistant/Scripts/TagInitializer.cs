@@ -41,7 +41,9 @@ namespace Kogetsu.Library.Assistant
                 }
             }
 
+            #region Documentation - Notes
             // ตรวจสอบก่อนว่าต้องอัปเดตไหม (เพื่อป้องกันการเขียนไฟล์ ProjectSettings บ่อยเกินจำเป็น)
+            #endregion
             if (!NeedsUpdate(tagsProp, userCustomTags, settings.RequiredTags)) return;
 
             tagsProp.ClearArray();

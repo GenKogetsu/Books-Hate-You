@@ -21,7 +21,7 @@ public sealed class LibrarianMovementController : LivingMovementController
     [Header("State (Runtime)")]
     [SerializeField, ReadOnly] private string _currentStateName = "None";
 
-    private EnemyState _currentState;
+    private StateMachine<LibrarianMovementController> _stateMachine;
     private bool _isDead;
     private bool _isGameOver;
     private Transform _playerTransform;
@@ -32,7 +32,7 @@ public sealed class LibrarianMovementController : LivingMovementController
     internal LibrarianStats Stats => _librarianStats;
     internal Transform PlayerTransform => _playerTransform;
     internal Transform EyePoint => _eyePoint;
-    internal bool IsChasing => _currentState is ChaseState;
+    internal bool IsChasing => _stateMachine?.CurrentState is ChaseState;
 
     private void Reset()
     {
@@ -73,6 +73,7 @@ public sealed class LibrarianMovementController : LivingMovementController
         }
 
         _agent.speed = _librarianStats.InitialChaseSpeed;
+        _stateMachine = new StateMachine<LibrarianMovementController>(this);
         ChangeState(new IdleState(this));
     }
 
@@ -90,18 +91,17 @@ public sealed class LibrarianMovementController : LivingMovementController
 
     protected override bool CanMove()
     {
-        return !_isDead && !_isGameOver && _currentState != null;
+        return !_isDead && !_isGameOver && _stateMachine?.CurrentState != null;
     }
 
     protected override void UpdateMovement()
     {
-        _currentState.Update();
+        _stateMachine?.Update();
     }
 
     public override void StopMovement()
     {
-        _currentState?.Exit();
-        _currentState = null;
+        _stateMachine?.Stop();
         _currentStateName = "None";
 
         if (_agent)
@@ -116,10 +116,11 @@ public sealed class LibrarianMovementController : LivingMovementController
         if (_isDead)
             return;
 
-        _currentState?.Exit();
-        _currentState = nextState;
+        if (_stateMachine == null)
+            _stateMachine = new StateMachine<LibrarianMovementController>(this);
+
+        _stateMachine.ChangeState(nextState);
         _currentStateName = nextState?.GetType().Name ?? "None";
-        _currentState.Enter();
     }
 
     internal bool CanDetectPlayer()

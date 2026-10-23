@@ -1,6 +1,7 @@
 
 using System.Collections;
 using Kogetsu.Library.DesignPatternCore;
+using Kogetsu.Library.Debugging;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -132,9 +133,8 @@ public class KillOnHit : MonoBehaviour
 
         if (_debugLog)
         {
-            Debug.Log(
-                $"[KillOnHit] {name} ชน {playerRoot.name}",
-                this);
+            DebugLog.Log(DebugCategory.Combat,
+                $"{name} ชน {playerRoot.name}", this, _debugLog);
         }
 
         // ซ่อนโมเดลทันทีเมื่อชนผู้เล่น
@@ -210,9 +210,8 @@ public class KillOnHit : MonoBehaviour
         {
             if (_debugLog)
             {
-                Debug.Log(
-                    $"[KillOnHit] คืน {name} เข้า Pool: {key}",
-                    this);
+                DebugLog.Log(DebugCategory.ObjectPool,
+                    $"คืน {name} เข้า Pool: {key}", this, _debugLog);
             }
 
             ObjectPoolManager.Instance.Release(key, this);

@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public sealed class FinishLinePublisher : MonoBehaviour
 {
-    [SerializeField] private string _playerTag = "Player";
+    [SerializeField] private TargetTag _targetTags = TargetTag.Player;
     [SerializeField] private bool _publishOnlyOnce = true;
     private bool _hasPublished;
 
@@ -19,7 +19,7 @@ public sealed class FinishLinePublisher : MonoBehaviour
             return;
 
         Transform player = other.transform.root;
-        if (!player.CompareTag(_playerTag))
+        if (!_targetTags.MatchesUnityTag(player.tag))
             return;
 
         _hasPublished = true;

@@ -1,5 +1,6 @@
 
 using Kogetsu.Library.DesignPatternCore;
+using Kogetsu.Library.Debugging;
 using UnityEngine;
 
 public class BookShelf : MonoBehaviour
@@ -21,6 +22,9 @@ public class BookShelf : MonoBehaviour
     [SerializeField] private LayerMask _visionBlockMask;
 
     [SerializeField] private Vector3 _aimOffset = new(0f, 1f, 0f);
+
+    [Header("Debug")]
+    [SerializeField] private bool _debugLog;
     [Header("Throw")]
     [Tooltip("ใช้ Prefab นี้อ้างอิงชื่อ Key ที่ลงทะเบียนใน Pool")]
     [SerializeField] private Book _bookPrefab;
@@ -88,9 +92,8 @@ public class BookShelf : MonoBehaviour
 
         if (_livingMask.value == 0)
         {
-            Debug.Log(
-                "[BookShelf] ไม่พบ Layer Living สำหรับตรวจจับผู้เล่น",
-                this);
+            DebugLog.Log(DebugCategory.Enemy,
+                "ไม่พบ Layer Living สำหรับตรวจจับผู้เล่น", this, _debugLog);
         }
     }
 
@@ -349,7 +352,7 @@ public class BookShelf : MonoBehaviour
 
         if (!_bookPrefab || !_targetRoot)
         {
-            Debug.Log("ยิงไม่ได้: ไม่มี Prefab หรือ Target");  
+            DebugLog.Log(DebugCategory.Combat, "ยิงไม่ได้: ไม่มี Prefab หรือ Target", this, _debugLog);
             return;
         }
 
@@ -364,7 +367,7 @@ public class BookShelf : MonoBehaviour
 
         if (!ObjectPoolManager.Instance)
         {
-            Debug.Log("ยิงไม่ได้: ไม่พบ ObjectPoolManager");
+            DebugLog.Log(DebugCategory.ObjectPool, "ยิงไม่ได้: ไม่พบ ObjectPoolManager", this, _debugLog);
             return;
         }
 
@@ -376,7 +379,8 @@ public class BookShelf : MonoBehaviour
 
         if (!book)
         {
-            Debug.Log($"ดึงหนังสือจาก Pool ไม่สำเร็จ: {_bookPrefab.name}");
+            DebugLog.Log(DebugCategory.ObjectPool,
+                $"ดึงหนังสือจาก Pool ไม่สำเร็จ: {_bookPrefab.name}", this, _debugLog);
             return;
         }
 
@@ -388,7 +392,8 @@ public class BookShelf : MonoBehaviour
         _ammoLeft--;
         _nextShotTime = Time.time + _cooldown;
 
-        Debug.Log($"ยิงหนังสือใส่ '{_targetRoot.name}' เหลือ {_ammoLeft} นัด");
+        DebugLog.Log(DebugCategory.Combat,
+            $"ยิงหนังสือใส่ '{_targetRoot.name}' เหลือ {_ammoLeft} นัด", this, _debugLog);
     }
 
     #endregion

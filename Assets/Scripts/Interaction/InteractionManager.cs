@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 
 [RequireComponent(typeof(PlayerInventory))]
 public sealed class InteractionManager : MonoBehaviour
@@ -13,19 +12,12 @@ public sealed class InteractionManager : MonoBehaviour
     [Header("Input")]
     [SerializeField] private InputActionReference _interactActionReference;
 
-    [Header("Prompt")]
-    [SerializeField] private Vector3 _promptOffset = new(0f, 1.5f, 0f);
-    [SerializeField, Min(0f)] private float _promptCameraOffset = 0.2f;
-    [SerializeField] private float _promptCharacterSize = 0.12f;
-
     private PlayerInventory _inventory;
     private IInteractable _currentInteractable;
     private Component _currentComponent;
     private InteractionPromptView _currentPromptView;
     private float _currentDistance;
-    private GameObject _promptObject;
-    private Canvas _promptCanvas;
-    private TextMeshProUGUI _promptText;
+    public InteractionState CurrentState { get; private set; }
 
     private void Awake()
     {
@@ -89,6 +81,7 @@ public sealed class InteractionManager : MonoBehaviour
         _currentInteractable = null;
         _currentComponent = null;
         _currentDistance = float.MaxValue;
+        CurrentState = InteractionState.None;
 
         float closestSqrDistance = float.MaxValue;
 
@@ -117,42 +110,6 @@ public sealed class InteractionManager : MonoBehaviour
         }
     }
 
-    private void CreatePrompt()
-    {
-        // Create once during Awake, then only toggle this existing Canvas.
-        // It is never recreated per interaction target.
-        _promptObject = new GameObject("InteractionPromptCanvas");
-        _promptObject.transform.SetParent(transform);
-
-        _promptCanvas = _promptObject.AddComponent<Canvas>();
-        _promptCanvas.renderMode = RenderMode.WorldSpace;
-        _promptCanvas.overrideSorting = true;
-        _promptCanvas.sortingOrder = 1000;
-
-        RectTransform canvasRect = _promptCanvas.GetComponent<RectTransform>();
-        canvasRect.sizeDelta = new Vector2(2f, 1f);
-        canvasRect.localScale = Vector3.one * 0.01f;
-
-        GameObject textObject = new GameObject("PromptText");
-        textObject.transform.SetParent(_promptCanvas.transform, false);
-
-        RectTransform textRect = textObject.AddComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
-
-        _promptText = textObject.AddComponent<TextMeshProUGUI>();
-        _promptText.alignment = TextAlignmentOptions.Center;
-        _promptText.fontSize = 72f;
-        _promptText.characterSpacing = 0f;
-        _promptText.color = Color.white;
-        _promptText.textWrappingMode = TextWrappingModes.NoWrap;
-        _promptText.raycastTarget = false;
-
-        _promptObject.SetActive(false);
-    }
-
     private void UpdatePrompt()
     {
         bool hasTarget = _currentInteractable != null;
@@ -170,6 +127,9 @@ public sealed class InteractionManager : MonoBehaviour
         bool inRange = _currentDistance <= _interactionRange * _interactionRange;
         bool conditionPassed = _currentInteractable.CanInteract(_inventory);
         string prompt = !inRange ? "O" : conditionPassed ? "F" : "X";
+        CurrentState = !inRange
+            ? InteractionState.Detected
+            : conditionPassed ? InteractionState.InRange : InteractionState.Blocked;
         view.SetState(prompt, true);
     }
 

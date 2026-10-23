@@ -9,29 +9,39 @@ namespace Kogetsu.Library.Editor
     [CustomEditor(typeof(StatsController), true)]
     public class StatsControllerEditor : UnityEditor.Editor
     {
+        #region Documentation - Notes
         // ─── Stats Data ────────────────────────────────────────────────
+        #endregion
         private SerializedProperty _statsData;
         private SerializedProperty _currentMoveSpeed;
         private SerializedProperty _currectJumpForce;
 
+        #region Documentation - Notes
         // ─── HP ────────────────────────────────────────────────────────
+        #endregion
         private SerializedProperty _currentHp;
         private SerializedProperty _minHp;
         private SerializedProperty _hpUIConfig;
 
+        #region Documentation - Notes
         // ─── Stamina ───────────────────────────────────────────────────
+        #endregion
         private SerializedProperty _currentStamina;
         private SerializedProperty _minStamina;
         private SerializedProperty _staminaUIConfig;
 
+        #region Documentation - Notes
         // ─── Color Lerp ────────────────────────────────────────────────
+        #endregion
         private SerializedProperty _colorLerpRoot;
         private SerializedProperty _startColor;
         private SerializedProperty _endColor;
         private SerializedProperty _lerpSpeed;
         private SerializedProperty _lerpCount;
 
+        #region Documentation - Notes
         // ─── Foldout States ────────────────────────────────────────────
+        #endregion
         private bool _showHpUI      = true;
         private bool _showStaminaUI = true;
         private bool _showColorLerp = true;
@@ -62,7 +72,9 @@ namespace Kogetsu.Library.Editor
         {
             serializedObject.Update();
 
+            #region Documentation - Notes
             // ── Script (readonly) ────────────────────────────────────────
+            #endregion
             GUI.enabled = false;
             EditorGUILayout.ObjectField("Script",
                 MonoScript.FromMonoBehaviour((MonoBehaviour)target),
@@ -71,7 +83,9 @@ namespace Kogetsu.Library.Editor
 
             EditorGUILayout.Space(4);
 
+            #region Documentation - Notes
             // ── Stats Data ───────────────────────────────────────────────
+            #endregion
             if (_statsData.objectReferenceValue == null)
                 EditorGUILayout.HelpBox("Stats Data is required!", MessageType.Error);
 
@@ -89,17 +103,23 @@ namespace Kogetsu.Library.Editor
 
             EditorGUILayout.Space(6);
 
+            #region Documentation - Notes
             // ── HP UI ────────────────────────────────────────────────────
+            #endregion
             DrawUIConfigFoldout(ref _showHpUI, _hpUIConfig, "HP UI");
 
             EditorGUILayout.Space(4);
 
+            #region Documentation - Notes
             // ── Stamina UI ───────────────────────────────────────────────
+            #endregion
             DrawUIConfigFoldout(ref _showStaminaUI, _staminaUIConfig, "Stamina UI");
 
             EditorGUILayout.Space(6);
 
+            #region Documentation - Notes
             // ── Color Lerp ───────────────────────────────────────────────
+            #endregion
             _showColorLerp = EditorGUILayout.Foldout(_showColorLerp, "Color Lerp (Hit Flash)", true, EditorStyles.foldoutHeader);
             if (_showColorLerp)
             {
@@ -116,26 +136,36 @@ namespace Kogetsu.Library.Editor
 
             EditorGUILayout.Space(4);
 
+            #region Documentation - Notes
             // ── Debug ─────────────────────────────────────────────────────
+            #endregion
             _showDebug = EditorGUILayout.Foldout(_showDebug, "Debug", true, EditorStyles.foldoutHeader);
             if (_showDebug)
             {
                 var ctrl = (StatsController)target;
                 EditorGUI.indentLevel++;
 
+                #region Documentation - Notes
                 // ── HP ───────────────────────────────────────────────────
+                #endregion
                 EditorGUILayout.LabelField("HP", EditorStyles.boldLabel);
                 EditorGUI.indentLevel++;
 
+                #region Documentation - Notes
                 // Max — readonly, derived from StatsData.BaseHp
+                #endregion
                 GUI.enabled = false;
                 EditorGUILayout.FloatField(new GUIContent("Max", "StatsData.BaseHp — แก้ได้ที่ ScriptableObject"), ctrl.MaxHp);
                 GUI.enabled = true;
 
+                #region Documentation - Notes
                 // Min — editable; OnValidate() will clamp Current in play mode
+                #endregion
                 EditorGUILayout.PropertyField(_minHp, new GUIContent("Min"));
 
+                #region Documentation - Notes
                 // Current — readonly runtime value
+                #endregion
                 GUI.enabled = false;
                 EditorGUILayout.PropertyField(_currentHp, new GUIContent("Current"));
                 GUI.enabled = true;
@@ -146,7 +176,9 @@ namespace Kogetsu.Library.Editor
                 DrawSeparator();
                 EditorGUILayout.Space(4);
 
+                #region Documentation - Notes
                 // ── Stamina ──────────────────────────────────────────────
+                #endregion
                 EditorGUILayout.LabelField("Stamina", EditorStyles.boldLabel);
                 EditorGUI.indentLevel++;
 
@@ -167,7 +199,9 @@ namespace Kogetsu.Library.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
+        #region Documentation - Notes
         // ── Separator line ─────────────────────────────────────────────────
+        #endregion
         private static void DrawSeparator()
         {
             Rect rect = EditorGUILayout.GetControlRect(false, 1f);
@@ -176,7 +210,9 @@ namespace Kogetsu.Library.Editor
             EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 0.4f));
         }
 
+        #region Documentation - Notes
         // ── Draw StatsUIConfig toggle + foldout ────────────────────────────
+        #endregion
         private void DrawUIConfigFoldout(ref bool foldout, SerializedProperty configProp, string label)
         {
             var useUIProp = configProp.FindPropertyRelative("UseUI");
@@ -211,7 +247,9 @@ namespace Kogetsu.Library.Editor
             });
         }
 
+        #region Documentation - Notes
         // ── Helper: toggle inline + foldout ───────────────────────────────
+        #endregion
         private void DrawToggleFoldout(ref bool foldout, SerializedProperty toggleProp,
                                        string label, System.Action drawContent)
         {

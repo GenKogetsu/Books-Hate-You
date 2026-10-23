@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 556863b794574454587cb223d0c2eb0c, type: 3}
+  m_Name: KogetsuDebugSettings
+  m_EditorClassIdentifier: KogetsuLibrary::Kogetsu.Library.Debugging.DebugSettingsSO
+  _enableDebug: 0
+  _general: 0
+  _player: 0
+  _enemy: 0
+  _interaction: 0
+  _combat: 0
+  _movement: 0
+  _animation: 0
+  _objectPool: 0
+  _eventBus: 0
+  _scene: 0
+  _visualNovel: 0
+  _audio: 0

@@ -5,7 +5,7 @@ public sealed class CameraViewTriggerPublisher : MonoBehaviour
 {
     [SerializeField] private CameraViewMode _cameraViewMode = CameraViewMode.TPP;
     [SerializeField] private CameraViewObserverSO _observer;
-    [SerializeField] private string _playerTag = "Player";
+    [SerializeField] private TargetTag _targetTags = TargetTag.Player;
 
     private void Reset()
     {
@@ -16,7 +16,7 @@ public sealed class CameraViewTriggerPublisher : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Transform player = other.transform.root;
-        if (!player.CompareTag(_playerTag))
+        if (!_targetTags.MatchesUnityTag(player.tag))
             return;
 
         CameraController cameraController =

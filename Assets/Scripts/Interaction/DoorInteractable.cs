@@ -13,6 +13,8 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable
     [SerializeField, Min(1)] private int _requiredAmount = 1;
     [SerializeField] private bool _consumeItem = true;
 
+    public DoorState CurrentState { get; private set; }
+
     public string InteractionPrompt => _isOpen ? "" : "F";
 
     private void Reset()
@@ -20,13 +22,20 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable
         _animator = GetComponentInChildren<Animator>();
     }
 
+    private void Awake()
+    {
+        CurrentState = _isOpen ? DoorState.Open : DoorState.Locked;
+    }
+
     public bool CanInteract(PlayerInventory inventory)
     {
         if (_isOpen)
             return false;
 
-        return !_requiresKey ||
-               inventory != null && inventory.HasItem(_requiredItem, _requiredAmount);
+        bool canOpen = !_requiresKey ||
+                       inventory != null && inventory.HasItem(_requiredItem, _requiredAmount);
+        CurrentState = canOpen ? DoorState.Ready : DoorState.Locked;
+        return canOpen;
     }
 
     public void Interact(PlayerInventory inventory)
@@ -38,7 +47,11 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable
             inventory.RemoveItem(_requiredItem, _requiredAmount);
 
         _isOpen = true;
+        CurrentState = DoorState.Opening;
         if (_animator && _tiggerClip)
             _animator.CrossFade(_tiggerClip.name, 0.1f);
+
+        if (!_animator || !_tiggerClip)
+            CurrentState = DoorState.Open;
     }
 }

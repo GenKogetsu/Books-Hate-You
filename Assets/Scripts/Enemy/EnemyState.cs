@@ -1,4 +1,4 @@
-public abstract class EnemyState
+public abstract class EnemyState : IState<LibrarianMovementController>
 {
     protected readonly LibrarianMovementController Controller;
 

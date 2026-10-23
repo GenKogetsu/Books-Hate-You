@@ -5,14 +5,14 @@ namespace Kogetsu.Library.Assistant
 {
     public static class ScriptGeneratorMenuPackages
     {
-        private const string _rootPath = "Packages/com.Kogetsu.Library/Editor/Assistant/DocAssistant/Templates/";
+        private static string _interfaceTemplatePath => Editor.LibraryAssetLocator.Find("InterfaceTemplate.txt");
+        private static string _enumTemplatePath => Editor.LibraryAssetLocator.Find("EnumTemplate.txt");
+        private static string _structTemplatePath => Editor.LibraryAssetLocator.Find("StructTemplate.txt");
+        private static string _recordStructEventTemplatePath => Editor.LibraryAssetLocator.Find("RecordStructEventTemplate.txt");
 
-        private const string _interfaceTemplatePath = _rootPath + "InterfaceTemplate.txt";
-        private const string _enumTemplatePath = _rootPath + "EnumTemplate.txt";
-        private const string _structTemplatePath = _rootPath + "StructTemplate.txt";
-        private const string _recordStructEventTemplatePath = _rootPath + "RecordStructEventTemplate.txt";
-
+        #region Documentation - Notes
         // --- เมนูในหน้าหลัก (ต่อจาก C# Script) ---
+        #endregion
         [MenuItem("Assets/Create/Interface C# Script", false, 81)]
         public static void CreateInterface() => ProjectWindowUtil.CreateScriptAssetFromTemplateFile(_interfaceTemplatePath, "I.cs");
 
@@ -25,7 +25,9 @@ namespace Kogetsu.Library.Assistant
         [MenuItem("Assets/Create/Record Struct Event C# Script", false, 84)]
         public static void CreateRecordStruct() => ProjectWindowUtil.CreateScriptAssetFromTemplateFile(_recordStructEventTemplatePath, "NewRecordStructEvent.cs");
 
+        #region Documentation - Notes
         // --- เมนูในโฟลเดอร์ Scripting (ต่อจาก Script ของ Unity) ---
+        #endregion
         [MenuItem("Assets/Create/Scripting/Interface C# Script", false, 81)]
         public static void CreateInterfaceScripting() => ProjectWindowUtil.CreateScriptAssetFromTemplateFile(_interfaceTemplatePath, "I.cs");
 

@@ -71,6 +71,9 @@ public class CameraController : MonoBehaviour
     public bool IsFirstPerson => _isFirstPerson;
     public bool IsTopView => _isTopView;
     public bool IsViewTransitioning => _viewRoutine != null;
+    public CameraViewMode CurrentViewMode => _isTopView
+        ? CameraViewMode.TopView
+        : _isFirstPerson ? CameraViewMode.FPP : CameraViewMode.TPP;
 
 
     public Quaternion LookYawRotation

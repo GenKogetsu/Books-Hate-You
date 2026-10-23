@@ -9,7 +9,7 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
     [SerializeField] private bool _loadOnlyOnce = true;
 
     [Header("Target")]
-    [SerializeField] private string _playerTag = "Player";
+    [SerializeField] private TargetTag _targetTags = TargetTag.Player;
 
     private bool _hasLoaded;
 
@@ -24,7 +24,7 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
             return;
 
         Transform player = other.transform.root;
-        if (!player.CompareTag(_playerTag))
+        if (!_targetTags.MatchesUnityTag(player.tag))
             return;
 
         if (!BasicSceneEffectController.Instance)
