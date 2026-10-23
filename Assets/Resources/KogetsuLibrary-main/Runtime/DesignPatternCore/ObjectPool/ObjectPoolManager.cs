@@ -14,6 +14,19 @@ namespace Kogetsu.Library.DesignPatternCore
         [SerializeField] private List<PoolTableDataSO> _poolTables = new();
 
         private readonly Dictionary<string, ObjectPool<Transform>> _poolDictionary = new();
+        private readonly HashSet<string> _dontReturnPoolOnLoad = new();
+
+        private void OnEnable()
+        {
+            if (EventBus.Instance)
+                EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
+        }
+
+        private void OnDisable()
+        {
+            if (EventBus.Instance)
+                EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
+        }
 
         /// <summary>
         /// <para> Summary : </para>
@@ -101,6 +114,17 @@ namespace Kogetsu.Library.DesignPatternCore
 #endif
         }
 
+        private void OnLoadSceneEvent(LoadSceneEvent _)
+        {
+            foreach (var kvp in _poolDictionary)
+            {
+                if (_dontReturnPoolOnLoad.Contains(kvp.Key))
+                    continue;
+
+                kvp.Value.ReturnAllActive();
+            }
+        }
+
         /// <summary>
         /// <para> Summary : </para>
         /// <para> (TH) : ประมวลผลการสร้าง Pool และทำ Pre-warm ตามค่าที่กำหนดใน Configuration </para>
@@ -117,6 +141,9 @@ namespace Kogetsu.Library.DesignPatternCore
                     if (entry.Prefab == null) continue;
 
                     var key = entry.Prefab.name;
+
+                    if (entry.DontReturnPoolOnload)
+                        _dontReturnPoolOnLoad.Add(key);
 
                     if (_poolDictionary.ContainsKey(key)) continue;
 

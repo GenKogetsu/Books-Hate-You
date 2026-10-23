@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using Kogetsu.Library.DesignPatternCore;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerStatus))]
-public class PlayerMovementController : MonoBehaviour
+public class PlayerMovementController : LivingMovementController
 {
     #region Constants
 
@@ -139,10 +139,13 @@ public class PlayerMovementController : MonoBehaviour
 
     #region Main Loop
 
-    private void Update()
+    protected override bool CanMove()
     {
-        if (!_playerStatus.GetIsAlive()) return;
+        return _playerStatus && _playerStatus.GetIsAlive();
+    }
 
+    protected override void UpdateMovement()
+    {
         UpdateJumpPrepare();
         UpdateLanding();
         ApplyMovement();
@@ -381,7 +384,19 @@ public class PlayerMovementController : MonoBehaviour
     private void OnGameover(GameoverEvent gameoverEvent)
     {
         _playerStatus.ResetMovementState();
+        StopMovement();
         enabled = false;
+    }
+
+    public override void StopMovement()
+    {
+        if (!_playerStatus)
+            return;
+
+        _playerStatus.SetMoveInput(Vector2.zero);
+        _playerStatus.SetIsRunInputHeld(false);
+        _playerStatus.SetIsCrouchInputHeld(false);
+        _playerStatus.ResetMovementState();
     }
 
     #endregion

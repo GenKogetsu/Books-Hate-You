@@ -4,6 +4,7 @@
 TagManager:
   serializedVersion: 3
   tags:
+  - Librarian
   - SFX_Channel.KogetsuLibrary
   - BMG_Channel.KogetsuLibrary
   - Voiceover_Channel.KogetsuLibrary
@@ -11,12 +12,12 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Player
+  - 
   - Water
   - UI
   - Block
-  - 
-  - 
+  - Living
+  - Obstacle
   - 
   - 
   - 

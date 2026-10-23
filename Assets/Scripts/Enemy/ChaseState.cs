@@ -2,18 +2,32 @@ using UnityEngine;
 
 public sealed class ChaseState : EnemyState
 {
-    private float _chaseDuration;
+    private enum ChasePhase
+    {
+        Chasing,
+        InvestigatingLastSeenPosition,
+        ReturningToChaseStart
+    }
 
-    public ChaseState(LibrarianController controller) : base(controller) { }
+    private float _chaseDuration;
+    private Vector3 _lastSeenPosition;
+    private Vector3 _chaseStartPosition;
+    private ChasePhase _phase;
+
+    public ChaseState(LibrarianMovementController controller) : base(controller) { }
 
     public override void Enter()
     {
         _chaseDuration = 0f;
+        _chaseStartPosition = Controller.transform.position;
+        _lastSeenPosition = Controller.PlayerStatus.transform.position;
+        _phase = ChasePhase.Chasing;
+
         Controller.Agent.isStopped = false;
-        Controller.Agent.speed = Controller.InitialChaseSpeed;
+        Controller.Agent.speed = Controller.Stats.InitialChaseSpeed;
         Controller.NextDestinationUpdateTime = 0f;
-        Controller.PlayAnimation(Controller.RunClip);
-        UpdateDestination();
+        Controller.PlayRunAnimation();
+        UpdateDestination(_lastSeenPosition);
     }
 
     public override void Update()
@@ -24,35 +38,67 @@ public sealed class ChaseState : EnemyState
             return;
         }
 
-        float distance = Vector3.Distance(
-            Controller.transform.position,
-            Controller.PlayerStatus.transform.position);
-
-        if (distance > Controller.LoseTargetRange)
+        if (Controller.CanDetectPlayer())
         {
-            Controller.ChangeState(new IdleState(Controller));
+            _phase = ChasePhase.Chasing;
+            _lastSeenPosition = Controller.PlayerStatus.transform.position;
+            _chaseDuration += Time.deltaTime;
+
+            Controller.Agent.speed = Mathf.Min(
+                Controller.Stats.InitialChaseSpeed
+                + _chaseDuration * Controller.Stats.SpeedIncreasePerSecond,
+                Mathf.Max(
+                    Controller.Stats.InitialChaseSpeed,
+                    Controller.Stats.MaximumChaseSpeed));
+
+            if (Time.time >= Controller.NextDestinationUpdateTime)
+                UpdateDestination(_lastSeenPosition);
+
             return;
         }
 
-        _chaseDuration += Time.deltaTime;
-        Controller.Agent.speed = Mathf.Min(
-            Controller.InitialChaseSpeed
-            + _chaseDuration * Controller.SpeedIncreasePerSecond,
-            Controller.MaximumChaseSpeed);
+        if (_phase == ChasePhase.Chasing)
+        {
+            _phase = ChasePhase.InvestigatingLastSeenPosition;
+            Controller.Agent.speed = Controller.Stats.InitialChaseSpeed;
+            UpdateDestination(_lastSeenPosition);
+            return;
+        }
 
-        if (Time.time >= Controller.NextDestinationUpdateTime)
-            UpdateDestination();
-    }
-
-    private void UpdateDestination()
-    {
-        if (!Controller.HasLivingPlayer())
+        if (!HasReachedDestination())
             return;
 
-        Controller.Agent.SetDestination(Controller.PlayerStatus.transform.position);
+        if (_phase == ChasePhase.InvestigatingLastSeenPosition)
+        {
+            _phase = ChasePhase.ReturningToChaseStart;
+            UpdateDestination(_chaseStartPosition);
+            return;
+        }
+
+        Controller.ChangeState(new IdleState(Controller));
+    }
+
+    private void UpdateDestination(Vector3 destination)
+    {
+        Controller.Agent.SetDestination(destination);
         Controller.NextDestinationUpdateTime = Time.time + Mathf.Max(
             0.02f,
-            Controller.DestinationUpdateInterval);
+            Controller.Stats.DestinationUpdateInterval);
+    }
+
+    private bool HasReachedDestination()
+    {
+        if (Controller.Agent.pathPending)
+            return false;
+
+        if (!Controller.Agent.hasPath)
+            return true;
+
+        float stoppingDistance = Mathf.Max(
+            Controller.Agent.stoppingDistance,
+            0.15f);
+
+        return Controller.Agent.remainingDistance <= stoppingDistance;
     }
 
     public override void Exit()

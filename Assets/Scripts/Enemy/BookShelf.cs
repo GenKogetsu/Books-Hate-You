@@ -9,33 +9,28 @@ public class BookShelf : MonoBehaviour
     [Header("Vision")]
     [SerializeField, Min(0.1f)] private float _range = 10f;
     [SerializeField, Range(1f, 179f)] private float _viewAngle = 60f;
-    [SerializeField] private Vector3 _eyeOffset = new Vector3(0f, 1.5f, 0.5f);
+    [SerializeField] private Vector3 _eyeOffset = new(0f, 1.5f, 0.5f);
 
-    [Tooltip("Nothing = ไม่กรอง Layer ผู้เล่น")]
-    [SerializeField] private LayerMask _playerMask;
+    [Tooltip("ตรวจเฉพาะ Object ที่อยู่ใน Layer Living และมี Tag Player")]
+    [SerializeField] private LayerMask _livingMask;
 
     [Tooltip("เลือกเฉพาะ Layer ของกำแพงหรือสิ่งกีดขวาง")]
     [SerializeField] private LayerMask _visionBlockMask;
 
-    [SerializeField] private Vector3 _aimOffset = new Vector3(0f, 1f, 0f);
-    [SerializeField] private string _playerTag = "Player";
+    [SerializeField] private Vector3 _aimOffset = new(0f, 1f, 0f);
+    private string _playerTag = "Player";
 
     [Header("Throw")]
     [Tooltip("ใช้ Prefab นี้อ้างอิงชื่อ Key ที่ลงทะเบียนใน Pool")]
     [SerializeField] private Book _bookPrefab;
 
     [SerializeField, Min(0f)] private float _throwForce = 15f;
-    [SerializeField] private Vector2Int _ammoRange = new Vector2Int(3, 8);
+    [SerializeField] private Vector2Int _ammoRange = new(3, 8);
     [SerializeField, Min(0f)] private float _cooldown = 1.5f;
 
-    [Header("Gizmo")]
-    [SerializeField] private Color _idleColor = Color.green;
-    [SerializeField] private Color _detectedColor = Color.red;
-    [SerializeField, Range(3, 32)] private int _rimSegments = 16;
-
-    [Header("Debug")]
-    [SerializeField] private bool _debugLog = true;
-    [SerializeField] private bool _skipLineOfSight = false;
+    private Color _idleColor = Color.green;
+    private Color _detectedColor = Color.red;
+    private int _rimSegments = 8;
 
     #endregion
 
@@ -75,6 +70,9 @@ public class BookShelf : MonoBehaviour
     {
         _shelfColliders = GetComponentsInChildren<Collider>(true);
 
+        if (_livingMask.value == 0)
+            _livingMask = LayerMask.GetMask("Living");
+
         int min = Mathf.Max(0, Mathf.Min(_ammoRange.x, _ammoRange.y));
         int max = Mathf.Max(0, Mathf.Max(_ammoRange.x, _ammoRange.y));
 
@@ -87,10 +85,10 @@ public class BookShelf : MonoBehaviour
                 this);
         }
 
-        if (_playerMask.value == 0)
+        if (_livingMask.value == 0)
         {
             Debug.Log(
-                "[BookShelf] _playerMask เป็น Nothing: ไม่กรอง Layer ผู้เล่น",
+                "[BookShelf] ไม่พบ Layer Living สำหรับตรวจจับผู้เล่น",
                 this);
         }
     }
@@ -104,12 +102,6 @@ public class BookShelf : MonoBehaviour
 
         if (!_playerDetected)
             return;
-
-        if (_ammoLeft <= 0)
-        {
-            DebugLog("หมดกระสุนแล้ว", true);
-            return;
-        }
 
         if (Time.time < _nextShotTime)
             return;
@@ -195,7 +187,6 @@ public class BookShelf : MonoBehaviour
         _playerDetected = false;
         _targetRoot = null;
 
-        DebugLog("ได้รับ GameoverEvent: หยุดยิงหนังสือ", true);
     }
 
     #endregion
@@ -212,14 +203,8 @@ public class BookShelf : MonoBehaviour
         Collider[] candidates = Physics.OverlapSphere(
             origin,
             _range,
-            Physics.AllLayers,
+            _livingMask,
             QueryTriggerInteraction.Ignore);
-
-        if (candidates.Length == 0)
-        {
-            DebugLog("ไม่มี Collider ในระยะตรวจจับ");
-            return;
-        }
 
         string lastReason =
             "ไม่พบ Tag Player ใน Collider หรือ Parent";
@@ -234,13 +219,6 @@ public class BookShelf : MonoBehaviour
 
             if (!playerRoot)
                 continue;
-
-            if (!PassesPlayerLayerFilter(candidate, playerRoot))
-            {
-                lastReason =
-                    $"ผู้เล่น '{playerRoot.name}' ไม่ผ่าน Player Mask";
-                continue;
-            }
 
             Vector3 aimPoint =
                 playerRoot.position + _aimOffset;
@@ -261,17 +239,6 @@ public class BookShelf : MonoBehaviour
                 continue;
             }
 
-            if (!_skipLineOfSight &&
-                !HasLineOfSight(
-                    origin,
-                    aimPoint,
-                    playerRoot,
-                    out string blocker))
-            {
-                lastReason =
-                    $"ผู้เล่นถูกบังโดย '{blocker}'";
-                continue;
-            }
 
             _targetRoot = playerRoot;
             _playerDetected = true;
@@ -279,11 +246,9 @@ public class BookShelf : MonoBehaviour
             _debugRayFrom = origin;
             _debugRayTo = aimPoint;
 
-            DebugLog($"ตรวจพบผู้เล่น '{playerRoot.name}'");
             return;
         }
 
-        DebugLog(lastReason);
     }
 
     private Transform FindPlayerRoot(Transform candidate)
@@ -299,20 +264,6 @@ public class BookShelf : MonoBehaviour
         }
 
         return null;
-    }
-
-    private bool PassesPlayerLayerFilter(
-        Collider candidate,
-        Transform playerRoot)
-    {
-        if (_playerMask.value == 0)
-            return true;
-
-        int candidateBit = 1 << candidate.gameObject.layer;
-        int rootBit = 1 << playerRoot.gameObject.layer;
-
-        return (_playerMask.value & candidateBit) != 0 ||
-               (_playerMask.value & rootBit) != 0;
     }
 
     private bool HasLineOfSight(
@@ -380,18 +331,6 @@ public class BookShelf : MonoBehaviour
                transform.TransformVector(_eyeOffset);
     }
 
-    private void DebugLog(string reason, bool force = false)
-    {
-        if (!_debugLog)
-            return;
-
-        if (!force && reason == _lastDebugReason)
-            return;
-
-        _lastDebugReason = reason;
-        Debug.Log($"[BookShelf] {reason}", this);
-    }
-
     #endregion
 
     #region Throw
@@ -403,9 +342,7 @@ public class BookShelf : MonoBehaviour
 
         if (!_bookPrefab || !_targetRoot)
         {
-            DebugLog(
-                "ยิงไม่ได้: ไม่มี Book Prefab หรือ Target",
-                true);
+            Debug.Log("ยิงไม่ได้: ไม่มี Prefab หรือ Target");  
             return;
         }
 
@@ -420,7 +357,7 @@ public class BookShelf : MonoBehaviour
 
         if (!ObjectPoolManager.Instance)
         {
-            DebugLog("ยิงไม่ได้: ไม่พบ ObjectPoolManager", true);
+            Debug.Log("ยิงไม่ได้: ไม่พบ ObjectPoolManager");
             return;
         }
 
@@ -432,9 +369,7 @@ public class BookShelf : MonoBehaviour
 
         if (!book)
         {
-            DebugLog(
-                $"ดึงหนังสือจาก Pool ไม่สำเร็จ: {_bookPrefab.name}",
-                true);
+            Debug.Log($"ดึงหนังสือจาก Pool ไม่สำเร็จ: {_bookPrefab.name}");
             return;
         }
 
@@ -446,9 +381,7 @@ public class BookShelf : MonoBehaviour
         _ammoLeft--;
         _nextShotTime = Time.time + _cooldown;
 
-        DebugLog(
-            $"ยิงหนังสือใส่ '{_targetRoot.name}' เหลือ {_ammoLeft} นัด",
-            true);
+        Debug.Log($"ยิงหนังสือใส่ '{_targetRoot.name}' เหลือ {_ammoLeft} นัด");
     }
 
     #endregion

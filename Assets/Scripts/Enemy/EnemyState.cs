@@ -1,8 +1,8 @@
 public abstract class EnemyState
 {
-    protected readonly LibrarianController Controller;
+    protected readonly LibrarianMovementController Controller;
 
-    protected EnemyState(LibrarianController controller)
+    protected EnemyState(LibrarianMovementController controller)
     {
         Controller = controller;
     }

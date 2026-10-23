@@ -12,6 +12,7 @@ namespace Kogetsu.Library.DesignPatternCore
             public int InitialSize;
             public int MaxSize;
             public int LimitOverPercent;
+            public bool DontReturnPoolOnload;
         }
 
         public List<PoolEntry> Entries = new();

@@ -221,10 +221,13 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3113170c38893a48aa56ac6ebace98b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KillPlayerOnHit
+  m_EditorClassIdentifier: Assembly-CSharp::KillOnHit
   _effectOnHit: {fileID: 4557460557167711786}
   _model: {fileID: 1831906528573394049}
   _returnToPoolDelay: 2
+  _livingMask:
+    serializedVersion: 2
+    m_Bits: 128
   _debugLog: 0
 --- !u!1001 &6348708267019653990
 PrefabInstance:

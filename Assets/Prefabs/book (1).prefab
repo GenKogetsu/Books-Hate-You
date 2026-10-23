@@ -368,5 +368,5 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3113170c38893a48aa56ac6ebace98b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KillPlayerOnHit
+  m_EditorClassIdentifier: Assembly-CSharp::KillOnHit
   _effectOnHit: {fileID: 0}

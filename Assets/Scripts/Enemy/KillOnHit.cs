@@ -4,7 +4,7 @@ using Kogetsu.Library.DesignPatternCore;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class KillPlayerOnHit : MonoBehaviour
+public class KillOnHit : MonoBehaviour
 {
     #region Serialized Fields
 
@@ -15,11 +15,13 @@ public class KillPlayerOnHit : MonoBehaviour
     [SerializeField] private GameObject _model;
 
     [Header("Object Pool")]
-    [Tooltip("เวลาก่อนส่ง Object กลับ Pool หลังชน หน่วยเป็นวินาที")]
     [SerializeField, Min(0f)] private float _returnToPoolDelay = 2f;
 
+    [Header("Layer Detection")]
+    [SerializeField] private LayerMask _livingMask;
+
     [Header("Debug")]
-    [SerializeField] private bool _debugLog = true;
+    [SerializeField] private bool _debugLog = false;
 
     #endregion
 
@@ -34,9 +36,12 @@ public class KillPlayerOnHit : MonoBehaviour
 
     private void Awake()
     {
+        if (_livingMask.value == 0)
+            _livingMask = LayerMask.GetMask("Living");
+
         if (!_model)
             Debug.LogWarning(
-                "[KillPlayerOnHit] ยังไม่ได้กำหนด _model",
+                "[KillOnHit] ยังไม่ได้กำหนด _model",
                 this);
 
         if (_effectOnHit)
@@ -88,30 +93,33 @@ public class KillPlayerOnHit : MonoBehaviour
         if (_hasHitPlayer || !other)
             return;
 
+        if (!IsLivingLayer(other.transform))
+            return;
+
         Transform playerRoot = FindPlayerRoot(other.transform);
 
         if (!playerRoot)
             return;
 
-        PlayerHpController playerHpController =
-            playerRoot.GetComponent<PlayerHpController>();
+        LivingHpController livingHpController =
+            playerRoot.GetComponent<LivingHpController>();
 
-        if (!playerHpController)
+        if (!livingHpController)
         {
-            playerHpController =
-                playerRoot.GetComponentInParent<PlayerHpController>();
+            livingHpController =
+                playerRoot.GetComponentInParent<LivingHpController>();
         }
 
-        if (!playerHpController)
+        if (!livingHpController)
         {
-            playerHpController =
-                other.GetComponentInParent<PlayerHpController>();
+            livingHpController =
+                other.GetComponentInParent<LivingHpController>();
         }
 
-        if (!playerHpController)
+        if (!livingHpController)
         {
             Debug.LogWarning(
-                "[KillPlayerOnHit] พบ Player แต่ไม่พบ PlayerHpController",
+                "[KillOnHit] พบ Living แต่ไม่พบ LivingHpController",
                 other);
 
             return;
@@ -123,7 +131,7 @@ public class KillPlayerOnHit : MonoBehaviour
         if (_debugLog)
         {
             Debug.Log(
-                $"[KillPlayerOnHit] {name} ชน {playerRoot.name}",
+                $"[KillOnHit] {name} ชน {playerRoot.name}",
                 this);
         }
 
@@ -132,7 +140,7 @@ public class KillPlayerOnHit : MonoBehaviour
             _model.SetActive(false);
 
         // เรียกระบบตายของผู้เล่น
-        playerHpController.KillPlayer();
+        livingHpController.Kill();
 
         // เล่นเอฟเฟกต์ระเบิด
         PlayHitEffect();
@@ -154,6 +162,19 @@ public class KillPlayerOnHit : MonoBehaviour
         }
 
         return null;
+    }
+
+    private bool IsLivingLayer(Transform candidate)
+    {
+        while (candidate)
+        {
+            if ((_livingMask.value & (1 << candidate.gameObject.layer)) != 0)
+                return true;
+
+            candidate = candidate.parent;
+        }
+
+        return false;
     }
 
     #endregion
@@ -185,7 +206,7 @@ public class KillPlayerOnHit : MonoBehaviour
             if (_debugLog)
             {
                 Debug.Log(
-                    $"[KillPlayerOnHit] คืน {name} เข้า Pool: {key}",
+                    $"[KillOnHit] คืน {name} เข้า Pool: {key}",
                     this);
             }
 
@@ -194,7 +215,7 @@ public class KillPlayerOnHit : MonoBehaviour
         else
         {
             Debug.LogError(
-                "[KillPlayerOnHit] ไม่พบ ObjectPoolManager " +
+                "[KillOnHit] ไม่พบ ObjectPoolManager " +
                 "จึงไม่สามารถคืน Object เข้า Pool ได้",
                 this);
         }

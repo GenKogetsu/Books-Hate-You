@@ -1,13 +1,13 @@
 public sealed class IdleState : EnemyState
 {
-    public IdleState(LibrarianController controller) : base(controller) { }
+    public IdleState(LibrarianMovementController controller) : base(controller) { }
 
     public override void Enter()
     {
         Controller.Agent.isStopped = true;
         Controller.Agent.ResetPath();
-        Controller.Agent.speed = Controller.InitialChaseSpeed;
-        Controller.PlayAnimation(Controller.IdleClip);
+        Controller.Agent.speed = Controller.Stats.InitialChaseSpeed;
+        Controller.PlayIdleAnimation();
     }
 
     public override void Update()

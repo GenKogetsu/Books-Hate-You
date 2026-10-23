@@ -2,13 +2,12 @@ using UnityEngine;
 using Kogetsu.Library.Attribute;
 using System.Collections.Generic;
 
-public class PlayerAnimationController : MonoBehaviour
+public class PlayerAnimationController : LivingAnimationController
 {
     #region Serialized Fields
 
     [Header("References")]
     [SerializeField] private PlayerStatus _playerStatus;
-    [SerializeField] private Animator _animator;
 
     [Header("Standing Clips")]
     [SerializeField, KeyFromName] private Dictionary<string, AnimationClip> _idleClips = new();
@@ -36,7 +35,6 @@ public class PlayerAnimationController : MonoBehaviour
     [SerializeField, KeyFromName] private Dictionary<string, AnimationClip> _deathClips = new();
 
     [Header("Settings")]
-    [SerializeField, Min(0f)] private float _transitionDuration = 0.15f;
 
     #endregion
 
@@ -49,7 +47,6 @@ public class PlayerAnimationController : MonoBehaviour
     private AnimationClip _currentJumpClip;
     private bool _jumpHeldAtEnd;
 
-    private static readonly int SpeedMultiplierHash = Animator.StringToHash("SpeedMultiplier");
 
     #endregion
     #region Validation
@@ -67,10 +64,10 @@ public class PlayerAnimationController : MonoBehaviour
 
     #region Unity Callbacks
 
-    private void Reset()
+    protected override void Reset()
     {
+        base.Reset();
         TryGetComponent(out _playerStatus);
-        _animator = GetComponentInChildren<Animator>();
     }
 
     private void OnEnable()
@@ -230,7 +227,7 @@ public class PlayerAnimationController : MonoBehaviour
         else
         {
             _animator.SetFloat(SpeedMultiplierHash, 1f);
-            _animator.CrossFade(clip.name, blend);
+        _animator.CrossFade(clip.name, blend);
         }
 
         if (state == LivingAnimState.Jump)
