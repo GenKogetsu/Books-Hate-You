@@ -1,6 +1,6 @@
 using UnityEngine;
 [RequireComponent(typeof(InteractionPromptView))]
-public sealed class DoorInteractable : MonoBehaviour, IInteractable
+public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractionBlockReason
 {
     [Header("Door")]
     [SerializeField] private Animator _animator;
@@ -13,9 +13,13 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable
     [SerializeField, Min(1)] private int _requiredAmount = 1;
     [SerializeField] private bool _consumeItem = true;
 
+    [Header("Interaction Feedback")]
+    [SerializeField, TextArea(1, 3)] private string _lockedMessage = "ต้องใช้กุญแจ";
+
     public DoorState CurrentState { get; private set; }
 
     public string InteractionPrompt => _isOpen ? "" : "F";
+    public string InteractionBlockReason => _lockedMessage;
 
     private void Reset()
     {

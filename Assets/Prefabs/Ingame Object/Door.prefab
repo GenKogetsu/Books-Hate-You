@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 512013637203965}
   - component: {fileID: 4163598442271302188}
-  - component: {fileID: 3778898800332425667}
   - component: {fileID: 167286152826565050}
   - component: {fileID: 2097894124461514022}
+  - component: {fileID: 3778898800332425667}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -59,25 +59,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3778898800332425667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1831508477181380467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f7a3c9e5b2d4a6f8c0e1b3d7f9a5c62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
-  _animator: {fileID: 4163598442271302188}
-  _tiggerClip: {fileID: 7400000, guid: eb0a344e83307224e948e6b5580905e0, type: 2}
-  _isOpen: 0
-  _requiresKey: 1
-  _requiredItem: 0
-  _requiredAmount: 1
-  _consumeItem: 1
 --- !u!65 &167286152826565050
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -113,6 +94,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionPromptView
   _offset: {x: 0, y: 1.5, z: 0}
   _cameraOffset: 0.2
+--- !u!114 &3778898800332425667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831508477181380467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f7a3c9e5b2d4a6f8c0e1b3d7f9a5c62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorInteractable
+  _animator: {fileID: 4163598442271302188}
+  _tiggerClip: {fileID: 7400000, guid: eb0a344e83307224e948e6b5580905e0, type: 2}
+  _isOpen: 0
+  _requiresKey: 1
+  _requiredItem: 0
+  _requiredAmount: 1
+  _consumeItem: 1
 --- !u!1 &4657894390148550539
 GameObject:
   m_ObjectHideFlags: 0

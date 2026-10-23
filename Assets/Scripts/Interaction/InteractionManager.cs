@@ -126,11 +126,25 @@ public sealed class InteractionManager : MonoBehaviour
 
         bool inRange = _currentDistance <= _interactionRange * _interactionRange;
         bool conditionPassed = _currentInteractable.CanInteract(_inventory);
-        string prompt = !inRange ? "O" : conditionPassed ? "F" : "X";
+        string prompt = !inRange
+            ? "O"
+            : conditionPassed
+                ? "F"
+                : GetBlockedPrompt(_currentInteractable);
         CurrentState = !inRange
             ? InteractionState.Detected
             : conditionPassed ? InteractionState.InRange : InteractionState.Blocked;
         view.SetState(prompt, true);
+    }
+
+    private static string GetBlockedPrompt(IInteractable interactable)
+    {
+        IInteractionBlockReason reasonProvider = interactable as IInteractionBlockReason;
+        if (reasonProvider == null ||
+            string.IsNullOrWhiteSpace(reasonProvider.InteractionBlockReason))
+            return "X";
+
+        return $"X\n{reasonProvider.InteractionBlockReason}";
     }
 
     private void OnDrawGizmosSelected()

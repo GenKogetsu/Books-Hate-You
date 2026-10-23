@@ -1,14 +1,20 @@
-﻿namespace Kogetsu.Library.Core
+using UnityEngine;
+using UnityEngine.Serialization;
+
+namespace Kogetsu.Library.Core
 {
-    public class BasicRotateAbility : MonoBehaviour
+    public sealed class BasicRotateAbility : MonoBehaviour
     {
-        [SerializeField] protected Vector3 Rotate;
-        [SerializeField] protected float RoateSpeed = 1;
+        [SerializeField, FormerlySerializedAs("Rotate")] private Vector3 _rotationAxis = Vector3.up;
+        [SerializeField, Min(0f), FormerlySerializedAs("RoateSpeed")] private float _rotationSpeed = 90f;
+        [SerializeField] private Space _rotationSpace = Space.Self;
 
         private void Update()
         {
-            transform.Rotate(RoateSpeed * Time.deltaTime * Rotate);
-        }
+            if (_rotationSpeed <= 0f || _rotationAxis.sqrMagnitude <= Mathf.Epsilon)
+                return;
 
+            transform.Rotate(_rotationAxis.normalized, _rotationSpeed * Time.deltaTime, _rotationSpace);
+        }
     }
 }
