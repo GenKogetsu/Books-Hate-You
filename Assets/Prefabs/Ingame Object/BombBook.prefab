@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7924720759675426631}
   - component: {fileID: 4062497971865638376}
   - component: {fileID: 2202889420527777019}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 4667944500186634968}
   - component: {fileID: 5913596425806998074}
   - component: {fileID: 5973088986634874030}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BombBook
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -238,9 +238,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2412999773877045347}
     m_Modifications:
+    - target: {fileID: 1853350894723706831, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1966649346497238023, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4026405738751597475, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 4427360681522763372, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_Name
       value: FloorExplosion
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427360681522763372, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6132068809420943443, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_LocalScale.x

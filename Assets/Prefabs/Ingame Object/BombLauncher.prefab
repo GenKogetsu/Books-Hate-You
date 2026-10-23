@@ -68,8 +68,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BombBookLauncher
   _viewAngle: 52.5
   _launchRange: 7.17
-  _bombBookPrefab: {fileID: 0}
+  _bombBookPrefab: {fileID: 5913596425806998074, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
   _ammoRange: {x: 4, y: 8}
-  _cooldownRange: {x: 8, y: 10}
+  _cooldownRange: {x: 5, y: 10}
   _launchForce: 10
   _launchConeColor: {r: 1, g: 0.35, b: 0, a: 0.8}

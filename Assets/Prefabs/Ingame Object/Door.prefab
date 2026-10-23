@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 167286152826565050}
   - component: {fileID: 2097894124461514022}
   - component: {fileID: 3778898800332425667}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,6 +113,7 @@ MonoBehaviour:
   _requiredItem: 0
   _requiredAmount: 1
   _consumeItem: 1
+  _lockedMessage: Need Key
 --- !u!1 &4657894390148550539
 GameObject:
   m_ObjectHideFlags: 0
@@ -125,7 +126,7 @@ GameObject:
   - component: {fileID: 7586153141074497058}
   - component: {fileID: 3805907999543235298}
   - component: {fileID: 7670329699476437962}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -238,7 +239,7 @@ GameObject:
   - component: {fileID: 4544346524286502097}
   - component: {fileID: 1721349497637473216}
   - component: {fileID: 4993365240725368078}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 7767374880928236346}
   - component: {fileID: 6684109321410106846}
   - component: {fileID: 4570651598360801133}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: book4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &7767374880928236346
 Transform:
@@ -101,12 +101,12 @@ GameObject:
   - component: {fileID: 3426673311962384675}
   - component: {fileID: 4275972734024596550}
   - component: {fileID: 2913539075904450853}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: book5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &3426673311962384675
 Transform:
@@ -191,12 +191,12 @@ GameObject:
   - component: {fileID: 4126767178649054966}
   - component: {fileID: 2990724483471806948}
   - component: {fileID: 7706842461892955732}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: book6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4126767178649054966
 Transform:
@@ -281,12 +281,12 @@ GameObject:
   - component: {fileID: 1235067174162716201}
   - component: {fileID: 5312553442255655447}
   - component: {fileID: 7528182773787782880}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: book3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1235067174162716201
 Transform:
@@ -371,12 +371,12 @@ GameObject:
   - component: {fileID: 2477163821266831274}
   - component: {fileID: 3048398410460741057}
   - component: {fileID: 2458314918037213658}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: book1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2477163821266831274
 Transform:
@@ -461,12 +461,12 @@ GameObject:
   - component: {fileID: 4493669650699749037}
   - component: {fileID: 5651600891845589580}
   - component: {fileID: 684118292600539802}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: book2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4493669650699749037
 Transform:
@@ -549,12 +549,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7201512244238686368}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: A_stack_of_books
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &7201512244238686368
 Transform:
@@ -564,7 +564,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9088425191359886172}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.687429, z: -0, w: 0.7262516}
+  m_LocalRotation: {x: 0, y: 0.68742985, z: 0, w: 0.7262509}
   m_LocalPosition: {x: 3.416275, y: 0.242, z: 13.015204}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -576,4 +576,4 @@ Transform:
   - {fileID: 3426673311962384675}
   - {fileID: 4126767178649054966}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 86.854, z: 0}

@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 529706248345923684}
   - component: {fileID: 38525097348790551}
   - component: {fileID: 8009147858244072498}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: wire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &529706248345923684
 Transform:
@@ -101,12 +101,12 @@ GameObject:
   - component: {fileID: 7449905153644148765}
   - component: {fileID: 5822233826490890168}
   - component: {fileID: 8586198007921263474}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Computer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &7449905153644148765
 Transform:
@@ -194,12 +194,12 @@ GameObject:
   - component: {fileID: 5468922851625784964}
   - component: {fileID: 3749905015816547086}
   - component: {fileID: 2904423915187844926}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: keyboard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5468922851625784964
 Transform:
@@ -284,12 +284,12 @@ GameObject:
   - component: {fileID: 8052371798975287155}
   - component: {fileID: 5559052006954235543}
   - component: {fileID: 9067005224946300658}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: mouse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8052371798975287155
 Transform:

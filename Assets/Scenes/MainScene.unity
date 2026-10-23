@@ -1756,6 +1756,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BombLauncher (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1132384639126201302, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1657574022788389540, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
       propertyPath: _launchRange
       value: 5.59
@@ -11525,6 +11529,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BombLauncher (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1132384639126201302, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1657574022788389540, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
       propertyPath: _launchRange
       value: 5.59
@@ -14671,6 +14679,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BombLauncher (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 1132384639126201302, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1657574022788389540, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
       propertyPath: _bombBookPrefab
       value: 
@@ -17780,7 +17792,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1043089819
 Transform:
@@ -36882,6 +36894,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BombLauncher (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 1132384639126201302, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1657574022788389540, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
       propertyPath: _launchRange
       value: 5.59
@@ -40290,18 +40306,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: BombLauncher
       objectReference: {fileID: 0}
+    - target: {fileID: 1132384639126201302, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1657574022788389540, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
       propertyPath: _bombBookPrefab
       value: 
       objectReference: {fileID: 628880844}
-    - target: {fileID: 1657574022788389540, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
-      propertyPath: _cooldownRange.x
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1657574022788389540, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
-      propertyPath: _cooldownRange.y
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 3885282178474070901, guid: fa9e74e7d0d3ae74e94ad7331f41c6dd, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.75
@@ -40355,14 +40367,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2162344670760917487, guid: 9b586c0a87ef7564ca7789c1f08ad736, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1.37
-      objectReference: {fileID: 0}
-    - target: {fileID: 2162344670760917487, guid: 9b586c0a87ef7564ca7789c1f08ad736, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 3.37
-      objectReference: {fileID: 0}
     - target: {fileID: 6890340877586999331, guid: 9b586c0a87ef7564ca7789c1f08ad736, type: 3}
       propertyPath: m_Name
       value: Truck
@@ -40465,6 +40469,10 @@ PrefabInstance:
       value: Stairs
       objectReference: {fileID: 0}
     - target: {fileID: 982791607541489768, guid: 002367dc42d3b9244b3d56e872bd71e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 982791607541489768, guid: 002367dc42d3b9244b3d56e872bd71e6, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -40484,10 +40492,6 @@ PrefabInstance:
     - target: {fileID: 6096839259634750376, guid: 0d0283703a1b0a14ca91da42cd378ddf, type: 3}
       propertyPath: m_Name
       value: Computer&desk
-      objectReference: {fileID: 0}
-    - target: {fileID: 7334642134888526782, guid: 0d0283703a1b0a14ca91da42cd378ddf, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.75
       objectReference: {fileID: 0}
     - target: {fileID: 8749431167799734491, guid: 0d0283703a1b0a14ca91da42cd378ddf, type: 3}
       propertyPath: m_LocalPosition.x
@@ -40642,10 +40646,6 @@ PrefabInstance:
     - target: {fileID: 1831508477181380467, guid: 7c1479ac7e96e26458d876e3c802e628, type: 3}
       propertyPath: m_Name
       value: Door
-      objectReference: {fileID: 0}
-    - target: {fileID: 3778898800332425667, guid: 7c1479ac7e96e26458d876e3c802e628, type: 3}
-      propertyPath: _lockedMessage
-      value: Need Key
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
