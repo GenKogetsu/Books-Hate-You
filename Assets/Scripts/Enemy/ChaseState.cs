@@ -14,9 +14,9 @@ public sealed class ChaseState : EnemyState
     private Vector3 _chaseStartPosition;
     private ChasePhase _phase;
 
-    public ChaseState(LibrarianMovementController controller) : base(controller) { }
+    public ChaseState() { }
 
-    public override void Enter()
+    public override void OnEnter()
     {
         _chaseDuration = 0f;
         _chaseStartPosition = Controller.transform.position;
@@ -30,11 +30,11 @@ public sealed class ChaseState : EnemyState
         UpdateDestination(_lastSeenPosition);
     }
 
-    public override void Update()
+    public override void OnUpdate()
     {
         if (!Controller.HasLivingPlayer())
         {
-            Controller.ChangeState(new IdleState(Controller));
+            Controller.ChangeState(new IdleState());
             return;
         }
 
@@ -75,7 +75,7 @@ public sealed class ChaseState : EnemyState
             return;
         }
 
-        Controller.ChangeState(new IdleState(Controller));
+        Controller.ChangeState(new IdleState());
     }
 
     private void UpdateDestination(Vector3 destination)
@@ -101,7 +101,7 @@ public sealed class ChaseState : EnemyState
         return Controller.Agent.remainingDistance <= stoppingDistance;
     }
 
-    public override void Exit()
+    public override void OnExit()
     {
         Controller.Agent.isStopped = true;
         Controller.Agent.ResetPath();

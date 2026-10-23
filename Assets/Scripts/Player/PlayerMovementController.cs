@@ -41,6 +41,7 @@ public class PlayerMovementController : LivingMovementController
     private Vector3 _standingCenter;
     private float _jumpPrepareTimer;
     private float _landingTimer;
+    private Kogetsu.Library.DesignPatternCore.StateMachine<PlayerMovementController> _stateMachine;
 
     #endregion
 
@@ -55,10 +56,23 @@ public class PlayerMovementController : LivingMovementController
 
     private void Awake()
     {
+        if (!_characterController)
+            _characterController = GetComponent<CharacterController>();
+
+        if (!_playerStatus)
+            _playerStatus = GetComponent<PlayerStatus>();
+
         _standingHeight = _characterController.height;
         _standingCenter = _characterController.center;
 
         if (!_modelTransform) _modelTransform = transform;
+
+        _stateMachine = new Kogetsu.Library.DesignPatternCore.StateMachine<PlayerMovementController>();
+    }
+
+    private void Start()
+    {
+        ChangeState(new PlayerIdleState());
     }
 
     #endregion
@@ -141,14 +155,36 @@ public class PlayerMovementController : LivingMovementController
 
     protected override bool CanMove()
     {
-        return _playerStatus && _playerStatus.GetIsAlive();
+        return _playerStatus;
     }
 
     protected override void UpdateMovement()
     {
+        _stateMachine?.Update();
+    }
+
+    internal PlayerStatus Status => _playerStatus;
+
+    internal void TickMovement()
+    {
         UpdateJumpPrepare();
         UpdateLanding();
         ApplyMovement();
+    }
+
+    internal void ChangeState(PlayerMovementState nextState)
+    {
+        if (_stateMachine == null)
+            _stateMachine = new Kogetsu.Library.DesignPatternCore.StateMachine<PlayerMovementController>();
+
+        if (nextState != null && _stateMachine.CurrentState != null &&
+            _stateMachine.CurrentState.GetType() == nextState.GetType())
+            return;
+
+        if (nextState != null)
+            nextState.Initialize(this);
+
+        _stateMachine.ChangeState(nextState);
     }
 
     #endregion

@@ -4912,6 +4912,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 320
   _aimOffset: {x: 0, y: 1, z: 0}
+  _debugLog: 0
   _bookPrefab: {fileID: 0}
   _throwForce: 10
   _ammoRange: {x: 3, y: 8}

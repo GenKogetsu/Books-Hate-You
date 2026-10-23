@@ -1,8 +1,8 @@
 public sealed class IdleState : EnemyState
 {
-    public IdleState(LibrarianMovementController controller) : base(controller) { }
+    public IdleState() { }
 
-    public override void Enter()
+    public override void OnEnter()
     {
         Controller.Agent.isStopped = true;
         Controller.Agent.ResetPath();
@@ -10,11 +10,11 @@ public sealed class IdleState : EnemyState
         Controller.PlayIdleAnimation();
     }
 
-    public override void Update()
+    public override void OnUpdate()
     {
         if (Controller.CanDetectPlayer())
-            Controller.ChangeState(new ChaseState(Controller));
+            Controller.ChangeState(new ChaseState());
     }
 
-    public override void Exit() { }
+    public override void OnExit() { }
 }

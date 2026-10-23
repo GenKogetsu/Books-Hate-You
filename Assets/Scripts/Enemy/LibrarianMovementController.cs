@@ -21,7 +21,7 @@ public sealed class LibrarianMovementController : LivingMovementController
     [Header("State (Runtime)")]
     [SerializeField, ReadOnly] private string _currentStateName = "None";
 
-    private StateMachine<LibrarianMovementController> _stateMachine;
+    private Kogetsu.Library.DesignPatternCore.StateMachine<LibrarianMovementController> _stateMachine;
     private bool _isDead;
     private bool _isGameOver;
     private Transform _playerTransform;
@@ -48,6 +48,12 @@ public sealed class LibrarianMovementController : LivingMovementController
 
     private void Start()
     {
+        if (!_agent)
+            _agent = GetComponent<NavMeshAgent>();
+
+        if (!_animationController)
+            _animationController = GetComponent<LibrarianAnimationController>();
+
         if (_livingMask.value == 0)
             _livingMask = LayerMask.GetMask("Living");
 
@@ -73,8 +79,8 @@ public sealed class LibrarianMovementController : LivingMovementController
         }
 
         _agent.speed = _librarianStats.InitialChaseSpeed;
-        _stateMachine = new StateMachine<LibrarianMovementController>(this);
-        ChangeState(new IdleState(this));
+        _stateMachine = new Kogetsu.Library.DesignPatternCore.StateMachine<LibrarianMovementController>();
+        ChangeState(new IdleState());
     }
 
     private void OnEnable()
@@ -101,7 +107,7 @@ public sealed class LibrarianMovementController : LivingMovementController
 
     public override void StopMovement()
     {
-        _stateMachine?.Stop();
+        _stateMachine?.ChangeState(null);
         _currentStateName = "None";
 
         if (_agent)
@@ -117,7 +123,10 @@ public sealed class LibrarianMovementController : LivingMovementController
             return;
 
         if (_stateMachine == null)
-            _stateMachine = new StateMachine<LibrarianMovementController>(this);
+            _stateMachine = new Kogetsu.Library.DesignPatternCore.StateMachine<LibrarianMovementController>();
+
+        if (nextState != null)
+            nextState.Initialize(this);
 
         _stateMachine.ChangeState(nextState);
         _currentStateName = nextState?.GetType().Name ?? "None";
