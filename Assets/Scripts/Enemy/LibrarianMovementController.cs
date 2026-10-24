@@ -89,12 +89,16 @@ public sealed class LibrarianMovementController : LivingMovementController
 
     private void OnEnable()
     {
+        base.OnEnable();
+
         if (EventBus.Instance)
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
     }
 
     private void OnDisable()
     {
+        base.OnDisable();
+
         if (EventBus.Instance)
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
     }
