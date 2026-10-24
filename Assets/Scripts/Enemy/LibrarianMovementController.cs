@@ -242,6 +242,7 @@ public sealed class LibrarianMovementController : LivingMovementController
             return;
 
         _isDead = true;
+        StopChaseAudio();
         StopMovement();
         _currentStateName = "Dead";
     }

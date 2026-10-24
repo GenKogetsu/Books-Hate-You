@@ -56,13 +56,11 @@ public sealed class EnemyHpController : LivingHpController
 
     private void OnDeath()
     {
-        PlayDeathSound();
-
-        _animationController?.PlayDeathAnimation();
-
         LibrarianMovementController movement =
             GetComponent<LibrarianMovementController>();
 
         movement?.HandleDeath();
+        PlayDeathSound();
+        _animationController?.PlayDeathAnimation();
     }
 }
