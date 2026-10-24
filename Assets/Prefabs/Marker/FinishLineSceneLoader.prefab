@@ -69,5 +69,8 @@ MonoBehaviour:
   _sceneBuildIndex: 0
   _loadOnlyOnce: 0
   _playerSceneWarpState: {fileID: 11400000, guid: c91695ab8063445db710bef52ec0bce9, type: 2}
-  _destinationPlayerPosition: {x: 0, y: 0, z: 0}
+  _destinationPlayerTransform:
+    _position: {x: 0, y: 0, z: 0}
+    _rotation: {x: 0, y: 0, z: 0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}
   _targetTags: 32

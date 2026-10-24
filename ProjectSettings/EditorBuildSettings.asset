@@ -9,13 +9,13 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: d9827756db3c1d24b839fe611e380494
   - enabled: 1
-    path: Assets/Scenes/MainScene/Floor1.unity
+    path: Assets/Scenes/MainScene/Floor1/Floor1.unity
     guid: 4ebb376656253d6468ac229f8502311f
   - enabled: 1
-    path: Assets/Scenes/MainScene/Stair.unity
+    path: Assets/Scenes/MainScene/Stair/Stair.unity
     guid: 88b8851124373de4b8b876ba010f2cf5
   - enabled: 1
-    path: Assets/Scenes/MainScene/Floor2.unity
+    path: Assets/Scenes/MainScene/Floor2/Floor2.unity
     guid: 6f06e1b98f09e554f953ef8ea72f9490
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}

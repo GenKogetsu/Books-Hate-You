@@ -10,7 +10,7 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
 
     [Header("Player Spawn In Destination Scene")]
     [SerializeField] private PlayerSceneWarpState _playerSceneWarpState;
-    [SerializeField] private Vector3 _destinationPlayerPosition;
+    [SerializeField] private PlayerTransformSnapshot _destinationPlayerTransform = PlayerTransformSnapshot.Identity;
 
     [Header("Target")]
     [SerializeField] private TargetTag _targetTags = TargetTag.Player;
@@ -48,7 +48,7 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
         }
 
         _hasLoaded = true;
-        _playerSceneWarpState.SetPendingPosition(_destinationPlayerPosition);
+        _playerSceneWarpState.SetPendingTransform(_destinationPlayerTransform);
         BasicSceneEffectController.Instance.LoadScene(_sceneBuildIndex);
     }
 }

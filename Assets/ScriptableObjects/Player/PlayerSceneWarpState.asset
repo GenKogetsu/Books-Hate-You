@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b7996e930ab43498f5eb8f919bfa021, type: 3}
   m_Name: PlayerSceneWarpState
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSceneWarpState
-  _hasPendingPosition: 0
-  _pendingPosition: {x: 0, y: 0, z: 0}
+  _hasPendingTransform: 0
+  _pendingTransform:
+    _position: {x: 0, y: 0, z: 0}
+    _rotation: {x: 0, y: 0, z: 0, w: 1}
+    _localScale: {x: 1, y: 1, z: 1}

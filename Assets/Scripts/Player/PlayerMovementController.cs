@@ -201,14 +201,14 @@ public class PlayerMovementController : LivingMovementController
     private void ApplyPendingSceneWarp()
     {
         if (!_playerSceneWarpState ||
-            !_playerSceneWarpState.TryGetPendingPosition(out Vector3 destination))
+            !_playerSceneWarpState.TryGetPendingTransform(out PlayerTransformSnapshot destination))
             return;
 
         _characterController.enabled = false;
-        transform.position = destination;
+        destination.ApplyTo(transform);
         _characterController.enabled = true;
 
-        _playerSceneWarpState.ClearPendingPosition();
+        _playerSceneWarpState.ClearPendingTransform();
         _playerStatus.ResetMovementState();
         _animationController?.ForceIdle();
     }

@@ -1,26 +1,47 @@
 using UnityEngine;
 
+[System.Serializable]
+public struct PlayerTransformSnapshot
+{
+    [SerializeField] private Vector3 _position;
+    [SerializeField] private Quaternion _rotation;
+    [SerializeField] private Vector3 _localScale;
+
+    public static PlayerTransformSnapshot Identity => new()
+    {
+        _position = Vector3.zero,
+        _rotation = Quaternion.identity,
+        _localScale = Vector3.one
+    };
+
+    public void ApplyTo(Transform target)
+    {
+        target.SetPositionAndRotation(_position, _rotation);
+        target.localScale = _localScale;
+    }
+}
+
 [CreateAssetMenu(fileName = "PlayerSceneWarpState", menuName = "Data/Player Scene Warp State")]
 public sealed class PlayerSceneWarpState : ScriptableObject
 {
-    [SerializeField] private bool _hasPendingPosition;
-    [SerializeField] private Vector3 _pendingPosition;
+    [SerializeField] private bool _hasPendingTransform;
+    [SerializeField] private PlayerTransformSnapshot _pendingTransform;
 
-    public void SetPendingPosition(Vector3 position)
+    public void SetPendingTransform(PlayerTransformSnapshot transformSnapshot)
     {
-        _pendingPosition = position;
-        _hasPendingPosition = true;
+        _pendingTransform = transformSnapshot;
+        _hasPendingTransform = true;
     }
 
-    public bool TryGetPendingPosition(out Vector3 position)
+    public bool TryGetPendingTransform(out PlayerTransformSnapshot transformSnapshot)
     {
-        position = _pendingPosition;
-        return _hasPendingPosition;
+        transformSnapshot = _pendingTransform;
+        return _hasPendingTransform;
     }
 
-    public void ClearPendingPosition()
+    public void ClearPendingTransform()
     {
-        _hasPendingPosition = false;
-        _pendingPosition = default;
+        _hasPendingTransform = false;
+        _pendingTransform = PlayerTransformSnapshot.Identity;
     }
 }
