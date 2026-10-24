@@ -6,6 +6,7 @@ using Kogetsu.Library.DesignPatternCore;
 namespace Kogetsu.Library.Core
 {
     [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(AudioSource))]
     [CreateHierarchyMenu("KogetsuLibrary/Core/Controller")]
     public class BasicSceneEffectController : Singleton<BasicSceneEffectController>, ISceneLoader
     {
@@ -15,6 +16,10 @@ namespace Kogetsu.Library.Core
 
         [SerializeField] protected AnimationClip LoadSceneIn;
         [SerializeField] protected AnimationClip LoadSceneOut;
+
+        [Header("Load Scene Audio")]
+        [SerializeField] protected AudioSource LoadSceneAudioSource;
+        [SerializeField] protected AudioClip LoadSceneAudioClip;
 
 #if UNITY_EDITOR
         protected virtual void OnValidate()
@@ -52,6 +57,7 @@ namespace Kogetsu.Library.Core
         protected virtual void AssignComponent()
         {
             if (!SceneEffectAnimator) SceneEffectAnimator = this.GetComponent<Animator>();
+            if (!LoadSceneAudioSource) LoadSceneAudioSource = this.GetComponent<AudioSource>();
         }
 
         protected virtual IEnumerator LoadSceneRotine(int sceneBulidIndex)
@@ -71,6 +77,7 @@ namespace Kogetsu.Library.Core
                 yield return new WaitForSeconds(LoadSceneOut.length * AnimatorSpeed);
             }
 
+            StopLoadSceneAudio();
             GameManager.Instance.SetGameState(GameState.Normal);
         }
 
@@ -120,7 +127,23 @@ namespace Kogetsu.Library.Core
         public void LoadScene(int buildIndex)
         {
             Time.timeScale = 1f;
+            PlayLoadSceneAudio();
             StartCoroutine(LoadSceneRotine(buildIndex));
+        }
+
+        protected virtual void PlayLoadSceneAudio()
+        {
+            if (!LoadSceneAudioSource || !LoadSceneAudioClip)
+                return;
+
+            LoadSceneAudioSource.clip = LoadSceneAudioClip;
+            LoadSceneAudioSource.Play();
+        }
+
+        protected virtual void StopLoadSceneAudio()
+        {
+            if (LoadSceneAudioSource)
+                LoadSceneAudioSource.Stop();
         }
 
         #region Documentation - XML

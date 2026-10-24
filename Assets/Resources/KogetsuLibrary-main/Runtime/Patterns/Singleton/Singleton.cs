@@ -66,6 +66,9 @@ namespace Kogetsu.Library.DesignPatternCore
         #endregion
         protected virtual void Awake()
         {
+            if (transform.parent != null)
+                transform.SetParent(null);
+
             if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);
@@ -76,9 +79,6 @@ namespace Kogetsu.Library.DesignPatternCore
 
             if (UseDontDestroyOnLoad)
             {
-                if (transform.parent != null)
-                    transform.SetParent(null);
-
                 DontDestroyOnLoad(gameObject);
             }
         }

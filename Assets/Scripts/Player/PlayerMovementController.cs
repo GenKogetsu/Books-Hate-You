@@ -41,6 +41,7 @@ public class PlayerMovementController : LivingMovementController
     private Vector3 _standingCenter;
     private float _jumpPrepareTimer;
     private float _landingTimer;
+    private bool _isLoadingScene;
     private Kogetsu.Library.DesignPatternCore.StateMachine<PlayerMovementController> _stateMachine;
 
     #endregion
@@ -82,6 +83,7 @@ public class PlayerMovementController : LivingMovementController
     private void OnEnable()
     {
         base.OnEnable();
+        _isLoadingScene = false;
 
         if (_moveActionReference != null)
         {
@@ -113,6 +115,7 @@ public class PlayerMovementController : LivingMovementController
         if (EventBus.Instance)
         {
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
         }
     }
 
@@ -150,6 +153,7 @@ public class PlayerMovementController : LivingMovementController
         if (EventBus.Instance)
         {
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
         }
     }
 
@@ -197,16 +201,19 @@ public class PlayerMovementController : LivingMovementController
 
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
+        if (_isLoadingScene) return;
         _playerStatus.SetMoveInput(context.ReadValue<Vector2>());
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
+        if (_isLoadingScene) return;
         _playerStatus.SetMoveInput(Vector2.zero);
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
+        if (_isLoadingScene) return;
         if (!_playerStatus.GetCanJumpNow()) return;
 
         _jumpPrepareTimer = _playerStatus.GetJumpPrepareDuration();
@@ -215,21 +222,25 @@ public class PlayerMovementController : LivingMovementController
 
     private void OnRunPerformed(InputAction.CallbackContext context)
     {
+        if (_isLoadingScene) return;
         _playerStatus.SetIsRunInputHeld(true);
     }
 
     private void OnRunCanceled(InputAction.CallbackContext context)
     {
+        if (_isLoadingScene) return;
         _playerStatus.SetIsRunInputHeld(false);
     }
 
     private void OnCrouchPerformed(InputAction.CallbackContext context)
     {
+        if (_isLoadingScene) return;
         _playerStatus.SetIsCrouchInputHeld(true);
     }
 
     private void OnCrouchCanceled(InputAction.CallbackContext context)
     {
+        if (_isLoadingScene) return;
         _playerStatus.SetIsCrouchInputHeld(false);
     }
 
@@ -426,6 +437,21 @@ public class PlayerMovementController : LivingMovementController
         _playerStatus.ResetMovementState();
         StopMovement();
         enabled = false;
+    }
+
+    private void OnLoadSceneEvent(LoadSceneEvent _)
+    {
+        _isLoadingScene = true;
+        DisableInputActions();
+        StopMovement();
+    }
+
+    private void DisableInputActions()
+    {
+        _moveActionReference?.action.Disable();
+        _jumpActionReference?.action.Disable();
+        _runActionReference?.action.Disable();
+        _crouchActionReference?.action.Disable();
     }
 
     public override void StopMovement()
