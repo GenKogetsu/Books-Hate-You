@@ -4,14 +4,14 @@ using NaughtyAttributes;
 using Kogetsu.Library.Attribute;
 using Kogetsu.Library.DesignPatternCore;
 
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(NavMeshAgent), typeof(LibrarianAudioManager))]
 public sealed class LibrarianMovementController : LivingMovementController
 {
     [Header("References")]
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private LibrarianAnimationController _animationController;
     [SerializeField] private Transform _eyePoint;
-    [SerializeField] private AudioSource _chaseAudioSource;
+    [SerializeField] private LibrarianAudioManager _audioManager;
 
     [Tooltip("ตรวจเฉพาะ Collider ใน Layer Living ที่มี Tag Player")]
     [SerializeField] private LayerMask _livingMask;
@@ -34,10 +34,12 @@ public sealed class LibrarianMovementController : LivingMovementController
     internal Transform PlayerTransform => _playerTransform;
     internal Transform EyePoint => _eyePoint;
     internal bool IsChasing => _stateMachine?.CurrentState is ChaseState;
+    internal LibrarianAudioManager AudioManager => _audioManager;
 
     private void Reset()
     {
         TryGetComponent(out _agent);
+        TryGetComponent(out _audioManager);
         _animationController = GetComponent<LibrarianAnimationController>();
 
         if (_visionBlockMask.value == 0)
@@ -55,8 +57,10 @@ public sealed class LibrarianMovementController : LivingMovementController
         if (!_animationController)
             _animationController = GetComponent<LibrarianAnimationController>();
 
-        if (!_chaseAudioSource)
-            _chaseAudioSource = GetComponentInChildren<AudioSource>();
+        if (!_audioManager)
+            _audioManager = GetComponent<LibrarianAudioManager>();
+        if (!_audioManager)
+            _audioManager = gameObject.AddComponent<LibrarianAudioManager>();
 
         if (_livingMask.value == 0)
             _livingMask = LayerMask.GetMask("Living");
@@ -82,7 +86,7 @@ public sealed class LibrarianMovementController : LivingMovementController
             return;
         }
 
-        _agent.speed = _librarianStats.InitialChaseSpeed;
+        _agent.speed = _librarianStats.MoveSpeed;
         _stateMachine = new Kogetsu.Library.DesignPatternCore.StateMachine<LibrarianMovementController>();
         ChangeState(new IdleState());
     }
@@ -213,22 +217,6 @@ public sealed class LibrarianMovementController : LivingMovementController
     internal void PlayIdleAnimation() => _animationController?.PlayIdle();
     internal void PlayRunAnimation() => _animationController?.PlayRun();
 
-    internal void StartChaseAudio()
-    {
-        if (_chaseAudioSource)
-        {
-            if (!_chaseAudioSource.isPlaying)
-                _chaseAudioSource.Play();
-        }
-    }
-
-    internal void StopChaseAudio()
-    {
-        if (_chaseAudioSource)
-            _chaseAudioSource.Stop();
-
-    }
-
     private void OnGameover(GameoverEvent _)
     {
         _isGameOver = true;
@@ -242,7 +230,7 @@ public sealed class LibrarianMovementController : LivingMovementController
             return;
 
         _isDead = true;
-        StopChaseAudio();
+        _audioManager?.StopChase();
         StopMovement();
         _currentStateName = "Dead";
     }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5988a265dc6b294bb784af79d01486b, type: 3}
   m_Name: LibrarianStats
   m_EditorClassIdentifier: Assembly-CSharp::LibrarianStats
-  InitialChaseSpeed: 5
+  MoveSpeed: 5
   MaximumChaseSpeed: 7
   SpeedIncreasePerSecond: 0.25
   DestinationUpdateInterval: 0.15

@@ -8,6 +8,10 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
     [SerializeField, Min(0)] private int _sceneBuildIndex;
     [SerializeField] private bool _loadOnlyOnce = true;
 
+    [Header("Player Spawn In Destination Scene")]
+    [SerializeField] private PlayerSceneWarpState _playerSceneWarpState;
+    [SerializeField] private Vector3 _destinationPlayerPosition;
+
     [Header("Target")]
     [SerializeField] private TargetTag _targetTags = TargetTag.Player;
 
@@ -35,7 +39,16 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
             return;
         }
 
+        if (!_playerSceneWarpState)
+        {
+            Debug.LogError(
+                "[FinishLineSceneLoader] ไม่ได้กำหนด PlayerSceneWarpState",
+                this);
+            return;
+        }
+
         _hasLoaded = true;
+        _playerSceneWarpState.SetPendingPosition(_destinationPlayerPosition);
         BasicSceneEffectController.Instance.LoadScene(_sceneBuildIndex);
     }
 }

@@ -11,14 +11,17 @@ public abstract class PlayerMovementState : BaseState<PlayerMovementController>,
     {
         if (!Status.GetIsAlive())
         {
+            Controller.AudioManager?.StopAll();
             Controller.ChangeState(new PlayerDeadState());
             return;
         }
 
         Controller.TickMovement();
+        Controller.AudioManager?.Sync(Status);
 
         if (!Status.GetIsAlive())
         {
+            Controller.AudioManager?.StopAll();
             Controller.ChangeState(new PlayerDeadState());
             return;
         }

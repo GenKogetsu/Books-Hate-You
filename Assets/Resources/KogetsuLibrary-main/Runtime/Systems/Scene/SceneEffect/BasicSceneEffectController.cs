@@ -67,18 +67,24 @@ namespace Kogetsu.Library.Core
             if (LoadSceneIn)
             {
                 SceneEffectAnimator.Play(LoadSceneIn.name);
-                yield return new WaitForSeconds(LoadSceneIn.length * AnimatorSpeed);
+                yield return new WaitForSeconds(GetClipPlaybackDuration(LoadSceneIn));
             }
 
             SceneManager.LoadScene(sceneBulidIndex);
 
             if (LoadSceneOut)
             {
-                yield return new WaitForSeconds(LoadSceneOut.length * AnimatorSpeed);
+                SceneEffectAnimator.Play(LoadSceneOut.name);
+                yield return new WaitForSeconds(GetClipPlaybackDuration(LoadSceneOut));
             }
 
             StopLoadSceneAudio();
             GameManager.Instance.SetGameState(GameState.Normal);
+        }
+
+        private float GetClipPlaybackDuration(AnimationClip clip)
+        {
+            return clip.length / Mathf.Max(Mathf.Abs(AnimatorSpeed), 0.01f);
         }
 
         private void OnLoadSceneEvent(LoadSceneEvent loadSceneEvent)

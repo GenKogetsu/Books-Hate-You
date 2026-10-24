@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Kogetsu.Library.DesignPatternCore;
 
+[DefaultExecutionOrder(-1000)]
 [RequireComponent(typeof(CharacterController), typeof(PlayerStatus))]
 public class PlayerMovementController : LivingMovementController
 {
@@ -20,6 +21,9 @@ public class PlayerMovementController : LivingMovementController
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private Transform _cameraReference;
     [SerializeField] private Transform _modelTransform;
+    [SerializeField] private PlayerAudioManager _audioManager;
+    [SerializeField] private PlayerAnimationController _animationController;
+    [SerializeField] private PlayerSceneWarpState _playerSceneWarpState;
 
     [Header("Input Action")]
     [SerializeField] private InputActionReference _moveActionReference;
@@ -41,7 +45,7 @@ public class PlayerMovementController : LivingMovementController
     private Vector3 _standingCenter;
     private float _jumpPrepareTimer;
     private float _landingTimer;
-    private bool _isLoadingScene;
+    private bool _isPlayerInputLocked;
     private Kogetsu.Library.DesignPatternCore.StateMachine<PlayerMovementController> _stateMachine;
 
     #endregion
@@ -52,6 +56,8 @@ public class PlayerMovementController : LivingMovementController
     {
         TryGetComponent(out _characterController);
         TryGetComponent(out _playerStatus);
+        _audioManager = GetComponentInChildren<PlayerAudioManager>();
+        _animationController = GetComponentInChildren<PlayerAnimationController>();
         if (!_modelTransform) _modelTransform = transform;
     }
 
@@ -63,10 +69,21 @@ public class PlayerMovementController : LivingMovementController
         if (!_playerStatus)
             _playerStatus = GetComponent<PlayerStatus>();
 
+        if (!_audioManager)
+            _audioManager = GetComponentInChildren<PlayerAudioManager>();
+
+        if (!_animationController)
+            _animationController = GetComponentInChildren<PlayerAnimationController>();
+
+        if (!_audioManager)
+            _audioManager = gameObject.AddComponent<PlayerAudioManager>();
+
         _standingHeight = _characterController.height;
         _standingCenter = _characterController.center;
 
         if (!_modelTransform) _modelTransform = transform;
+
+        ApplyPendingSceneWarp();
 
         _stateMachine = new Kogetsu.Library.DesignPatternCore.StateMachine<PlayerMovementController>();
     }
@@ -83,7 +100,7 @@ public class PlayerMovementController : LivingMovementController
     private void OnEnable()
     {
         base.OnEnable();
-        _isLoadingScene = false;
+        _isPlayerInputLocked = false;
 
         if (_moveActionReference != null)
         {
@@ -172,12 +189,28 @@ public class PlayerMovementController : LivingMovementController
     }
 
     internal PlayerStatus Status => _playerStatus;
+    internal PlayerAudioManager AudioManager => _audioManager;
 
     internal void TickMovement()
     {
         UpdateJumpPrepare();
         UpdateLanding();
         ApplyMovement();
+    }
+
+    private void ApplyPendingSceneWarp()
+    {
+        if (!_playerSceneWarpState ||
+            !_playerSceneWarpState.TryGetPendingPosition(out Vector3 destination))
+            return;
+
+        _characterController.enabled = false;
+        transform.position = destination;
+        _characterController.enabled = true;
+
+        _playerSceneWarpState.ClearPendingPosition();
+        _playerStatus.ResetMovementState();
+        _animationController?.ForceIdle();
     }
 
     internal void ChangeState(PlayerMovementState nextState)
@@ -201,19 +234,19 @@ public class PlayerMovementController : LivingMovementController
 
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
-        if (_isLoadingScene) return;
+        if (_isPlayerInputLocked) return;
         _playerStatus.SetMoveInput(context.ReadValue<Vector2>());
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
-        if (_isLoadingScene) return;
+        if (_isPlayerInputLocked) return;
         _playerStatus.SetMoveInput(Vector2.zero);
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext context)
     {
-        if (_isLoadingScene) return;
+        if (_isPlayerInputLocked) return;
         if (!_playerStatus.GetCanJumpNow()) return;
 
         _jumpPrepareTimer = _playerStatus.GetJumpPrepareDuration();
@@ -222,25 +255,25 @@ public class PlayerMovementController : LivingMovementController
 
     private void OnRunPerformed(InputAction.CallbackContext context)
     {
-        if (_isLoadingScene) return;
+        if (_isPlayerInputLocked) return;
         _playerStatus.SetIsRunInputHeld(true);
     }
 
     private void OnRunCanceled(InputAction.CallbackContext context)
     {
-        if (_isLoadingScene) return;
+        if (_isPlayerInputLocked) return;
         _playerStatus.SetIsRunInputHeld(false);
     }
 
     private void OnCrouchPerformed(InputAction.CallbackContext context)
     {
-        if (_isLoadingScene) return;
+        if (_isPlayerInputLocked) return;
         _playerStatus.SetIsCrouchInputHeld(true);
     }
 
     private void OnCrouchCanceled(InputAction.CallbackContext context)
     {
-        if (_isLoadingScene) return;
+        if (_isPlayerInputLocked) return;
         _playerStatus.SetIsCrouchInputHeld(false);
     }
 
@@ -435,14 +468,16 @@ public class PlayerMovementController : LivingMovementController
     private void OnGameover(GameoverEvent gameoverEvent)
     {
         _playerStatus.ResetMovementState();
+        _audioManager?.StopAll();
         StopMovement();
         enabled = false;
     }
 
     private void OnLoadSceneEvent(LoadSceneEvent _)
     {
-        _isLoadingScene = true;
+        _isPlayerInputLocked = true;
         DisableInputActions();
+        _audioManager?.StopAll();
         StopMovement();
     }
 

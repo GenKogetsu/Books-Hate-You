@@ -44,10 +44,10 @@ public sealed class ChaseState : EnemyState
         _phase = ChasePhase.Chasing;
 
         Controller.Agent.isStopped = false;
-        Controller.Agent.speed = Controller.Stats.InitialChaseSpeed;
+        Controller.Agent.speed = Controller.Stats.MoveSpeed;
         Controller.NextDestinationUpdateTime = 0f;
         Controller.PlayRunAnimation();
-        Controller.StartChaseAudio();
+        Controller.AudioManager?.PlayChase();
         UpdateDestination(_lastSeenPosition);
     }
 
@@ -66,10 +66,10 @@ public sealed class ChaseState : EnemyState
             _chaseDuration += Time.deltaTime;
 
             Controller.Agent.speed = Mathf.Min(
-                Controller.Stats.InitialChaseSpeed
+                Controller.Stats.MoveSpeed
                 + _chaseDuration * Controller.Stats.SpeedIncreasePerSecond,
                 Mathf.Max(
-                    Controller.Stats.InitialChaseSpeed,
+                    Controller.Stats.MoveSpeed,
                     Controller.Stats.MaximumChaseSpeed));
 
             if (Time.time >= Controller.NextDestinationUpdateTime)
@@ -81,7 +81,7 @@ public sealed class ChaseState : EnemyState
         if (_phase == ChasePhase.Chasing)
         {
             _phase = ChasePhase.InvestigatingLastSeenPosition;
-            Controller.Agent.speed = Controller.Stats.InitialChaseSpeed;
+            Controller.Agent.speed = Controller.Stats.MoveSpeed;
             UpdateDestination(_lastSeenPosition);
             return;
         }
@@ -131,7 +131,7 @@ public sealed class ChaseState : EnemyState
 
     public override void OnExit()
     {
-        Controller.StopChaseAudio();
+        Controller.AudioManager?.StopChase();
         Controller.Agent.isStopped = true;
         Controller.Agent.ResetPath();
     }
