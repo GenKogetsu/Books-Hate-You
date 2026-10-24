@@ -13,6 +13,13 @@ public class PlayerHpController : LivingHpController
 
     public override bool IsDead => _playerStatus.GetIsDead();
 
+    private void Awake()
+    {
+        if (!_playerStatus)
+            _playerStatus = GetComponent<PlayerStatus>();
+
+    }
+
     public override void TakeDamage(float damage)
     {
         if (_playerStatus.GetIsDead()) return;
@@ -21,6 +28,7 @@ public class PlayerHpController : LivingHpController
 
         if (_playerStatus.GetIsDead())
         {
+            PlayDeathSound();
             PublishGameover();
         }
     }
@@ -30,6 +38,7 @@ public class PlayerHpController : LivingHpController
         if (_playerStatus.GetIsDead()) return;
 
         _playerStatus.SetCurrentHp(0f);
+        PlayDeathSound();
         PublishGameover();
     }
 

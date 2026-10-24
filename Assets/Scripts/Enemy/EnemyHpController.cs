@@ -26,6 +26,7 @@ public sealed class EnemyHpController : LivingHpController
 
         if (!_animationController)
             _animationController = GetComponent<LivingAnimationController>();
+
     }
 
     public override void TakeDamage(float damage)
@@ -55,6 +56,8 @@ public sealed class EnemyHpController : LivingHpController
 
     private void OnDeath()
     {
+        PlayDeathSound();
+
         _animationController?.PlayDeathAnimation();
 
         LibrarianMovementController movement =
