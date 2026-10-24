@@ -11,6 +11,7 @@ public sealed class LibrarianMovementController : LivingMovementController
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private LibrarianAnimationController _animationController;
     [SerializeField] private Transform _eyePoint;
+    [SerializeField] private AudioSource _chaseAudioSource;
 
     [Tooltip("ตรวจเฉพาะ Collider ใน Layer Living ที่มี Tag Player")]
     [SerializeField] private LayerMask _livingMask;
@@ -53,6 +54,9 @@ public sealed class LibrarianMovementController : LivingMovementController
 
         if (!_animationController)
             _animationController = GetComponent<LibrarianAnimationController>();
+
+        if (!_chaseAudioSource)
+            _chaseAudioSource = GetComponentInChildren<AudioSource>();
 
         if (_livingMask.value == 0)
             _livingMask = LayerMask.GetMask("Living");
@@ -204,6 +208,22 @@ public sealed class LibrarianMovementController : LivingMovementController
 
     internal void PlayIdleAnimation() => _animationController?.PlayIdle();
     internal void PlayRunAnimation() => _animationController?.PlayRun();
+
+    internal void StartChaseAudio()
+    {
+        if (_chaseAudioSource)
+        {
+            if (!_chaseAudioSource.isPlaying)
+                _chaseAudioSource.Play();
+        }
+    }
+
+    internal void StopChaseAudio()
+    {
+        if (_chaseAudioSource)
+            _chaseAudioSource.Stop();
+
+    }
 
     private void OnGameover(GameoverEvent _)
     {

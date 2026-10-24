@@ -11,15 +11,35 @@ public sealed class ChaseState : EnemyState
 
     private float _chaseDuration;
     private Vector3 _lastSeenPosition;
-    private Vector3 _chaseStartPosition;
+    private TransformSnapshot _chaseStartTransform;
     private ChasePhase _phase;
+
+    private readonly struct TransformSnapshot
+    {
+        public readonly Vector3 Position;
+        public readonly Quaternion Rotation;
+        public readonly Vector3 LocalScale;
+
+        public TransformSnapshot(Transform source)
+        {
+            Position = source.position;
+            Rotation = source.rotation;
+            LocalScale = source.localScale;
+        }
+
+        public void Restore(Transform target)
+        {
+            target.SetPositionAndRotation(Position, Rotation);
+            target.localScale = LocalScale;
+        }
+    }
 
     public ChaseState() { }
 
     public override void OnEnter()
     {
         _chaseDuration = 0f;
-        _chaseStartPosition = Controller.transform.position;
+        _chaseStartTransform = new TransformSnapshot(Controller.transform);
         _lastSeenPosition = Controller.PlayerTransform.position;
         _phase = ChasePhase.Chasing;
 
@@ -27,6 +47,7 @@ public sealed class ChaseState : EnemyState
         Controller.Agent.speed = Controller.Stats.InitialChaseSpeed;
         Controller.NextDestinationUpdateTime = 0f;
         Controller.PlayRunAnimation();
+        Controller.StartChaseAudio();
         UpdateDestination(_lastSeenPosition);
     }
 
@@ -71,10 +92,11 @@ public sealed class ChaseState : EnemyState
         if (_phase == ChasePhase.InvestigatingLastSeenPosition)
         {
             _phase = ChasePhase.ReturningToChaseStart;
-            UpdateDestination(_chaseStartPosition);
+            UpdateDestination(_chaseStartTransform.Position);
             return;
         }
 
+        RestoreChaseStartTransform();
         Controller.ChangeState(new IdleState());
     }
 
@@ -101,8 +123,15 @@ public sealed class ChaseState : EnemyState
         return Controller.Agent.remainingDistance <= stoppingDistance;
     }
 
+    private void RestoreChaseStartTransform()
+    {
+        Controller.Agent.Warp(_chaseStartTransform.Position);
+        _chaseStartTransform.Restore(Controller.transform);
+    }
+
     public override void OnExit()
     {
+        Controller.StopChaseAudio();
         Controller.Agent.isStopped = true;
         Controller.Agent.ResetPath();
     }

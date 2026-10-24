@@ -9,23 +9,15 @@ namespace Kogetsu.Library.Core
         [Required]
         [SerializeField] private AudioObserverSO _audioObserver;
 
-        [Required]
-        [SerializeField] private BasicMovementInputObserverSO _basicObserverChannel;
-
         [Header("Audio Source")]
-        [Required]
         [SerializeField] private AudioSource _sfx;
 
-        [Required]
         [SerializeField] private AudioSource _bmg;
 
-        [Required]
         [SerializeField] private AudioSource _voiceover;
 
-        [Required]
         [SerializeField] private AudioSource _typing;
 
-        [Required]
         [SerializeField] private AudioSource _click;
 
         [Header("Global Click SFX")]
@@ -37,7 +29,6 @@ namespace Kogetsu.Library.Core
             _audioObserver.OnBmgChannel                  += OnBmgSignal;
             _audioObserver.OnVoiceoverChannel            += OnVoiceoverSignal;
             _audioObserver.OnTypingSfxChannel            += OnTypingSfxSignal;
-            _basicObserverChannel.OnInteractionChannel   += OnInteraction;
         }
 
         private void OnDisable()
@@ -46,7 +37,6 @@ namespace Kogetsu.Library.Core
             _audioObserver.OnBmgChannel                  -= OnBmgSignal;
             _audioObserver.OnVoiceoverChannel            -= OnVoiceoverSignal;
             _audioObserver.OnTypingSfxChannel            -= OnTypingSfxSignal;
-            _basicObserverChannel.OnInteractionChannel   -= OnInteraction;
         }
 
         public void OnSfxSignal(AudioClip sound)
@@ -85,11 +75,6 @@ namespace Kogetsu.Library.Core
             if (clip == null) { source.Stop(); source.clip = null; return; }
             if (oneShot) source.PlayOneShot(clip);
             else { source.clip = clip; source.Play(); }
-        }
-
-        private void OnInteraction()
-        {
-            if (_clickSfx != null) _click.PlayOneShot(_clickSfx);
         }
     }
 }

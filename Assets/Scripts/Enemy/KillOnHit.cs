@@ -11,6 +11,7 @@ public class KillOnHit : MonoBehaviour
 
     [Header("Hit Effect")]
     [SerializeField] private ParticleSystem _effectOnHit;
+    [SerializeField] private AudioSource _audioSourceOnHit;
 
     [Header("Model")]
     [SerializeField] private GameObject _model;
@@ -193,6 +194,9 @@ public class KillOnHit : MonoBehaviour
 
         _effectOnHit.gameObject.SetActive(true);
         _effectOnHit.Play(true);
+
+        if (_audioSourceOnHit)
+            _audioSourceOnHit.Play();
     }
 
     #endregion
