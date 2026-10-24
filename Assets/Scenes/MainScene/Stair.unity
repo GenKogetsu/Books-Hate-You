@@ -110339,10 +110339,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1513852733}
     m_Modifications:
-    - target: {fileID: 1831906528573394049, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 2412999773877045347, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.8400002
@@ -110383,29 +110379,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4729703583214369961, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
-    - target: {fileID: 4850893161153824609, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 6433296076635953372, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
       propertyPath: m_Name
       value: BombBook (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6433296076635953372, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
-    - target: {fileID: 7307655119266956554, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
-    - target: {fileID: 8069199459506505925, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

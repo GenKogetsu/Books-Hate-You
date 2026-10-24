@@ -81,6 +81,8 @@ public class PlayerMovementController : LivingMovementController
 
     private void OnEnable()
     {
+        base.OnEnable();
+
         if (_moveActionReference != null)
         {
             _moveActionReference.action.Enable();
@@ -116,6 +118,8 @@ public class PlayerMovementController : LivingMovementController
 
     private void OnDisable()
     {
+        base.OnDisable();
+
         if (_moveActionReference != null)
         {
             _moveActionReference.action.performed -= OnMovePerformed;

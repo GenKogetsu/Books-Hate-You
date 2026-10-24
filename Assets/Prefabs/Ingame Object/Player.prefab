@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1426347045633578922}
   - component: {fileID: 6676884994689292392}
+  - component: {fileID: 5069880352923138369}
   - component: {fileID: 2462468342898242945}
   - component: {fileID: 6186212074232582608}
   - component: {fileID: 4953691014067624592}
@@ -64,6 +65,27 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.25, z: 0}
+--- !u!65 &5069880352923138369
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2831018578632617135}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.64, y: 2.1648617, z: 0.64}
+  m_Center: {x: 0, y: 1.1706269, z: 0}
 --- !u!114 &2462468342898242945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1215,10 +1237,10 @@ PrefabInstance:
       addedObject: {fileID: 5880212577204560495}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5571695603197746753}
+      addedObject: {fileID: 944324936864202192}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 944324936864202192}
+      addedObject: {fileID: 5571695603197746753}
     - targetCorrespondingSourceObject: {fileID: 1339101018200438765, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3088195524797819492}
@@ -1360,6 +1382,50 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &944324936864202192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4328193538707738478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.BoneRenderer
+  boneShape: 1
+  drawBones: 1
+  drawTripods: 0
+  boneSize: 1
+  tripodSize: 1
+  boneColor: {r: 0, g: 0, b: 1, a: 0.5}
+  m_Transforms:
+  - {fileID: 8866276461509539136}
+  - {fileID: 1393252958280993852}
+  - {fileID: 6048086100203623650}
+  - {fileID: 1173519186891353102}
+  - {fileID: 7592261922418901649}
+  - {fileID: 632802472104167239}
+  - {fileID: 4723931488524780159}
+  - {fileID: 8994646186820107493}
+  - {fileID: 4080417040194556995}
+  - {fileID: 1776671676448040087}
+  - {fileID: 6878637997773718581}
+  - {fileID: 9179372468822116051}
+  - {fileID: 2341329557815628347}
+  - {fileID: 3874598327805911632}
+  - {fileID: 1245233826849125067}
+  - {fileID: 6956957786659397895}
+  - {fileID: 6198919753554185414}
+  - {fileID: 7705052105731434492}
+  - {fileID: 7691525227806010925}
+  - {fileID: 7005234102104590167}
+  - {fileID: 5219346969134007225}
+  - {fileID: 5975449977014373282}
+  - {fileID: 7175366743100763450}
+  - {fileID: 1387920330650912663}
+  - {fileID: 2982526500520463863}
 --- !u!114 &5571695603197746753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1415,50 +1481,6 @@ MonoBehaviour:
     value: {fileID: 7282956691077534559, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
   - key: PlayerDeath6
     value: {fileID: 6775970868302962459, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
---- !u!114 &944324936864202192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4328193538707738478}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.BoneRenderer
-  boneShape: 1
-  drawBones: 1
-  drawTripods: 0
-  boneSize: 1
-  tripodSize: 1
-  boneColor: {r: 0, g: 0, b: 1, a: 0.5}
-  m_Transforms:
-  - {fileID: 8866276461509539136}
-  - {fileID: 1393252958280993852}
-  - {fileID: 6048086100203623650}
-  - {fileID: 1173519186891353102}
-  - {fileID: 7592261922418901649}
-  - {fileID: 632802472104167239}
-  - {fileID: 4723931488524780159}
-  - {fileID: 8994646186820107493}
-  - {fileID: 4080417040194556995}
-  - {fileID: 1776671676448040087}
-  - {fileID: 6878637997773718581}
-  - {fileID: 9179372468822116051}
-  - {fileID: 2341329557815628347}
-  - {fileID: 3874598327805911632}
-  - {fileID: 1245233826849125067}
-  - {fileID: 6956957786659397895}
-  - {fileID: 6198919753554185414}
-  - {fileID: 7705052105731434492}
-  - {fileID: 7691525227806010925}
-  - {fileID: 7005234102104590167}
-  - {fileID: 5219346969134007225}
-  - {fileID: 5975449977014373282}
-  - {fileID: 7175366743100763450}
-  - {fileID: 1387920330650912663}
-  - {fileID: 2982526500520463863}
 --- !u!4 &4723931488524780159 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8169382868667117632, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
