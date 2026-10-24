@@ -412,6 +412,7 @@ MonoBehaviour:
   _characterController: {fileID: 6676884994689292392}
   _cameraReference: {fileID: 0}
   _modelTransform: {fileID: 1426347045633578922}
+  _audioManager: {fileID: 2638107796167718708}
   _animationController: {fileID: 5571695603197746753}
   _playerSceneWarpState: {fileID: 11400000, guid: c91695ab8063445db710bef52ec0bce9, type: 2}
   _moveActionReference: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
@@ -2052,10 +2053,6 @@ MonoBehaviour:
     value: {fileID: 7282956691077534559, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
   - key: PlayerDeath6
     value: {fileID: 6775970868302962459, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
-  _walkAudioSource: {fileID: 0}
-  _runAudioSource: {fileID: 0}
-  _takeoffAudioSource: {fileID: 0}
-  _landingAudioSource: {fileID: 0}
 --- !u!4 &4723931488524780159 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8169382868667117632, guid: 8edacffbf81a36d4ebbafa1474a0c136, type: 3}
