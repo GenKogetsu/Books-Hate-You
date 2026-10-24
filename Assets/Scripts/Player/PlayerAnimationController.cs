@@ -35,6 +35,14 @@ public class PlayerAnimationController : LivingAnimationController
     [Header("Other Clips")]
     [SerializeField, KeyFromName] private Dictionary<string, AnimationClip> _deathClips = new();
 
+    [Header("Movement Audio")]
+    [SerializeField] private AudioSource _footstepAudioSource;
+    [SerializeField] private AudioClip _walkAudioClip;
+    [SerializeField] private AudioClip _runAudioClip;
+    [SerializeField] private AudioSource _jumpAudioSource;
+    [SerializeField] private AudioClip _jumpTakeoffAudioClip;
+    [SerializeField] private AudioClip _jumpLandingAudioClip;
+
     [Header("Settings")]
 
     #endregion
@@ -45,6 +53,7 @@ public class PlayerAnimationController : LivingAnimationController
     private bool _wasCrouching;
     private float _transitionEndTime;
     private bool _isLoadingScene;
+    private bool _landingSoundPlayed;
 
     private AnimationClip _currentJumpClip;
     private bool _jumpHeldAtEnd;
@@ -81,17 +90,26 @@ public class PlayerAnimationController : LivingAnimationController
 
         if (!_playerStatus) return;
 
+        if (!_footstepAudioSource)
+            _footstepAudioSource = GetComponent<AudioSource>();
+
+        if (!_jumpAudioSource)
+            _jumpAudioSource = GetComponent<AudioSource>();
+
         _currentState = LivingAnimState.None;
         _currentJumpClip = null;
         _jumpHeldAtEnd = false;
         _transitionEndTime = 0f;
         _wasCrouching = _playerStatus.GetIsCrouching();
+        _landingSoundPlayed = false;
 
         PlayState(ResolveState(), true);
     }
 
     private void OnDisable()
     {
+        StopFootstepAudio();
+
         if (EventBus.Instance)
             EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
     }
@@ -101,6 +119,7 @@ public class PlayerAnimationController : LivingAnimationController
         if (_isLoadingScene) return;
 
         HoldJumpAtEnd();
+        TryPlayLandingSound();
 
         LivingAnimState targetState = ResolveState();
 
@@ -233,6 +252,8 @@ public class PlayerAnimationController : LivingAnimationController
     {
         if (!_animator) return;
 
+        PlayMovementAudioForState(state);
+
         AnimationClip clip = ResolveClip(state);
         if (!clip) return;
 
@@ -255,6 +276,7 @@ public class PlayerAnimationController : LivingAnimationController
         {
             _currentJumpClip = clip;
             _jumpHeldAtEnd = false;
+            _landingSoundPlayed = false;
         }
         else if (state != LivingAnimState.Fall)
         {
@@ -263,6 +285,81 @@ public class PlayerAnimationController : LivingAnimationController
         }
 
         _currentState = state;
+    }
+
+    private void PlayMovementAudioForState(LivingAnimState state)
+    {
+        if (_isLoadingScene)
+        {
+            StopFootstepAudio();
+            return;
+        }
+
+        if (state == LivingAnimState.Jump && _currentState != LivingAnimState.Jump)
+            PlayJumpOneShot(_jumpTakeoffAudioClip);
+        if (state == LivingAnimState.Walk)
+        {
+            SetFootstepAudio(_walkAudioClip);
+            return;
+        }
+
+        if (state == LivingAnimState.Run)
+        {
+            SetFootstepAudio(_runAudioClip);
+            return;
+        }
+
+        StopFootstepAudio();
+    }
+
+    private void SetFootstepAudio(AudioClip clip)
+    {
+        if (!_footstepAudioSource || !clip)
+        {
+            StopFootstepAudio();
+            return;
+        }
+
+        if (_footstepAudioSource.clip != clip)
+        {
+            _footstepAudioSource.Stop();
+            _footstepAudioSource.clip = clip;
+        }
+
+        _footstepAudioSource.loop = true;
+        if (!_footstepAudioSource.isPlaying)
+            _footstepAudioSource.Play();
+    }
+
+    private void StopFootstepAudio()
+    {
+        if (!_footstepAudioSource)
+            return;
+
+        _footstepAudioSource.Stop();
+        _footstepAudioSource.clip = null;
+    }
+
+    private void PlayJumpOneShot(AudioClip clip)
+    {
+        if (_jumpAudioSource && clip)
+            _jumpAudioSource.PlayOneShot(clip);
+    }
+
+    private void TryPlayLandingSound()
+    {
+        if (_isLoadingScene || _landingSoundPlayed || _currentState != LivingAnimState.Fall)
+            return;
+
+        if (!_animator || !_jumpLandingAudioClip)
+            return;
+
+        AnimatorStateInfo info = _animator.GetCurrentAnimatorStateInfo(0);
+        if (info.normalizedTime < 0.9f)
+            return;
+
+        _landingSoundPlayed = true;
+        PlayJumpOneShot(_jumpLandingAudioClip);
     }
 
     private AnimationClip ResolveClip(LivingAnimState state)
