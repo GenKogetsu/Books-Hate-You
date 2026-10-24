@@ -1,5 +1,6 @@
 using UnityEngine;
 using Kogetsu.Library.Attribute;
+using Kogetsu.Library.DesignPatternCore;
 using System.Collections.Generic;
 
 public class PlayerAnimationController : LivingAnimationController
@@ -43,6 +44,7 @@ public class PlayerAnimationController : LivingAnimationController
     private LivingAnimState _currentState = LivingAnimState.None;
     private bool _wasCrouching;
     private float _transitionEndTime;
+    private bool _isLoadingScene;
 
     private AnimationClip _currentJumpClip;
     private bool _jumpHeldAtEnd;
@@ -72,6 +74,11 @@ public class PlayerAnimationController : LivingAnimationController
 
     private void OnEnable()
     {
+        if (EventBus.Instance)
+            EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
+
+        _isLoadingScene = false;
+
         if (!_playerStatus) return;
 
         _currentState = LivingAnimState.None;
@@ -83,8 +90,16 @@ public class PlayerAnimationController : LivingAnimationController
         PlayState(ResolveState(), true);
     }
 
+    private void OnDisable()
+    {
+        if (EventBus.Instance)
+            EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
+    }
+
     private void Update()
     {
+        if (_isLoadingScene) return;
+
         HoldJumpAtEnd();
 
         LivingAnimState targetState = ResolveState();
@@ -92,6 +107,12 @@ public class PlayerAnimationController : LivingAnimationController
         if (targetState == _currentState) return;
 
         PlayState(targetState);
+    }
+
+    private void OnLoadSceneEvent(LoadSceneEvent _)
+    {
+        _isLoadingScene = true;
+        PlayState(LivingAnimState.Idle, true);
     }
 
     #endregion
