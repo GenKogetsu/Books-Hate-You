@@ -2475,6 +2475,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2690427020958554685, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.93
+      objectReference: {fileID: 0}
+    - target: {fileID: 2690427020958554685, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0.2608501
       objectReference: {fileID: 0}
@@ -4417,22 +4421,6 @@ PrefabInstance:
     - target: {fileID: 3538806248453191570, guid: 1a40d2e7dac705643b1485d83f476dfb, type: 3}
       propertyPath: m_Name
       value: Libarian
-      objectReference: {fileID: 0}
-    - target: {fileID: 3538806248453191570, guid: 1a40d2e7dac705643b1485d83f476dfb, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7099684506646953870, guid: 1a40d2e7dac705643b1485d83f476dfb, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.0019979924
-      objectReference: {fileID: 0}
-    - target: {fileID: 7099684506646953870, guid: 1a40d2e7dac705643b1485d83f476dfb, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.0464597
-      objectReference: {fileID: 0}
-    - target: {fileID: 7099684506646953870, guid: 1a40d2e7dac705643b1485d83f476dfb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.5395899
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -173,6 +173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dda8f0f4640426aa57db9d57c20afb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHpController
+  _deathAudioSource: {fileID: 8291878576230160167}
+  _deathAudioClip: {fileID: 8300000, guid: be8f35486c21f67478608f3f5cc26e24, type: 3}
   _startHp: 100
   _maxHp: 100
   _currentHp: 100
@@ -276,7 +278,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 15
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
@@ -870,6 +872,18 @@ PrefabInstance:
     - target: {fileID: 5117511716226091238, guid: b19b2fcb51444e04795d65d2855a258e, type: 3}
       propertyPath: m_TagString
       value: Librarian
+      objectReference: {fileID: 0}
+    - target: {fileID: 5465940246521907071, guid: b19b2fcb51444e04795d65d2855a258e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0019979924
+      objectReference: {fileID: 0}
+    - target: {fileID: 5465940246521907071, guid: b19b2fcb51444e04795d65d2855a258e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.0464597
+      objectReference: {fileID: 0}
+    - target: {fileID: 5465940246521907071, guid: b19b2fcb51444e04795d65d2855a258e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.5395899
       objectReference: {fileID: 0}
     - target: {fileID: 5465940246521907071, guid: b19b2fcb51444e04795d65d2855a258e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
