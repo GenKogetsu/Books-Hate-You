@@ -268,7 +268,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1426347045633578922}
   - component: {fileID: 6676884994689292392}
-  - component: {fileID: 5069880352923138369}
+  - component: {fileID: 6430324794133638046}
   - component: {fileID: 2462468342898242945}
   - component: {fileID: 6186212074232582608}
   - component: {fileID: 4953691014067624592}
@@ -323,8 +323,8 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1.25, z: 0}
---- !u!65 &5069880352923138369
-BoxCollider:
+--- !u!136 &6430324794133638046
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -341,9 +341,11 @@ BoxCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.64, y: 2.1648617, z: 0.64}
-  m_Center: {x: 0, y: 1.1706269, z: 0}
+  serializedVersion: 2
+  m_Radius: 0.12603998
+  m_Height: 2.1150606
+  m_Direction: 1
+  m_Center: {x: 0.0021882057, y: 1.007887, z: 0.012653828}
 --- !u!114 &2462468342898242945
 MonoBehaviour:
   m_ObjectHideFlags: 0
