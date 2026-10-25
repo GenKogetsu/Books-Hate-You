@@ -8,6 +8,7 @@ public sealed class EnemyHpController : LivingHpController
     [SerializeField] private LivingAnimationController _animationController;
     [SerializeField] private LibrarianMovementController _movement;
     [SerializeField] private KillOnHit _killOnHit;
+    [SerializeField] private Collider _collider;
 
     [Header("Health")]
     [SerializeField, Min(0f)] private float _startHp = 100f;
@@ -37,6 +38,9 @@ public sealed class EnemyHpController : LivingHpController
 
         if (!_killOnHit)
             _killOnHit = GetComponent<KillOnHit>();
+
+        if (!_collider)
+            _collider = GetComponent<Collider>();
 
     }
 
@@ -70,6 +74,9 @@ public sealed class EnemyHpController : LivingHpController
 
         if (_killOnHit)
             _killOnHit.enabled = false;
+
+        if (_collider)
+            _collider.enabled = false;
 
         if (_movement)
         {
