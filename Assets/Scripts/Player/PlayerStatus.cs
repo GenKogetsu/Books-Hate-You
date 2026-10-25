@@ -95,7 +95,6 @@ public class PlayerStatus : MonoBehaviour
         return true;
     }
 
-    // Called once per movement tick, before movement speed and animation are evaluated.
     public bool TickSprintStamina(bool wantsToSprint, float deltaTime)
     {
         if (wantsToSprint && !_sprintLocked && _currentStamina > 0f)

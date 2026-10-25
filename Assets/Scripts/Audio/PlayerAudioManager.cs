@@ -38,7 +38,6 @@ public sealed class PlayerAudioManager : BaseAudioManager
         PlayOneShot(_landingSource);
     }
 
-    /// <summary>Called by player movement states; this manager only reads runtime state from PlayerStatus.</summary>
     public void Sync(PlayerStatus status)
     {
         if (!status)

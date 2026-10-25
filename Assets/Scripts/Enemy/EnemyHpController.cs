@@ -80,7 +80,6 @@ public sealed class EnemyHpController : LivingHpController
 
         if (_movement)
         {
-            // Let the movement FSM exit Chase first so its run state, path and audio are stopped.
             _movement.HandleDeath();
             _movement.enabled = false;
         }

@@ -139,7 +139,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 1
+  m_AngularDamping: 2
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -163,7 +163,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6433296076635953372}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: da3672ed911e68a45be05dbf87058a99, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -184,7 +184,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6433296076635953372}
-  m_Material: {fileID: 13400000, guid: da3672ed911e68a45be05dbf87058a99, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -308,6 +308,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Book
   _rigidbody: {fileID: 7211487822363450668}
+  _bounceLayers:
+    serializedVersion: 2
+    m_Bits: 7424
+  _bounceSpeedMultiplier: 0.5
+  _stopSpeedThreshold: 0.2
 --- !u!114 &5973088986634874030
 MonoBehaviour:
   m_ObjectHideFlags: 0

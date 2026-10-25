@@ -55,7 +55,6 @@ public class KillOnHit : MonoBehaviour
 
     private void OnEnable()
     {
-        // รีเซ็ตสถานะเมื่อ Object ถูกดึงออกจาก Pool
         _hasHitPlayer = false;
         _returnCoroutine = null;
 

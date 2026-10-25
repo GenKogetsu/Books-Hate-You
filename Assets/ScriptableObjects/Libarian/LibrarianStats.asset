@@ -17,6 +17,6 @@ MonoBehaviour:
   SpeedIncreasePerSecond: 0.25
   DestinationUpdateInterval: 0.15
   DetectionRange: 10
-  ViewAngle: 66.9
+  ViewAngle: 75
   LoseTargetRange: 13.42
   EyeOffset: {x: 0, y: 0.23, z: 0}

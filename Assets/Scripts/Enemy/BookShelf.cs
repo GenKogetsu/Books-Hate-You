@@ -375,7 +375,6 @@ public class BookShelf : MonoBehaviour
             return;
         }
 
-        // ใช้ชื่อ Prefab เป็น Pool Key ตาม ObjectPoolManager ของคุณ
         Book book = ObjectPoolManager.Instance.Get<Book>(
             _bookPrefab.name,
             origin,

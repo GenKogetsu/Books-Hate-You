@@ -1,8 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Collectible item that adds an amount to the player's inventory.
-/// </summary>
 [RequireComponent(typeof(InteractionPromptView))]
 public sealed class InventoryItemPickup : MonoBehaviour, IInteractable
 {

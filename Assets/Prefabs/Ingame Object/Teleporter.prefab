@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 8036597752834864722}
   - component: {fileID: 4413205906854002927}
   - component: {fileID: 881904025888546554}
-  m_Layer: 10
-  m_Name: FinishLineSceneLoader
+  m_Layer: 13
+  m_Name: Teleporter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

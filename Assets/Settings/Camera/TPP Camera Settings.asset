@@ -47,7 +47,7 @@ MonoBehaviour:
   _maxLookUp: 89
   _wallMask:
     serializedVersion: 2
-    m_Bits: 7424
+    m_Bits: 14592
   _collisionRadius: 0.25
   _wallClearance: 0.1
   _restoreSpeed: 8

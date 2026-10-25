@@ -9,6 +9,7 @@ public class Book : MonoBehaviour
     [SerializeField, Min(0f)] private float _stopSpeedThreshold = 0.2f;
 
     private bool _hasLaunched;
+    private bool _launchImpulsePending;
     private Vector3 _velocityBeforePhysicsStep;
     private float _lastBounceFixedTime = float.NegativeInfinity;
     private void Reset()
@@ -21,8 +22,7 @@ public class Book : MonoBehaviour
         if (!_rigidbody)
             TryGetComponent(out _rigidbody);
 
-        if (_bounceLayers.value == 0)
-            _bounceLayers = LayerMask.GetMask("Wall", "Obstacle", "Marker", "Ground");
+        _bounceLayers |= LayerMask.GetMask("Wall", "Obstacle", "Marker", "Ground");
     }
 
     private bool _countsAsPlayerBook;
@@ -33,14 +33,25 @@ public class Book : MonoBehaviour
         _countsAsPlayerBook = false;
         _hasKilledLibrarian = false;
         _hasLaunched = false;
+        _launchImpulsePending = false;
         _velocityBeforePhysicsStep = Vector3.zero;
         _lastBounceFixedTime = float.NegativeInfinity;
     }
 
     private void FixedUpdate()
     {
-        if (_hasLaunched && _rigidbody)
-            _velocityBeforePhysicsStep = _rigidbody.linearVelocity;
+        if (!_hasLaunched || !_rigidbody)
+            return;
+
+        // AddForce(Impulse) is applied by the next physics step. Keep the
+        // launch speed for a collision in that first step.
+        if (_launchImpulsePending)
+        {
+            _launchImpulsePending = false;
+            return;
+        }
+
+        _velocityBeforePhysicsStep = _rigidbody.linearVelocity;
     }
 
     public void Launch(
@@ -51,7 +62,6 @@ public class Book : MonoBehaviour
     {
         _countsAsPlayerBook = countsAsPlayerBook;
         _hasKilledLibrarian = false;
-        _hasLaunched = true;
         if (!_rigidbody)
             TryGetComponent(out _rigidbody);
 
@@ -90,6 +100,10 @@ public class Book : MonoBehaviour
         _rigidbody.angularVelocity = Vector3.zero;
         _rigidbody.WakeUp();
 
+        _hasLaunched = true;
+        _launchImpulsePending = true;
+        _velocityBeforePhysicsStep = direction.normalized * (force / _rigidbody.mass);
+
         _rigidbody.AddForce(
             direction.normalized * force,
             ForceMode.Impulse);
@@ -100,20 +114,25 @@ public class Book : MonoBehaviour
         if (!_hasLaunched || !_rigidbody || collision == null || !IsBounceLayer(collision.collider.transform))
             return;
 
-        if (Mathf.Approximately(_lastBounceFixedTime, Time.fixedTime))
+        if (_lastBounceFixedTime == Time.fixedTime)
             return;
-
-        _lastBounceFixedTime = Time.fixedTime;
 
         Vector3 incomingVelocity = _velocityBeforePhysicsStep;
         if (incomingVelocity.sqrMagnitude < 0.000001f)
-            incomingVelocity = _rigidbody.linearVelocity;
+            incomingVelocity = collision.relativeVelocity;
 
         if (collision.contactCount == 0 || incomingVelocity.sqrMagnitude < 0.000001f)
-        {
-            StopBook();
             return;
-        }
+
+        Vector3 normal = collision.GetContact(0).normal.normalized;
+        float approachSpeed = -Vector3.Dot(incomingVelocity, normal);
+
+        // A book leaving its spawn surface or skimming a floor has not hit it
+        // head-on. Do not drain the launch impulse in those contacts.
+        if (approachSpeed < 0.5f)
+            return;
+
+        _lastBounceFixedTime = Time.fixedTime;
 
         float reboundSpeed = incomingVelocity.magnitude * _bounceSpeedMultiplier;
         if (reboundSpeed <= _stopSpeedThreshold)
@@ -122,8 +141,7 @@ public class Book : MonoBehaviour
             return;
         }
 
-        Vector3 normal = collision.GetContact(0).normal.normalized;
-        _rigidbody.linearVelocity = Vector3.Reflect(incomingVelocity.normalized, normal) * reboundSpeed;
+        _rigidbody.linearVelocity = Vector3.Reflect(incomingVelocity, normal) * _bounceSpeedMultiplier;
         _velocityBeforePhysicsStep = _rigidbody.linearVelocity;
         _rigidbody.WakeUp();
     }
@@ -144,6 +162,7 @@ public class Book : MonoBehaviour
         _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
         _hasLaunched = false;
+        _launchImpulsePending = false;
         _rigidbody.Sleep();
     }
 

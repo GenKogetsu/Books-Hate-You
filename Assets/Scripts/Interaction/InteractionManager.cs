@@ -57,8 +57,6 @@ public sealed class InteractionManager : MonoBehaviour
         FindInteractable();
         UpdatePrompt();
 
-        // Keeps the system usable even when the InputActionReference has not
-        // been assigned yet. The reference remains the preferred input path.
         if (Keyboard.current != null &&
             Keyboard.current.fKey.wasPressedThisFrame)
         {

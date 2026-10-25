@@ -243,7 +243,6 @@ public sealed class CameraController : MonoBehaviour
                 _pitch = FppSettings.ClampPitch(_pitch - y);
                 break;
             case CameraViewMode.TopView:
-                // Top View keeps its Inspector pitch and rotates around Y only.
                 break;
             case CameraViewMode.TPP:
                 _pitch = TppSettings.ClampPitch(_pitch - y);

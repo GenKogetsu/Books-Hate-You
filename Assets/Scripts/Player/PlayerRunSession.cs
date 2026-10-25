@@ -2,10 +2,6 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-/// <summary>
-/// Tracks run-scoped state shared by scenes. A new run clears both collected
-/// pickups and the runtime inventory without changing the inventory asset.
-/// </summary>
 public static class PlayerRunSession
 {
     public const string WinAchievementId = "win_game";

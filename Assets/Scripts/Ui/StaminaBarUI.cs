@@ -54,7 +54,6 @@ public sealed class StaminaBarUI : MonoBehaviour
             return;
         }
 
-        // A centered RectTransform shrinks its two outer edges toward the middle.
         _rect.sizeDelta = new Vector2(Mathf.Max(18f, _fullWidth * stamina), _barHeight);
 
         Color color = Color.Lerp(Red, Blue, Mathf.InverseLerp(0.08f, _lowThreshold + 0.1f, stamina));
