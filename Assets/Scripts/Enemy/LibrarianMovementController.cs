@@ -97,6 +97,7 @@ public sealed class LibrarianMovementController : LivingMovementController
 
         if (EventBus.Instance)
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Subscribe<GameClearEvent>(OnGameClear);
     }
 
     protected override void OnDisable()
@@ -105,6 +106,7 @@ public sealed class LibrarianMovementController : LivingMovementController
 
         if (EventBus.Instance)
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Unsubscribe<GameClearEvent>(OnGameClear);
     }
 
     protected override bool CanMove()
@@ -223,6 +225,8 @@ public sealed class LibrarianMovementController : LivingMovementController
         StopMovement();
         _currentStateName = "GameOver";
     }
+
+    private void OnGameClear(GameClearEvent _) => OnGameover(default);
 
     public void HandleDeath()
     {

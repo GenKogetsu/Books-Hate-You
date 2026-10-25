@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Kogetsu.Library.DesignPatternCore;
 
 [RequireComponent(typeof(PlayerInventory))]
 public sealed class InteractionManager : MonoBehaviour
@@ -27,6 +28,9 @@ public sealed class InteractionManager : MonoBehaviour
 
     private void OnEnable()
     {
+        if (EventBus.Instance)
+            EventBus.Instance.Subscribe<GameClearEvent>(OnGameClear);
+
         if (_interactActionReference)
         {
             _interactActionReference.action.Enable();
@@ -36,12 +40,17 @@ public sealed class InteractionManager : MonoBehaviour
 
     private void OnDisable()
     {
+        if (EventBus.Instance)
+            EventBus.Instance.Unsubscribe<GameClearEvent>(OnGameClear);
+
         if (_interactActionReference)
         {
             _interactActionReference.action.performed -= OnInteractPerformed;
             _interactActionReference.action.Disable();
         }
     }
+
+    private void OnGameClear(GameClearEvent _) => enabled = false;
 
     private void Update()
     {

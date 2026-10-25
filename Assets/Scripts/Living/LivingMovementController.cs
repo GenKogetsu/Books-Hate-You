@@ -8,13 +8,19 @@ public abstract class LivingMovementController : MonoBehaviour
     protected virtual void OnEnable()
     {
         if (EventBus.Instance)
+        {
             EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
+            EventBus.Instance.Subscribe<GameClearEvent>(OnGameClearEvent);
+        }
     }
 
     protected virtual void OnDisable()
     {
         if (EventBus.Instance)
+        {
             EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
+            EventBus.Instance.Unsubscribe<GameClearEvent>(OnGameClearEvent);
+        }
     }
 
     protected virtual void Update()
@@ -30,6 +36,12 @@ public abstract class LivingMovementController : MonoBehaviour
     public virtual void StopMovement() { }
 
     private void OnLoadSceneEvent(LoadSceneEvent _)
+    {
+        _isLoadingScene = true;
+        StopMovement();
+    }
+
+    private void OnGameClearEvent(GameClearEvent _)
     {
         _isLoadingScene = true;
         StopMovement();

@@ -60,6 +60,7 @@ public class BookShelf : MonoBehaviour
         if (EventBus.Instance)
         {
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameoverEvent);
+            EventBus.Instance.Subscribe<GameClearEvent>(OnGameClearEvent);
         }
     }
 
@@ -68,6 +69,7 @@ public class BookShelf : MonoBehaviour
         if (EventBus.Instance)
         {
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameoverEvent);
+            EventBus.Instance.Unsubscribe<GameClearEvent>(OnGameClearEvent);
         }
     }
 
@@ -192,6 +194,8 @@ public class BookShelf : MonoBehaviour
         _targetRoot = null;
 
     }
+
+    private void OnGameClearEvent(GameClearEvent _) => OnGameoverEvent(default);
 
     #endregion
 

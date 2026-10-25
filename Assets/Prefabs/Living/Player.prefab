@@ -444,9 +444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e4b1c7a3d8f5a2e6c0b9d4f1a7e3c86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
-  _items:
-  - Item: 0
-    Amount: 0
+  _data: {fileID: 11400000, guid: 267c6c442eb3e3343b19db7db69f28c9, type: 2}
 --- !u!114 &726648040895731267
 MonoBehaviour:
   m_ObjectHideFlags: 0

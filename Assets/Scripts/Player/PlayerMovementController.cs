@@ -132,6 +132,7 @@ public class PlayerMovementController : LivingMovementController
         if (EventBus.Instance)
         {
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Subscribe<GameClearEvent>(OnGameClear);
             EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
         }
     }
@@ -170,6 +171,7 @@ public class PlayerMovementController : LivingMovementController
         if (EventBus.Instance)
         {
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Unsubscribe<GameClearEvent>(OnGameClear);
             EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
         }
     }
@@ -488,6 +490,8 @@ public class PlayerMovementController : LivingMovementController
         StopMovement();
         enabled = false;
     }
+
+    private void OnGameClear(GameClearEvent _) => OnGameover(default);
 
     private void OnLoadSceneEvent(LoadSceneEvent _)
     {

@@ -1,3 +1,4 @@
+using Kogetsu.Library.DesignPatternCore;
 using UnityEngine;
 [RequireComponent(typeof(InteractionPromptView))]
 public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractionBlockReason
@@ -12,6 +13,7 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
     [SerializeField] private InventoryItemType _requiredItem = InventoryItemType.Key;
     [SerializeField, Min(1)] private int _requiredAmount = 1;
     [SerializeField] private bool _consumeItem = true;
+    [SerializeField] private bool _publishesGameClearOnOpen;
 
     [Header("Interaction Feedback")]
     [SerializeField, TextArea(1, 3)] private string _lockedMessage = "ต้องใช้กุญแจ";
@@ -57,5 +59,8 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
 
         if (!_animator || !_tiggerClip)
             CurrentState = DoorState.Open;
+
+        if (_publishesGameClearOnOpen && EventBus.Instance)
+            EventBus.Instance.Publish(new GameClearEvent());
     }
 }

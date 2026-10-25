@@ -121,6 +121,7 @@ public sealed class CameraController : MonoBehaviour
         if (EventBus.Instance)
         {
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Subscribe<GameClearEvent>(OnGameClear);
             EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
         }
         Subscribe(_firstPersonViewKey, SelectFpp);
@@ -141,6 +142,7 @@ public sealed class CameraController : MonoBehaviour
         if (EventBus.Instance)
         {
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Unsubscribe<GameClearEvent>(OnGameClear);
             EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
         }
         Unsubscribe(_firstPersonViewKey, SelectFpp);
@@ -218,6 +220,8 @@ public sealed class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
+
+    private void OnGameClear(GameClearEvent _) => OnGameover(default);
 
     private void TickGameView()
     {
