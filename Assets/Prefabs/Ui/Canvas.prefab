@@ -123,6 +123,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3648778208660568733}
   - component: {fileID: 2214622086469531838}
+  - component: {fileID: 5523845935216599101}
   m_Layer: 5
   m_Name: KeyUI
   m_TagString: Untagged
@@ -164,8 +165,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KeyInventoryUI
   _inventoryData: {fileID: 11400000, guid: 267c6c442eb3e3343b19db7db69f28c9, type: 2}
   _amountText: {fileID: 1891941714941865693}
+  _visibilityGroup: {fileID: 5523845935216599101}
   _item: 0
-  _format: X {0}
+  _displayMaximum: 5
+  _format: '{0}/{1}'
+--- !u!225 &5523845935216599101
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948437264917221894}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3979814530954646126
 GameObject:
   m_ObjectHideFlags: 0

@@ -139,21 +139,24 @@ public sealed class InteractionManager : MonoBehaviour
             ? "O"
             : conditionPassed
                 ? "F"
-                : GetBlockedPrompt(_currentInteractable);
+                : GetBlockedPrompt(_currentInteractable, _inventory);
         CurrentState = !inRange
             ? InteractionState.Detected
             : conditionPassed ? InteractionState.InRange : InteractionState.Blocked;
         view.SetState(prompt, true);
     }
 
-    private static string GetBlockedPrompt(IInteractable interactable)
+    private static string GetBlockedPrompt(IInteractable interactable, PlayerInventory inventory)
     {
         IInteractionBlockReason reasonProvider = interactable as IInteractionBlockReason;
-        if (reasonProvider == null ||
-            string.IsNullOrWhiteSpace(reasonProvider.InteractionBlockReason))
+        if (reasonProvider == null)
             return "X";
 
-        return $"X\n{reasonProvider.InteractionBlockReason}";
+        string reason = reasonProvider.GetInteractionBlockReason(inventory);
+        if (string.IsNullOrWhiteSpace(reason))
+            return "X";
+
+        return $"X\n{reason}";
     }
 
     private void OnDrawGizmosSelected()

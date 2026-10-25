@@ -21,7 +21,15 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
     public DoorState CurrentState { get; private set; }
 
     public string InteractionPrompt => _isOpen ? "" : "F";
-    public string InteractionBlockReason => _lockedMessage;
+    public string GetInteractionBlockReason(PlayerInventory inventory)
+    {
+        if (!_requiresKey)
+            return _lockedMessage;
+
+        int amount = inventory ? inventory.GetAmount(_requiredItem) : 0;
+        int missing = Mathf.Max(0, _requiredAmount - amount);
+        return $"ขาดกุญแจอีก {missing} ดอก ({amount}/{_requiredAmount})";
+    }
 
     private void Reset()
     {

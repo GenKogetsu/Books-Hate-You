@@ -1,4 +1,4 @@
 public interface IInteractionBlockReason
 {
-    string InteractionBlockReason { get; }
+    string GetInteractionBlockReason(PlayerInventory inventory);
 }

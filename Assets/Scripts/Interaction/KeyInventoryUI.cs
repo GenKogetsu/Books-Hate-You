@@ -5,13 +5,21 @@ public sealed class KeyInventoryUI : MonoBehaviour
 {
     [SerializeField] private PlayerInventoryData _inventoryData;
     [SerializeField] private TMPro.TMP_Text _amountText;
+    [SerializeField] private CanvasGroup _visibilityGroup;
     [SerializeField] private InventoryItemType _item = InventoryItemType.Key;
-    [SerializeField] private string _format = "X {0}";
+    [SerializeField, Min(1)] private int _displayMaximum = 5;
+    [SerializeField] private string _format = "{0}/{1}";
 
     private void Awake()
     {
         if (!_amountText)
             _amountText = GetComponentInChildren<TMP_Text>(true);
+
+        if (!_visibilityGroup)
+            _visibilityGroup = GetComponent<CanvasGroup>();
+
+        if (!_visibilityGroup)
+            _visibilityGroup = gameObject.AddComponent<CanvasGroup>();
     }
 
     private void OnEnable()
@@ -42,7 +50,16 @@ public sealed class KeyInventoryUI : MonoBehaviour
 
     private void Refresh(int amount)
     {
+        bool visible = amount > 0;
+
         if (_amountText)
-            _amountText.text = string.Format(_format, amount);
+            _amountText.text = string.Format(_format, amount, _displayMaximum);
+
+        if (_visibilityGroup)
+        {
+            _visibilityGroup.alpha = visible ? 1f : 0f;
+            _visibilityGroup.interactable = visible;
+            _visibilityGroup.blocksRaycasts = visible;
+        }
     }
 }

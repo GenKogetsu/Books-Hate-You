@@ -19,6 +19,34 @@ public static class VictoryUiSetup
         Debug.Log("Victory UI setup completed.");
     }
 
+    [MenuItem("Tools/Configure Key UI")]
+    public static void ConfigureKeyUi()
+    {
+        GameObject root = PrefabUtility.LoadPrefabContents(CanvasPath);
+        try
+        {
+            KeyInventoryUI keyUi = root.GetComponentInChildren<KeyInventoryUI>(true);
+            if (!keyUi)
+                throw new System.InvalidOperationException("KeyInventoryUI is missing in Canvas prefab.");
+
+            CanvasGroup group = keyUi.GetComponent<CanvasGroup>();
+            if (!group)
+                group = keyUi.gameObject.AddComponent<CanvasGroup>();
+
+            SerializedObject serialized = new(keyUi);
+            serialized.FindProperty("_visibilityGroup").objectReferenceValue = group;
+            serialized.FindProperty("_displayMaximum").intValue = 5;
+            serialized.FindProperty("_format").stringValue = "{0}/{1}";
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+
+            PrefabUtility.SaveAsPrefabAsset(root, CanvasPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+    }
+
     private static void ConfigureCanvasPrefab()
     {
         GameObject root = PrefabUtility.LoadPrefabContents(CanvasPath);
