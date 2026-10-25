@@ -21,6 +21,8 @@ namespace Kogetsu.Library.Core
         [SerializeField] protected AudioSource LoadSceneAudioSource;
         [SerializeField] protected AudioClip LoadSceneAudioClip;
 
+        private bool _isTransitioning;
+
 #if UNITY_EDITOR
         protected virtual void OnValidate()
         {
@@ -48,6 +50,9 @@ namespace Kogetsu.Library.Core
 
         protected virtual void OnDisable()
         {
+            StopLoadSceneAudio();
+            _isTransitioning = false;
+
             if (EventBus.Instance)
             {
                 EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
@@ -79,6 +84,7 @@ namespace Kogetsu.Library.Core
             }
 
             StopLoadSceneAudio();
+            _isTransitioning = false;
             GameManager.Instance.SetGameState(GameState.Normal);
         }
 
@@ -132,6 +138,11 @@ namespace Kogetsu.Library.Core
         #endregion
         public void LoadScene(int buildIndex)
         {
+            if (_isTransitioning)
+                return;
+
+            _isTransitioning = true;
+            AssignComponent();
             Time.timeScale = 1f;
             PlayLoadSceneAudio();
             StartCoroutine(LoadSceneRotine(buildIndex));

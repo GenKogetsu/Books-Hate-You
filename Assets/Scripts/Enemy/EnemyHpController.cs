@@ -3,13 +3,16 @@ using NaughtyAttributes;
 
 public sealed class EnemyHpController : LivingHpController
 {
+
+    [Header("References")]
+    [SerializeField] private LivingAnimationController _animationController;
+    [SerializeField] private LibrarianMovementController _movement;
+    [SerializeField] private KillOnHit _killOnHit;
+
     [Header("Health")]
     [SerializeField, Min(0f)] private float _startHp = 100f;
     [SerializeField, Min(0f)] private float _maxHp = 100f;
     [SerializeField, ReadOnly] private float _currentHp;
-
-    [Header("Death")]
-    [SerializeField] private LivingAnimationController _animationController;
 
     public float CurrentHp => _currentHp;
     public bool IsAlive => _currentHp > 0f;
@@ -18,6 +21,8 @@ public sealed class EnemyHpController : LivingHpController
     private void Reset()
     {
         _animationController = GetComponent<LivingAnimationController>();
+        _movement = GetComponent<LibrarianMovementController>();
+        _killOnHit = GetComponent<KillOnHit>();
     }
 
     private void Awake()
@@ -26,6 +31,12 @@ public sealed class EnemyHpController : LivingHpController
 
         if (!_animationController)
             _animationController = GetComponent<LivingAnimationController>();
+
+        if (!_movement)
+            _movement = GetComponent<LibrarianMovementController>();
+
+        if (!_killOnHit)
+            _killOnHit = GetComponent<KillOnHit>();
 
     }
 
@@ -56,11 +67,21 @@ public sealed class EnemyHpController : LivingHpController
 
     private void OnDeath()
     {
-        LibrarianMovementController movement =
-            GetComponent<LibrarianMovementController>();
 
-        movement?.HandleDeath();
+        if (_killOnHit)
+            _killOnHit.enabled = false;
+
+        if (_movement)
+        {
+            // Let the movement FSM exit Chase first so its run state, path and audio are stopped.
+            _movement.HandleDeath();
+            _movement.enabled = false;
+        }
+
+        if (_animationController)
+            _animationController.PlayDeathAnimation();
+
         PlayDeathSound();
-        _animationController?.PlayDeathAnimation();
+
     }
 }

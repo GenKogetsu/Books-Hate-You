@@ -323,6 +323,7 @@ MonoBehaviour:
   _effectOnHit: {fileID: 4557460557167711786}
   _audioSourceOnHit: {fileID: 7279138533142382744}
   _model: {fileID: 1831906528573394049}
+  _returnToPoolOnHit: 1
   _returnToPoolDelay: 2
   _livingMask:
     serializedVersion: 2

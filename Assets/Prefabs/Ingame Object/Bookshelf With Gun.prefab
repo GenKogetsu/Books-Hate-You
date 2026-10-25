@@ -4910,7 +4910,7 @@ MonoBehaviour:
   _targetTags: 32
   _visionBlockMask:
     serializedVersion: 2
-    m_Bits: 320
+    m_Bits: 6464
   _aimOffset: {x: 0, y: 1, z: 0}
   _debugLog: 0
   _bookPrefab: {fileID: 5913596425806998074, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}

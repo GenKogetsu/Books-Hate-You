@@ -97,7 +97,7 @@ public class PlayerMovementController : LivingMovementController
 
     #region Event Subscription
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
         base.OnEnable();
         _isPlayerInputLocked = false;
@@ -136,7 +136,7 @@ public class PlayerMovementController : LivingMovementController
         }
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
         base.OnDisable();
 
@@ -378,9 +378,8 @@ public class PlayerMovementController : LivingMovementController
 
         if (_cameraController)
         {
-            Quaternion yaw = _cameraController.LookYawRotation;
-            forward = yaw * Vector3.forward;
-            right = yaw * Vector3.right;
+            forward = _cameraController.MovementForward;
+            right = _cameraController.MovementRight;
         }
         else if (_cameraReference)
         {

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 36157054507859751}
   - component: {fileID: 77181455581789161}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: TransparentCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}

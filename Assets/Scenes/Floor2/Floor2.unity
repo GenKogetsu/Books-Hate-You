@@ -485,10 +485,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2690427020958554685, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.26084998
-      objectReference: {fileID: 0}
     - target: {fileID: 4106691304749253331, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
       propertyPath: _playerModel
       value: 
@@ -497,6 +493,10 @@ PrefabInstance:
       propertyPath: _followTarget
       value: 
       objectReference: {fileID: 1207719821}
+    - target: {fileID: 4106691304749253331, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
+      propertyPath: _lookAtTarget
+      value: 
+      objectReference: {fileID: 1207719822}
     - target: {fileID: 4106691304749253331, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
       propertyPath: _playerStatus
       value: 
@@ -4768,7 +4768,7 @@ PrefabInstance:
       objectReference: {fileID: 57316019}
     - target: {fileID: 4864838129422575965, guid: b34791be28d72d049909df7e1d996e94, type: 3}
       propertyPath: m_VersionIndex
-      value: 5150
+      value: 5171
       objectReference: {fileID: 0}
     - target: {fileID: 4875001053657683723, guid: b34791be28d72d049909df7e1d996e94, type: 3}
       propertyPath: m_Mesh
@@ -4946,26 +4946,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1001028570}
-    - target: {fileID: 8088824884399602715, guid: b34791be28d72d049909df7e1d996e94, type: 3}
-      propertyPath: _destinationPlayerTransform._position.x
-      value: 17.392
-      objectReference: {fileID: 0}
-    - target: {fileID: 8088824884399602715, guid: b34791be28d72d049909df7e1d996e94, type: 3}
-      propertyPath: _destinationPlayerTransform._position.y
-      value: 1.392
-      objectReference: {fileID: 0}
-    - target: {fileID: 8088824884399602715, guid: b34791be28d72d049909df7e1d996e94, type: 3}
-      propertyPath: _destinationPlayerTransform._position.z
-      value: 10.418
-      objectReference: {fileID: 0}
-    - target: {fileID: 8088824884399602715, guid: b34791be28d72d049909df7e1d996e94, type: 3}
-      propertyPath: _destinationPlayerTransform._rotation.w
-      value: -0.00000004371139
-      objectReference: {fileID: 0}
-    - target: {fileID: 8088824884399602715, guid: b34791be28d72d049909df7e1d996e94, type: 3}
-      propertyPath: _destinationPlayerTransform._rotation.y
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8091803156342412181, guid: b34791be28d72d049909df7e1d996e94, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -5282,6 +5262,11 @@ MonoBehaviour:
 --- !u!4 &1207719821 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1426347045633578922, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
+  m_PrefabInstance: {fileID: 1207719818}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1207719822 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7691525227806010925, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
   m_PrefabInstance: {fileID: 1207719818}
   m_PrefabAsset: {fileID: 0}
 --- !u!43 &1248023409
@@ -8853,7 +8838,7 @@ AudioSource:
   m_GameObject: {fileID: 1899097715}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -2297645355381497367, guid: b8cddd5edf1cc844fa7fd61e66d9b81a, type: 2}
+  OutputAudioMixerGroup: {fileID: 7361837694777069145, guid: b8cddd5edf1cc844fa7fd61e66d9b81a, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 58c0cca8f467b2547884489ba6303462, type: 3}
   m_PlayOnAwake: 1

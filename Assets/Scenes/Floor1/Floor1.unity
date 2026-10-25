@@ -338,14 +338,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2690427020958554685, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -6.93
-      objectReference: {fileID: 0}
-    - target: {fileID: 2690427020958554685, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.2608501
-      objectReference: {fileID: 0}
     - target: {fileID: 4106691304749253331, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
       propertyPath: _playerModel
       value: 
@@ -354,6 +346,10 @@ PrefabInstance:
       propertyPath: _followTarget
       value: 
       objectReference: {fileID: 1364623191}
+    - target: {fileID: 4106691304749253331, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
+      propertyPath: _lookAtTarget
+      value: 
+      objectReference: {fileID: 1519735386}
     - target: {fileID: 4106691304749253331, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
       propertyPath: _playerStatus
       value: 
@@ -401,10 +397,6 @@ PrefabInstance:
     - target: {fileID: 7341722112981025748, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
       propertyPath: m_Name
       value: CameraBox
-      objectReference: {fileID: 0}
-    - target: {fileID: 7341722112981025748, guid: f1b82af935117dc4ea61427d8980ca43, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -647,7 +639,7 @@ AudioSource:
   m_GameObject: {fileID: 891078186}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -2297645355381497367, guid: b8cddd5edf1cc844fa7fd61e66d9b81a, type: 2}
+  OutputAudioMixerGroup: {fileID: 7361837694777069145, guid: b8cddd5edf1cc844fa7fd61e66d9b81a, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: ac97bed298e194b4bb88a97afdd6b691, type: 3}
   m_PlayOnAwake: 1
@@ -743,14 +735,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 355954444643896827, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
-      propertyPath: Loop
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 355954444643896827, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1426347045633578922, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.3
@@ -795,10 +779,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 3072128071341202242, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4953691014067624592, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
       propertyPath: _cameraReference
       value: 
@@ -807,22 +787,6 @@ PrefabInstance:
       propertyPath: _cameraController
       value: 
       objectReference: {fileID: 636853696}
-    - target: {fileID: 5635059385519003207, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6281327206688997968, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8282635355659619097, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
-      propertyPath: Loop
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8282635355659619097, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -847,6 +811,11 @@ Transform:
 --- !u!1 &1477137163 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4328193538707738478, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
+  m_PrefabInstance: {fileID: 1364623189}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1519735386 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7691525227806010925, guid: b5bf485be5e7ac945b6adb4c85dd4862, type: 3}
   m_PrefabInstance: {fileID: 1364623189}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1609420697
@@ -1257,11 +1226,7 @@ PrefabInstance:
       objectReference: {fileID: 142077583}
     - target: {fileID: 6353501992270379973, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_VersionIndex
-      value: 1651
-      objectReference: {fileID: 0}
-    - target: {fileID: 6597726638491319108, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 11.509
+      value: 1783
       objectReference: {fileID: 0}
     - target: {fileID: 7141639010568521062, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_Mesh
@@ -1269,7 +1234,7 @@ PrefabInstance:
       objectReference: {fileID: 844881739}
     - target: {fileID: 7141639010568521062, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_VersionIndex
-      value: 5086
+      value: 5218
       objectReference: {fileID: 0}
     - target: {fileID: 8424243151144896560, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_Mesh
@@ -1277,7 +1242,7 @@ PrefabInstance:
       objectReference: {fileID: 1913163502}
     - target: {fileID: 8424243151144896560, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_VersionIndex
-      value: 1651
+      value: 1783
       objectReference: {fileID: 0}
     - target: {fileID: 8591663762511383705, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_Mesh

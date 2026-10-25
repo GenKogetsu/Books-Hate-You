@@ -17,6 +17,7 @@ public class KillOnHit : MonoBehaviour
     [SerializeField] private GameObject _model;
 
     [Header("Object Pool")]
+    [SerializeField] private bool _returnToPoolOnHit = false;
     [SerializeField, Min(0f)] private float _returnToPoolDelay = 2f;
 
     [Header("Layer Detection")]
@@ -101,10 +102,6 @@ public class KillOnHit : MonoBehaviour
         if (!playerRoot)
             return;
 
-        // Tag is the authoritative target filter. Some player setups keep the
-        // CharacterController on the default layer, so requiring the Living
-        // layer before checking the tag would silently ignore valid hits.
-
         LivingHpController livingHpController =
             playerRoot.GetComponent<LivingHpController>();
 
@@ -129,7 +126,6 @@ public class KillOnHit : MonoBehaviour
             return;
         }
 
-        // ป้องกันการเรียก KillPlayer ซ้ำจาก Collider หลายชิ้น
         _hasHitPlayer = true;
 
         if (_debugLog)
@@ -138,18 +134,17 @@ public class KillOnHit : MonoBehaviour
                 $"{name} ชน {playerRoot.name}", this, _debugLog);
         }
 
-        // ซ่อนโมเดลทันทีเมื่อชนผู้เล่น
         if (_model)
             _model.SetActive(false);
 
-        // เรียกระบบตายของผู้เล่น
         livingHpController.Kill();
 
-        // เล่นเอฟเฟกต์ระเบิด
         PlayHitEffect();
 
-        // รอแล้วส่งกลับ Pool
-        _returnCoroutine = StartCoroutine(ReturnToPoolAfterDelay());
+        if (_returnToPoolOnHit)
+        {
+            _returnCoroutine = StartCoroutine(ReturnToPoolAfterDelay());
+        }
     }
 
     private Transform FindPlayerRoot(Transform candidate)

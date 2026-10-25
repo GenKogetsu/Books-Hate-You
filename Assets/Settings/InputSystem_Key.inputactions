@@ -67,17 +67,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "RotateClockwise (E)",
-                    "type": "Button",
-                    "id": "4581b8ef-b141-427a-8322-02701b415bd9",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false,
-                    "priority": 0
-                },
-                {
-                    "name": "RotateCounterClockwise (Q)",
+                    "name": "FPP View (1)",
                     "type": "Button",
                     "id": "64264762-3556-4cf5-8656-755b88f84397",
                     "expectedControlType": "",
@@ -87,10 +77,50 @@
                     "priority": 0
                 },
                 {
-                    "name": "FPP&TPP (TAP)",
+                    "name": "Top View (2)",
+                    "type": "Button",
+                    "id": "eb6dfaa7-1d22-4891-a351-a519788579ab",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "TPP View (3)",
+                    "type": "Button",
+                    "id": "8eec975b-11d0-4220-9133-f713aca7d5ee",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Change Camera View (TAP)",
                     "type": "Button",
                     "id": "4246ba75-9fe7-40be-8716-5242241ef571",
                     "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Hold Top Camera (Q)",
+                    "type": "Button",
+                    "id": "c2e6c4e9-5088-4a6f-a91c-1f4c66f8ef01",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Hold Back Camera (E)",
+                    "type": "Button",
+                    "id": "f02c9879-2da4-4f08-8ebf-3b43c9381f86",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false,
@@ -342,23 +372,89 @@
                 },
                 {
                     "name": "",
-                    "id": "d76b4804-6907-4a87-aa77-1634816e9cf0",
-                    "path": "<Keyboard>/e",
+                    "id": "be9aa2d1-b08d-4c55-bf14-2e0912158cf7",
+                    "path": "<Keyboard>/1",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "RotateClockwise (E)",
+                    "action": "FPP View (1)",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "be9aa2d1-b08d-4c55-bf14-2e0912158cf7",
+                    "id": "0a3a1779-f10a-4729-bc2a-68f8a7b8b391",
+                    "path": "<Keyboard>/numpad1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "FPP View (1)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ded91aa1-8fb3-4655-979c-456683821db6",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Top View (2)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9d7718e9-ab08-434e-a985-a7eabe38d79c",
+                    "path": "<Keyboard>/numpad2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Top View (2)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e071bfb6-4398-4462-bbe1-c1e93de2b45c",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "TPP View (3)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5080ebde-2c22-4e9d-934a-147da7c84625",
+                    "path": "<Keyboard>/numpad3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "TPP View (3)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f6f9d5a4-cc32-44f9-9cde-6e9c2af7b431",
                     "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "RotateCounterClockwise (Q)",
+                    "action": "Hold Top Camera (Q)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1a7aa51a-7a90-4ba3-9f17-e1fa63e9b8f4",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Hold Back Camera (E)",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -369,7 +465,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "FPP&TPP (TAP)",
+                    "action": "Change Camera View (TAP)",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -1,467 +1,454 @@
 using System.Collections;
-using System.Collections.Generic;
+using Kogetsu.Library.DesignPatternCore;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using NaughtyAttributes;
+using UnityEngine.UI;
 
-[ExecuteAlways]
-public class CameraController : MonoBehaviour
+public sealed class CameraController : MonoBehaviour
 {
-    [Header("Reference Settings")]
+    public enum CameraAnimationMode { Animate, SkipAnimation }
+
+    [Header("Player")]
     [SerializeField] private PlayerStatus _playerStatus;
-    [SerializeField] private Transform _cameraBox;
-    [SerializeField] private Dictionary<Camera, CameraType> _cameras = new();
     [SerializeField] private Transform _followTarget;
-
-    [Header("Camera Settings")]
-    [SerializeField] private bool _executeAlways = true;
-    [SerializeField] private bool _resetRotationOnAwake = true;
-    [SerializeField] private bool _isFollowing = true;
-
-    [Header("Rotation Settings")]
-    [SerializeField, Min(0.01f)] private float _rotateDuration = 0.25f;
-    [SerializeField] private AnimationCurve _rotateCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-    [SerializeField, Min(0)] private int _maxQueuedRotations = 4;
-
-    [Header("View Settings")]
-    [SerializeField] private bool _startInFirstPerson = false;
-    [SerializeField] private bool _startInTopView = false;
-    [SerializeField, Min(0.1f)] private float _topViewHeight = 12f;
-    [SerializeField] private Vector3 _firstPersonLocalOffset = new(0f, 1.6f, 0f);
-    [SerializeField, Min(0.01f)] private float _viewTransitionDuration = 0.5f;
-    [SerializeField] private AnimationCurve _viewCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-
-    [Header("First Person Settings")]
-    [SerializeField] private bool _lockCursorInFirstPerson = true;
-    [SerializeField, Min(0f)] private float _lookSensitivity = 0.1f;
-    [SerializeField, Range(0f, 89f)] private float _maxPitch = 80f;
+    [SerializeField] private Transform _lookAtTarget;
     [SerializeField] private GameObject _playerModel;
     [SerializeField] private GameObject _firstPersonModel;
+    [SerializeField] private bool _isFollowing = true;
 
-    [Header("Input Settings")]
-    [SerializeField, Required] private InputActionReference _rotateClockwiseKey;
-    [SerializeField, Required] private InputActionReference _rotateCounterClockwiseKey;
-    [SerializeField, Required] private InputActionReference _toggleViewKey;
+    [Header("Main Camera and Game View Anchors")]
+    [SerializeField] private Camera _mainCamera;
+    [SerializeField] private CameraViewAnchor _firstPersonViewCamera;
+    [SerializeField] private CameraViewAnchor _topViewCamera;
+    [SerializeField] private CameraViewAnchor _thirdPersonViewCamera;
+    [SerializeField] private CameraViewMode _startView = CameraViewMode.TPP;
+    [SerializeField] private CameraAnimationMode _animationMode = CameraAnimationMode.Animate;
+
+    [Header("Mirror Cameras")]
+    [SerializeField] private Camera _topMirrorViewCamera;
+    [SerializeField] private Camera _backMirrorViewCamera;
+
+    [Header("Skip Animation Fade")]
+    [SerializeField] private Animator _fadeAnimator;
+    [SerializeField] private Image _fadeImage;
+    [SerializeField] private AnimationClip _fadeIn;
+    [SerializeField] private AnimationClip _fadeOut;
+    [SerializeField, Min(0.01f)] private float _fadeSpeed = 1f;
+
+    [Header("Input Actions")]
+    [SerializeField] private InputActionReference _firstPersonViewKey;
+    [SerializeField] private InputActionReference _topViewKey;
+    [SerializeField] private InputActionReference _thirdPersonViewKey;
+    [SerializeField] private InputActionReference _toggleViewKey;
     [SerializeField] private InputActionReference _lookInput;
+    [SerializeField] private InputActionReference _holdTopCameraKey;
+    [SerializeField] private InputActionReference _holdBackCameraKey;
 
-    private readonly Queue<float> _rotationQueue = new();
-    private readonly Dictionary<Camera, Vector3> _baseLocalPositions = new();
-    private Coroutine _rotationRoutine;
-    private Coroutine _viewRoutine;
-    private Quaternion _yawStartRotation;
-    private Quaternion _yawTargetRotation;
-    private bool _snapYawOnTransition;
+    private readonly Kogetsu.Library.DesignPatternCore.StateMachine<CameraController> _stateMachine = new();
+    private GameViewState _gameViewState;
+    private MirrorViewState _mirrorViewState;
+    private CameraViewMode _currentMode;
+    private Quaternion _initialBoxRotation;
+    private Coroutine _transitionRoutine;
+    private float _yaw;
+    private float _pitch;
+    private float _topZoom;
+    private float _thirdPersonZoom;
+    private bool _topHeld;
+    private bool _backHeld;
+    private bool _collisionCompressed;
+    private Camera _activeMirrorCamera;
 
-    private bool _isFirstPerson;
-    private bool _isTopView;
+    private FirstPersonCameraSettingSO FppSettings =>
+        _firstPersonViewCamera ? _firstPersonViewCamera.Settings as FirstPersonCameraSettingSO : null;
+    private TopCameraSettingSO TopSettings =>
+        _topViewCamera ? _topViewCamera.Settings as TopCameraSettingSO : null;
+    private ThirdPersonCameraSettingSO TppSettings =>
+        _thirdPersonViewCamera ? _thirdPersonViewCamera.Settings as ThirdPersonCameraSettingSO : null;
 
-    private float _viewT = 1f;
+    public CameraViewMode CurrentViewMode => _currentMode;
+    public bool IsFirstPerson => _currentMode == CameraViewMode.FPP;
+    public bool IsTopView => _currentMode == CameraViewMode.TopView;
+    public bool IsViewTransitioning => _transitionRoutine != null;
+    public bool IsRotating => IsViewTransitioning;
+    public Quaternion LookYawRotation => Quaternion.LookRotation(MovementForward, Vector3.up);
 
-    private float _lookYaw;
-    private float _lookPitch;
-
-    private enum CameraType
-    {
-        MainCamera,
-        SecondaryCamera,
-        ThirdCamera
-    }
-
-    public bool IsRotating => _rotationRoutine != null;
-    public bool IsFirstPerson => _isFirstPerson;
-    public bool IsTopView => _isTopView;
-    public bool IsViewTransitioning => _viewRoutine != null;
-    public CameraViewMode CurrentViewMode => _isTopView
-        ? CameraViewMode.TopView
-        : _isFirstPerson ? CameraViewMode.FPP : CameraViewMode.TPP;
-
-
-    public Quaternion LookYawRotation
+    public Vector3 MovementForward
     {
         get
         {
-            float mouseWeight = 1f - _viewT;
-            return _cameraBox.rotation * Quaternion.Euler(0f, _lookYaw * mouseWeight, 0f);
+            if (!_mainCamera) return transform.forward;
+            Vector3 axis = _currentMode == CameraViewMode.TopView
+                ? _mainCamera.transform.up
+                : _mainCamera.transform.forward;
+            axis = Vector3.ProjectOnPlane(axis, Vector3.up);
+            return axis.sqrMagnitude > 0.0001f ? axis.normalized : Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
         }
     }
 
-    private void Reset()
+    public Vector3 MovementRight
     {
-        Setup();
+        get
+        {
+            Vector3 forward = MovementForward;
+            return forward.sqrMagnitude > 0.0001f ? Vector3.Cross(Vector3.up, forward).normalized : transform.right;
+        }
+    }
+
+    private void Awake()
+    {
+        AssignCameras();
+        _initialBoxRotation = transform.rotation;
+        _currentMode = _startView;
+        _gameViewState = new GameViewState();
+        _mirrorViewState = new MirrorViewState();
+        _gameViewState.Initialize(this);
+        _mirrorViewState.Initialize(this);
+        if (_fadeAnimator) _fadeAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        SnapMainToCurrentView();
+        ApplyModelVisibility();
     }
 
     private void OnEnable()
     {
-        Setup();
-
         if (!Application.isPlaying) return;
-
-        _isFirstPerson = _startInFirstPerson;
-        _isTopView = _startInTopView;
-        if (_isTopView) _isFirstPerson = false;
-        _viewT = _isFirstPerson ? 0f : 1f;
-        _lookYaw = 0f;
-        _lookPitch = 0f;
-
-        if (_rotateClockwiseKey)
-        {
-            _rotateClockwiseKey.action.Enable();
-            _rotateClockwiseKey.action.performed += RotateCameraBoxQ;
-        }
-
-        if (_rotateCounterClockwiseKey)
-        {
-            _rotateCounterClockwiseKey.action.Enable();
-            _rotateCounterClockwiseKey.action.performed += RotateCameraBoxE;
-        }
-
-        if (_toggleViewKey)
-        {
-            _toggleViewKey.action.Enable();
-            _toggleViewKey.action.performed += ToggleViewPerformed;
-        }
-
-        if (_lookInput)
-        {
-            _lookInput.action.Enable();
-        }
-
-        ApplyModelVisibility(_isFirstPerson);
-        ApplyCursorState();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Subscribe(_firstPersonViewKey, SelectFpp);
+        Subscribe(_topViewKey, SelectTop);
+        Subscribe(_thirdPersonViewKey, SelectTpp);
+        Subscribe(_toggleViewKey, CyclePerformed);
+        Subscribe(_holdTopCameraKey, TopMirrorStarted, TopMirrorReleased);
+        Subscribe(_holdBackCameraKey, BackMirrorStarted, BackMirrorReleased);
+        if (_lookInput) _lookInput.action.Enable();
+        _stateMachine.ChangeState(_gameViewState);
     }
 
     private void OnDisable()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         if (!Application.isPlaying) return;
+        Unsubscribe(_firstPersonViewKey, SelectFpp);
+        Unsubscribe(_topViewKey, SelectTop);
+        Unsubscribe(_thirdPersonViewKey, SelectTpp);
+        Unsubscribe(_toggleViewKey, CyclePerformed);
+        Unsubscribe(_holdTopCameraKey, TopMirrorStarted, TopMirrorReleased);
+        Unsubscribe(_holdBackCameraKey, BackMirrorStarted, BackMirrorReleased);
+        if (_lookInput) _lookInput.action.Disable();
+        CancelTransition();
+        _stateMachine.ChangeState(null);
+    }
 
-        if (_rotateClockwiseKey)
-        {
-            _rotateClockwiseKey.action.performed -= RotateCameraBoxQ;
-            _rotateClockwiseKey.action.Disable();
-        }
+    private static void Subscribe(InputActionReference reference, System.Action<InputAction.CallbackContext> performed,
+        System.Action<InputAction.CallbackContext> canceled = null)
+    {
+        if (!reference) return;
+        reference.action.Enable();
+        reference.action.performed += performed;
+        if (canceled != null) reference.action.canceled += canceled;
+    }
 
-        if (_rotateCounterClockwiseKey)
-        {
-            _rotateCounterClockwiseKey.action.performed -= RotateCameraBoxE;
-            _rotateCounterClockwiseKey.action.Disable();
-        }
+    private static void Unsubscribe(InputActionReference reference, System.Action<InputAction.CallbackContext> performed,
+        System.Action<InputAction.CallbackContext> canceled = null)
+    {
+        if (!reference) return;
+        reference.action.performed -= performed;
+        if (canceled != null) reference.action.canceled -= canceled;
+        reference.action.Disable();
+    }
 
-        if (_toggleViewKey)
-        {
-            _toggleViewKey.action.performed -= ToggleViewPerformed;
-            _toggleViewKey.action.Disable();
-        }
-
-        if (_lookInput)
-        {
-            _lookInput.action.Disable();
-        }
-
-        _rotationQueue.Clear();
-        _rotationRoutine = null;
-        _viewRoutine = null;
+    private void AssignCameras()
+    {
+        if (!_mainCamera) _mainCamera = transform.Find("Main Camera")?.GetComponent<Camera>();
+        if (!_firstPersonViewCamera) _firstPersonViewCamera = transform.Find("First Person View Camera")?.GetComponent<CameraViewAnchor>();
+        if (!_topViewCamera) _topViewCamera = transform.Find("Top View Camera")?.GetComponent<CameraViewAnchor>();
+        if (!_thirdPersonViewCamera) _thirdPersonViewCamera = transform.Find("Third Person View Camera")?.GetComponent<CameraViewAnchor>();
+        if (!_topMirrorViewCamera) _topMirrorViewCamera = transform.Find("Top Mirror View Camera")?.GetComponent<Camera>();
+        if (!_backMirrorViewCamera) _backMirrorViewCamera = transform.Find("Back Mirror View Camera")?.GetComponent<Camera>();
     }
 
     private void LateUpdate()
     {
-        if (!Application.isPlaying)
-        {
-            _isFirstPerson = false;
-            _viewT = 1f;
-            _viewRoutine = null;
-            _lookYaw = 0f;
-            _lookPitch = 0f;
-        }
-
-        if (!_executeAlways && !Application.isPlaying) return;
-
-        ApplyLook();
-        UpdateCamera();
+        if (!Application.isPlaying) return;
+        _stateMachine.Update();
     }
 
-    private CameraType GetCameraType(Camera camera) => camera.name switch
+    private void TickGameView()
     {
-        "MainCamera" => CameraType.MainCamera,
-        "SecondaryCamera" => CameraType.SecondaryCamera,
-        "ThirdCamera" => CameraType.ThirdCamera,
-        _ => CameraType.MainCamera,
+        if (_isFollowing && _followTarget) transform.position = _followTarget.position;
+        UpdateLook();
+        if (_transitionRoutine == null) SnapMainToCurrentView(true);
+    }
+
+    private void UpdateLook()
+    {
+        CameraSettingSO settings = SettingsFor(_currentMode);
+        if (settings == null || !_lookInput) return;
+        Vector2 delta = _lookInput.action.ReadValue<Vector2>();
+        _yaw += settings.LookX(delta.x);
+        float y = settings.LookY(delta.y);
+        switch (_currentMode)
+        {
+            case CameraViewMode.FPP:
+                _pitch = FppSettings.ClampPitch(_pitch - y);
+                break;
+            case CameraViewMode.TopView:
+                // Top View keeps its Inspector pitch and rotates around Y only.
+                break;
+            case CameraViewMode.TPP:
+                _pitch = TppSettings.ClampPitch(_pitch - y);
+                break;
+        }
+        transform.rotation = _initialBoxRotation * Quaternion.Euler(0f, _yaw, 0f);
+
+        if (Mouse.current == null) return;
+        float scroll = Mouse.current.scroll.ReadValue().y;
+        if (_currentMode == CameraViewMode.TopView && TopSettings)
+            _topZoom = TopSettings.ClampZoom(_topZoom + scroll * TopSettings.ZoomSpeed);
+        else if (_currentMode == CameraViewMode.TPP && TppSettings)
+            _thirdPersonZoom = TppSettings.ClampZoom(_thirdPersonZoom + scroll * TppSettings.ZoomSpeed);
+    }
+
+    private CameraSettingSO SettingsFor(CameraViewMode mode) => mode switch
+    {
+        CameraViewMode.FPP => FppSettings,
+        CameraViewMode.TopView => TopSettings,
+        _ => TppSettings
     };
 
-    private void Setup()
+    private Transform AnchorFor(CameraViewMode mode) => mode switch
     {
-        if (!_cameraBox) TryGetComponent(out _cameraBox);
+        CameraViewMode.FPP => _firstPersonViewCamera ? _firstPersonViewCamera.transform : null,
+        CameraViewMode.TopView => _topViewCamera ? _topViewCamera.transform : null,
+        _ => _thirdPersonViewCamera ? _thirdPersonViewCamera.transform : null
+    };
 
-        _cameras.Clear();
+    private Vector3 LookPoint => _lookAtTarget ? _lookAtTarget.position
+        : _followTarget ? _followTarget.position : transform.position;
 
-        if (_cameraBox != null)
-        {
-            Camera[] foundCameras = _cameraBox.GetComponentsInChildren<Camera>(true);
+    private static Quaternion LockTppPitch(Quaternion cameraRotation, Vector3 toPlayer)
+    {
+        if (toPlayer.sqrMagnitude <= 0.0001f)
+            return cameraRotation;
 
-            foreach (var cam in foundCameras)
-            {
-                if (_cameras.ContainsKey(cam)) continue;
-
-                _cameras.Add(cam, GetCameraType(cam));
-
-                // Capture the original offset only once
-                if (!_baseLocalPositions.ContainsKey(cam))
-                {
-                    _baseLocalPositions[cam] = cam.transform.localPosition;
-                }
-            }
-        }
-
-        if (_resetRotationOnAwake)
-        {
-            transform.rotation = Quaternion.identity;
-        }
+        float lookAtPitch = Quaternion.LookRotation(toPlayer, Vector3.up).eulerAngles.x;
+        Vector3 euler = cameraRotation.eulerAngles;
+        euler.x = lookAtPitch;
+        return Quaternion.Euler(euler);
     }
 
-    private void ApplyLook()
+    private bool TryGetDesiredPose(CameraViewMode mode, out Vector3 position, out Quaternion rotation)
     {
-        if (!Application.isPlaying || !_isFirstPerson || _isTopView || IsViewTransitioning || !_lookInput) return;
+        Transform anchor = AnchorFor(mode);
+        position = default;
+        rotation = default;
+        if (!anchor) return false;
 
-        Vector2 delta = _lookInput.action.ReadValue<Vector2>();
-
-        _lookYaw += delta.x * _lookSensitivity;
-        _lookPitch = Mathf.Clamp(_lookPitch - delta.y * _lookSensitivity, -_maxPitch, _maxPitch);
-    }
-
-    private void UpdateCamera()
-    {
-        if (!_cameraBox || !_followTarget || !_isFollowing) return;
-
-        _cameraBox.position = _followTarget.position;
-
-        if (_isTopView)
+        position = anchor.position;
+        rotation = anchor.rotation;
+        if (mode == CameraViewMode.FPP)
         {
-            Vector3 topPosition = _followTarget.position + Vector3.up * _topViewHeight;
-            Quaternion topRotation = Quaternion.Euler(90f, _cameraBox.eulerAngles.y, 0f);
-
-            foreach (var pair in _cameras)
-            {
-                if (!pair.Key) continue;
-                pair.Key.transform.position = topPosition;
-                pair.Key.transform.rotation = topRotation;
-            }
-
-            return;
+            rotation *= Quaternion.Euler(_pitch, 0f, 0f);
         }
-
-        Quaternion firstPersonRotation = LookYawRotation * Quaternion.Euler(_lookPitch, 0f, 0f);
-
-        foreach (var pair in _cameras)
+        else if (mode == CameraViewMode.TopView)
         {
-            Camera cam = pair.Key;
-            if (!cam) continue;
-
-            Transform camTransform = cam.transform;
-
-            if (_baseLocalPositions.TryGetValue(cam, out Vector3 baseLocal))
-            {
-                camTransform.localPosition = Vector3.LerpUnclamped(_firstPersonLocalOffset, baseLocal, _viewT);
-            }
-
-            Vector3 toTarget = _followTarget.position - camTransform.position;
-            Quaternion lookRotation = toTarget.sqrMagnitude > 1e-6f
-                ? Quaternion.LookRotation(toTarget)
-                : firstPersonRotation;
-
-            camTransform.rotation = Quaternion.SlerpUnclamped(firstPersonRotation, lookRotation, _viewT);
-        }
-    }
-
-    private void ToggleViewPerformed(InputAction.CallbackContext context) => ToggleView();
-
-    public void ToggleView()
-    {
-        if (!Application.isPlaying) return;
-        if (!CanToggleView()) return;
-
-        if (_isTopView)
-            SetTopView(false);
-
-        _isFirstPerson = !_isFirstPerson;
-
-        if (_viewRoutine != null) StopCoroutine(_viewRoutine);
-
-        if (_isFirstPerson)
-        {
-            if (_rotationRoutine != null) StopCoroutine(_rotationRoutine);
-            _rotationRoutine = null;
-            _rotationQueue.Clear();
-
-            _lookYaw = 0f;
-            _lookPitch = 0f;
-            _snapYawOnTransition = false;
+            position -= anchor.forward * _topZoom;
         }
         else
         {
-            Quaternion current = _cameraBox.rotation * Quaternion.Euler(0f, _lookYaw, 0f);
-            float snappedYaw = Mathf.Round(current.eulerAngles.y / 90f) * 90f;
-
-            _cameraBox.rotation = current;
-            _lookYaw = 0f;
-
-            _yawStartRotation = current;
-            _yawTargetRotation = Quaternion.Euler(0f, snappedYaw, 0f);
-            _snapYawOnTransition = true;
-
-            ApplyModelVisibility(false);
+            position -= anchor.forward * _thirdPersonZoom;
+            Vector3 pivot = LookPoint;
+            position = pivot + Quaternion.AngleAxis(_pitch, anchor.right) * (position - pivot);
+            Vector3 toPlayer = pivot - position;
+            rotation = LockTppPitch(rotation, toPlayer);
         }
-
-        _viewRoutine = StartCoroutine(ViewTransitionRoutine(_isFirstPerson ? 0f : 1f));
+        return true;
     }
 
-    public void SetTopView(bool enabled)
+    private Vector3 ResolveWallCollision(Vector3 desired, bool smoothReturn)
     {
-        if (!Application.isPlaying || !CanToggleView()) return;
+        ThirdPersonCameraSettingSO settings = TppSettings;
+        if (_currentMode != CameraViewMode.TPP || !settings || settings.WallMask.value == 0) return desired;
+        Vector3 pivot = LookPoint;
+        Vector3 offset = desired - pivot;
+        float distance = offset.magnitude;
+        if (distance < 0.0001f) return desired;
 
-        _isTopView = enabled;
-        if (enabled)
+        if (Physics.SphereCast(pivot, settings.CollisionRadius, offset / distance,
+            out RaycastHit hit, distance, settings.WallMask, QueryTriggerInteraction.Ignore))
         {
-            _isFirstPerson = false;
-            if (_viewRoutine != null) StopCoroutine(_viewRoutine);
-            _viewRoutine = null;
-            _viewT = 1f;
-            ApplyModelVisibility(false);
+            _collisionCompressed = true;
+            return pivot + offset / distance * Mathf.Max(0f, hit.distance - settings.WallClearance);
         }
-        else
+
+        if (smoothReturn && _collisionCompressed && _mainCamera)
         {
-            ApplyModelVisibility(false);
+            Vector3 restored = Vector3.Lerp(_mainCamera.transform.position, desired,
+                1f - Mathf.Exp(-settings.RestoreSpeed * Time.deltaTime));
+            if ((restored - desired).sqrMagnitude < 0.0001f) _collisionCompressed = false;
+            return restored;
         }
+        _collisionCompressed = false;
+        return desired;
     }
 
-    public void ToggleTopView()
+    private void PlaceMain(Vector3 position, Quaternion rotation, bool smoothReturn = false)
     {
-        SetTopView(!_isTopView);
-    }
-
-    public void SetTPP()
-    {
-        if (_isTopView)
+        if (!_mainCamera) return;
+        Vector3 requestedPosition = position;
+        position = ResolveWallCollision(position, smoothReturn);
+        if (_currentMode == CameraViewMode.TPP && (position - requestedPosition).sqrMagnitude > 0.0001f)
         {
-            _isTopView = false;
-            _viewT = 1f;
-            ApplyModelVisibility(false);
+            Vector3 toPlayer = LookPoint - position;
+            rotation = LockTppPitch(rotation, toPlayer);
         }
-
-        if (_isFirstPerson)
-            ToggleView();
+        _mainCamera.transform.SetPositionAndRotation(position, rotation);
     }
 
-    public void SetFPP()
+    private void SnapMainToCurrentView(bool smoothReturn = false)
     {
-        if (_isTopView)
+        if (TryGetDesiredPose(_currentMode, out Vector3 position, out Quaternion rotation))
+            PlaceMain(position, rotation, smoothReturn);
+    }
+
+    private void SelectFpp(InputAction.CallbackContext _) => SetFPP();
+    private void SelectTop(InputAction.CallbackContext _) => SetTopView(true);
+    private void SelectTpp(InputAction.CallbackContext _) => SetTPP();
+    private void CyclePerformed(InputAction.CallbackContext _) => CycleView();
+    private void TopMirrorStarted(InputAction.CallbackContext _) { _topHeld = true; RefreshMirror(); }
+    private void TopMirrorReleased(InputAction.CallbackContext _) { _topHeld = false; RefreshMirror(); }
+    private void BackMirrorStarted(InputAction.CallbackContext _) { _backHeld = true; RefreshMirror(); }
+    private void BackMirrorReleased(InputAction.CallbackContext _) { _backHeld = false; RefreshMirror(); }
+
+    private void RefreshMirror()
+    {
+        Camera desired = _topHeld ? _topMirrorViewCamera : _backHeld ? _backMirrorViewCamera : null;
+        if (desired == _activeMirrorCamera) return;
+        if (desired && _transitionRoutine != null && _animationMode == CameraAnimationMode.SkipAnimation)
+            CancelTransition();
+        _activeMirrorCamera = desired;
+        _stateMachine.ChangeState(desired ? _mirrorViewState : _gameViewState);
+    }
+
+    private void SetOutputCamera(Camera active)
+    {
+        if (_mainCamera) _mainCamera.enabled = _mainCamera == active;
+        if (_topMirrorViewCamera) _topMirrorViewCamera.enabled = _topMirrorViewCamera == active;
+        if (_backMirrorViewCamera) _backMirrorViewCamera.enabled = _backMirrorViewCamera == active;
+        DisableViewCamera(_firstPersonViewCamera);
+        DisableViewCamera(_topViewCamera);
+        DisableViewCamera(_thirdPersonViewCamera);
+    }
+
+    private static void DisableViewCamera(CameraViewAnchor anchor)
+    {
+        if (anchor && anchor.TryGetComponent(out Camera camera)) camera.enabled = false;
+    }
+
+    private bool CanChangeView() => Application.isPlaying
+        && _activeMirrorCamera == null
+        && (!_playerStatus || _playerStatus.GetIsIdle());
+
+    private void RequestView(CameraViewMode mode)
+    {
+        if (!CanChangeView() || mode == _currentMode || !AnchorFor(mode)) return;
+        CancelTransition();
+        _transitionRoutine = StartCoroutine(_animationMode == CameraAnimationMode.Animate
+            ? AnimateTo(mode) : FadeTo(mode));
+    }
+
+    private IEnumerator AnimateTo(CameraViewMode mode)
+    {
+        Vector3 startPosition = _mainCamera.transform.position;
+        Quaternion startRotation = _mainCamera.transform.rotation;
+        _currentMode = mode;
+        ApplyModelVisibility();
+        CameraSettingSO settings = SettingsFor(mode);
+        float duration = settings ? settings.TransitionDuration : 0.5f;
+        float elapsed = 0f;
+        while (elapsed < duration)
         {
-            _isTopView = false;
-            _viewT = 1f;
-            ApplyModelVisibility(false);
+            elapsed += Time.deltaTime;
+            float progress = settings ? settings.EvaluateTransition(elapsed / duration) : Mathf.Clamp01(elapsed / duration);
+            if (TryGetDesiredPose(mode, out Vector3 targetPosition, out Quaternion targetRotation))
+                PlaceMain(Vector3.LerpUnclamped(startPosition, targetPosition, progress),
+                    Quaternion.SlerpUnclamped(startRotation, targetRotation, progress));
+            yield return null;
         }
-
-        if (!_isFirstPerson)
-            ToggleView();
+        SnapMainToCurrentView();
+        _transitionRoutine = null;
     }
 
-    private void ApplyModelVisibility(bool firstPerson)
+    private IEnumerator FadeTo(CameraViewMode mode)
     {
+        if (_fadeAnimator && _fadeIn && _fadeOut)
+        {
+            _fadeAnimator.speed = _fadeSpeed;
+            _fadeAnimator.Play(_fadeIn.name, 0, 0f);
+            yield return new WaitForSecondsRealtime(_fadeIn.length / _fadeSpeed);
+        }
+        _currentMode = mode;
+        ApplyModelVisibility();
+        SnapMainToCurrentView();
+        if (_fadeAnimator && _fadeIn && _fadeOut)
+        {
+            _fadeAnimator.Play(_fadeOut.name, 0, 0f);
+            yield return new WaitForSecondsRealtime(_fadeOut.length / _fadeSpeed);
+        }
+        ClearFade();
+        _transitionRoutine = null;
+    }
+
+    private void CancelTransition()
+    {
+        if (_transitionRoutine != null) StopCoroutine(_transitionRoutine);
+        _transitionRoutine = null;
+        ClearFade();
+    }
+
+    private void ClearFade()
+    {
+        if (_fadeAnimator && _fadeAnimator.isActiveAndEnabled && _fadeAnimator.gameObject.activeInHierarchy)
+            _fadeAnimator.Play("Idel", 0, 0f);
+        if (_fadeImage)
+        {
+            Color color = _fadeImage.color;
+            color.a = 0f;
+            _fadeImage.color = color;
+        }
+    }
+
+    private void ApplyModelVisibility()
+    {
+        bool firstPerson = _currentMode == CameraViewMode.FPP;
         if (_playerModel) _playerModel.SetActive(!firstPerson);
         if (_firstPersonModel) _firstPersonModel.SetActive(firstPerson);
     }
 
-    private void ApplyCursorState()
+    public void CycleView() => RequestView(_currentMode switch
     {
-        if (!Application.isPlaying) return;
+        CameraViewMode.FPP => CameraViewMode.TopView,
+        CameraViewMode.TopView => CameraViewMode.TPP,
+        _ => CameraViewMode.FPP
+    });
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
-    private IEnumerator ViewTransitionRoutine(float target)
-    {
-        float start = _viewT;
-        float elapsed = 0f;
-
-        while (elapsed < _viewTransitionDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = _viewCurve.Evaluate(Mathf.Clamp01(elapsed / _viewTransitionDuration));
-            _viewT = Mathf.LerpUnclamped(start, target, t);
-
-            if (_snapYawOnTransition)
-            {
-                _cameraBox.rotation = Quaternion.SlerpUnclamped(_yawStartRotation, _yawTargetRotation, t);
-            }
-
-            yield return null;
-        }
-
-        _viewT = target;
-        _viewRoutine = null;
-
-        if (_snapYawOnTransition)
-        {
-            _cameraBox.rotation = _yawTargetRotation;
-            _snapYawOnTransition = false;
-        }
-
-        if (_isFirstPerson)
-        {
-            ApplyModelVisibility(true);
-            ApplyCursorState();
-        }
-    }
-
-    private void EnqueueRotation(float degrees)
-    {
-        if (_isFirstPerson || IsViewTransitioning || !_cameraBox) return;
-
-        if (_maxQueuedRotations > 0 && _rotationQueue.Count >= _maxQueuedRotations) return;
-
-        _rotationQueue.Enqueue(degrees);
-
-        _rotationRoutine ??= StartCoroutine(ProcessRotationQueue());
-    }
-
-    private bool CanToggleView()
-    {
-        if (!_playerStatus) return true;
-
-        return _playerStatus.GetIsIdle();
-    }
-
-    private IEnumerator ProcessRotationQueue()
-    {
-        while (_rotationQueue.Count > 0)
-        {
-            float degrees = _rotationQueue.Dequeue();
-            yield return RotateRoutine(degrees);
-        }
-
-        _rotationRoutine = null;
-    }
-
-    private IEnumerator RotateRoutine(float degrees)
-    {
-        Quaternion start = _cameraBox.rotation;
-        Quaternion target = Quaternion.Euler(0f, degrees, 0f) * start;
-
-        float elapsed = 0f;
-
-        while (elapsed < _rotateDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = _rotateCurve.Evaluate(Mathf.Clamp01(elapsed / _rotateDuration));
-            _cameraBox.rotation = Quaternion.SlerpUnclamped(start, target, t);
-            yield return null;
-        }
-
-        _cameraBox.rotation = target;
-    }
-
-    private void RotateCameraBoxQ(InputAction.CallbackContext context) => EnqueueRotation(90f);
-
-    private void RotateCameraBoxE(InputAction.CallbackContext context) => EnqueueRotation(-90f);
-
+    public void SetFPP() => RequestView(CameraViewMode.FPP);
+    public void SetTPP() => RequestView(CameraViewMode.TPP);
+    public void SetTopView(bool enabled) => RequestView(enabled ? CameraViewMode.TopView : CameraViewMode.TPP);
+    public void ToggleTopView() => SetTopView(_currentMode != CameraViewMode.TopView);
+    public void ToggleView() => CycleView();
     public void SetCameraFollow(bool state) => _isFollowing = state;
+
+    private sealed class GameViewState : BaseState<CameraController>
+    {
+        public override void OnEnter() => Context.SetOutputCamera(Context._mainCamera);
+        public override void OnUpdate() => Context.TickGameView();
+    }
+
+    private sealed class MirrorViewState : BaseState<CameraController>
+    {
+        public override void OnEnter() => Context.SetOutputCamera(Context._activeMirrorCamera);
+        public override void OnUpdate() => Context.TickGameView();
+    }
 }

@@ -84,8 +84,8 @@ public class PlayerAnimationController : LivingAnimationController
         _currentJumpClip = null;
         _jumpHeldAtEnd = false;
         _transitionEndTime = 0f;
-        _wasCrouching = _playerStatus.GetIsCrouching();
-        PlayState(ResolveState(), true);
+        _wasCrouching = false;
+        PlayState(LivingAnimState.Idle, true);
     }
 
     private void OnDisable()
@@ -109,11 +109,17 @@ public class PlayerAnimationController : LivingAnimationController
     private void OnLoadSceneEvent(LoadSceneEvent _)
     {
         _isLoadingScene = true;
-        ForceIdle();
+        if (_playerStatus && _playerStatus.GetIsDead())
+            PlayState(LivingAnimState.Death, true);
+        else
+            ForceIdle();
     }
 
     public void ForceIdle()
     {
+        if (_playerStatus && _playerStatus.GetIsDead())
+            return;
+
         PlayState(LivingAnimState.Idle, true);
     }
 

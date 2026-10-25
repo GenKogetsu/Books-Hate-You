@@ -91,7 +91,7 @@ public sealed class LibrarianMovementController : LivingMovementController
         ChangeState(new IdleState());
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
         base.OnEnable();
 
@@ -99,7 +99,7 @@ public sealed class LibrarianMovementController : LivingMovementController
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
         base.OnDisable();
 
@@ -230,7 +230,7 @@ public sealed class LibrarianMovementController : LivingMovementController
             return;
 
         _isDead = true;
-        _audioManager?.StopChase();
+        _audioManager?.StopAll();
         StopMovement();
         _currentStateName = "Dead";
     }

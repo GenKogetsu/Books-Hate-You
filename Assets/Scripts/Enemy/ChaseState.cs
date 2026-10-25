@@ -47,7 +47,8 @@ public sealed class ChaseState : EnemyState
         Controller.Agent.speed = Controller.Stats.MoveSpeed;
         Controller.NextDestinationUpdateTime = 0f;
         Controller.PlayRunAnimation();
-        Controller.AudioManager?.PlayChase();
+        Controller.AudioManager?.PlayRunSfx();
+        Controller.AudioManager?.PlayChaseBgm();
         UpdateDestination(_lastSeenPosition);
     }
 
@@ -131,7 +132,7 @@ public sealed class ChaseState : EnemyState
 
     public override void OnExit()
     {
-        Controller.AudioManager?.StopChase();
+        Controller.AudioManager?.StopAll();
         Controller.Agent.isStopped = true;
         Controller.Agent.ResetPath();
     }

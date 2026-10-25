@@ -4,7 +4,7 @@ public sealed class IdleState : EnemyState
 
     public override void OnEnter()
     {
-        Controller.AudioManager?.StopChase();
+        Controller.AudioManager?.StopAll();
         Controller.Agent.isStopped = true;
         Controller.Agent.ResetPath();
         Controller.Agent.speed = Controller.Stats.MoveSpeed;

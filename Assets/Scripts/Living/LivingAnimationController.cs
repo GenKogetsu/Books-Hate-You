@@ -26,10 +26,22 @@ public abstract class LivingAnimationController : MonoBehaviour
         if (!_animator || !clip)
             return;
 
-        _animator.SetFloat(SpeedMultiplierHash, 1f);
+        if (HasParameter(_animator, SpeedMultiplierHash, AnimatorControllerParameterType.Float))
+            _animator.SetFloat(SpeedMultiplierHash, 1f);
         _animator.CrossFade(
             clip.name,
             blend >= 0f ? blend : _transitionDuration);
+    }
+
+    private static bool HasParameter(Animator animator, int hash, AnimatorControllerParameterType type)
+    {
+        foreach (AnimatorControllerParameter parameter in animator.parameters)
+        {
+            if (parameter.nameHash == hash && parameter.type == type)
+                return true;
+        }
+
+        return false;
     }
 
     public virtual void PlayDeathAnimation() { }
