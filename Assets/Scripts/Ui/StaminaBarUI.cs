@@ -23,7 +23,7 @@ public sealed class StaminaBarUI : MonoBehaviour
         _restPosition = _rect.anchoredPosition;
         _image.raycastTarget = false;
         _image.enabled = false;
-        _playerStatus = FindFirstObjectByType<PlayerStatus>();
+        _playerStatus = FindAnyObjectByType<PlayerStatus>();
         if (_playerStatus)
             _lastDeniedVersion = _playerStatus.GetDeniedStaminaFeedbackVersion();
     }
@@ -32,7 +32,7 @@ public sealed class StaminaBarUI : MonoBehaviour
     {
         if (!_playerStatus)
         {
-            _playerStatus = FindFirstObjectByType<PlayerStatus>();
+            _playerStatus = FindAnyObjectByType<PlayerStatus>();
             if (!_playerStatus) return;
             _lastDeniedVersion = _playerStatus.GetDeniedStaminaFeedbackVersion();
         }

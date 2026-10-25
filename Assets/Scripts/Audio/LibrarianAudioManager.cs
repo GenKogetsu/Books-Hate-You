@@ -74,7 +74,7 @@ public sealed class LibrarianAudioManager : BaseAudioManager
             return;
         }
 
-        foreach (AudioSource source in FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (AudioSource source in FindObjectsByType<AudioSource>(FindObjectsInactive.Include))
         {
             if (!source || source.outputAudioMixerGroup != _levelBgmGroup)
                 continue;

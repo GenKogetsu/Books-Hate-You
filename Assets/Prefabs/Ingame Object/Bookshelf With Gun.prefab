@@ -4881,7 +4881,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.522, y: 0.12, z: 15.304}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.9208624, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6631988661973971014}
@@ -4915,8 +4915,8 @@ MonoBehaviour:
   _debugLog: 0
   _bookPrefab: {fileID: 5913596425806998074, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
   _throwForce: 10
-  _ammoRange: {x: 3, y: 8}
-  _cooldown: 2
+  _ammoRange: {x: 5, y: 8}
+  _cooldown: 1.5
 --- !u!1 &5196855601952197056
 GameObject:
   m_ObjectHideFlags: 0

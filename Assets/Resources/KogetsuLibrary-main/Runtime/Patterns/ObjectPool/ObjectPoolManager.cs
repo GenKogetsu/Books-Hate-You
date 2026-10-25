@@ -69,6 +69,23 @@ namespace Kogetsu.Library.DesignPatternCore
             return item.GetComponent<T>();
         }
 
+        public bool TryRelease(Component item)
+        {
+            if (item == null)
+                return false;
+
+            foreach (var entry in _poolDictionary)
+            {
+                if (!entry.Value.ContainsActive(item.transform))
+                    continue;
+
+                Release(entry.Key, item);
+                return true;
+            }
+
+            return false;
+        }
+
         #region Documentation - XML
         /// <summary>
         /// <para> Summary : </para>

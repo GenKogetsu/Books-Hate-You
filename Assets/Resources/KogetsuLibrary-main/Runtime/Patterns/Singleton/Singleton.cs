@@ -44,7 +44,7 @@ namespace Kogetsu.Library.DesignPatternCore
 
                 if (_instance != null) return _instance;
 
-                _instance = FindFirstObjectByType<T>();
+                _instance = FindAnyObjectByType<T>();
 
                 if (_instance == null)
                 {

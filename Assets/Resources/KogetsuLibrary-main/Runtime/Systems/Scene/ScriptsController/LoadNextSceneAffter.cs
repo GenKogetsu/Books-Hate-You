@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class LoadNextSceneAffter : MonoBehaviour
 {
-    [SerializeReference] private float LoadSceneAffter = 2f;
+    [SerializeField] private float LoadSceneAffter = 2f;
 
     private void Start()
     {

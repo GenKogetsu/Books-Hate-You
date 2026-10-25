@@ -2,6 +2,7 @@
 
 namespace Kogetsu.Library.Core
 {
+    [System.Serializable]
     public struct CameraSetting
     {
         [Required]

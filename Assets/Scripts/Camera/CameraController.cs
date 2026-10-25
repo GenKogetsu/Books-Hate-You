@@ -59,6 +59,7 @@ public sealed class CameraController : MonoBehaviour
     private bool _collisionCompressed;
     private Camera _activeMirrorCamera;
     private bool _isGameOver;
+    private bool _isLoadingScene;
 
     private FirstPersonCameraSettingSO FppSettings =>
         _firstPersonViewCamera ? _firstPersonViewCamera.Settings as FirstPersonCameraSettingSO : null;
@@ -114,10 +115,14 @@ public sealed class CameraController : MonoBehaviour
     {
         if (!Application.isPlaying) return;
         _isGameOver = false;
+        _isLoadingScene = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         if (EventBus.Instance)
+        {
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
+        }
         Subscribe(_firstPersonViewKey, SelectFpp);
         Subscribe(_topViewKey, SelectTop);
         Subscribe(_thirdPersonViewKey, SelectTpp);
@@ -134,7 +139,10 @@ public sealed class CameraController : MonoBehaviour
         Cursor.visible = true;
         if (!Application.isPlaying) return;
         if (EventBus.Instance)
+        {
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
+            EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
+        }
         Unsubscribe(_firstPersonViewKey, SelectFpp);
         Unsubscribe(_topViewKey, SelectTop);
         Unsubscribe(_thirdPersonViewKey, SelectTpp);
@@ -176,8 +184,30 @@ public sealed class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!Application.isPlaying || _isGameOver) return;
+        if (!Application.isPlaying || _isGameOver || _isLoadingScene) return;
         _stateMachine.Update();
+    }
+
+    private void OnLoadSceneEvent(LoadSceneEvent _)
+    {
+        _isLoadingScene = true;
+        DisableInputActions();
+        _topHeld = false;
+        _backHeld = false;
+        _activeMirrorCamera = null;
+        CancelTransition();
+        _stateMachine.ChangeState(null);
+    }
+
+    private void DisableInputActions()
+    {
+        Unsubscribe(_firstPersonViewKey, SelectFpp);
+        Unsubscribe(_topViewKey, SelectTop);
+        Unsubscribe(_thirdPersonViewKey, SelectTpp);
+        Unsubscribe(_toggleViewKey, CyclePerformed);
+        Unsubscribe(_holdTopCameraKey, TopMirrorStarted, TopMirrorReleased);
+        Unsubscribe(_holdBackCameraKey, BackMirrorStarted, BackMirrorReleased);
+        if (_lookInput) _lookInput.action.Disable();
     }
 
     private void OnGameover(GameoverEvent _)
@@ -338,6 +368,8 @@ public sealed class CameraController : MonoBehaviour
 
     private void RefreshMirror()
     {
+        if (_isLoadingScene) return;
+
         Camera desired = _topHeld ? _topMirrorViewCamera : _backHeld ? _backMirrorViewCamera : null;
         if (desired == _activeMirrorCamera) return;
         if (desired && _transitionRoutine != null && _animationMode == CameraAnimationMode.SkipAnimation)
@@ -361,7 +393,7 @@ public sealed class CameraController : MonoBehaviour
         if (anchor && anchor.TryGetComponent(out Camera camera)) camera.enabled = false;
     }
 
-    private bool CanChangeView() => Application.isPlaying
+    private bool CanChangeView() => Application.isPlaying && !_isLoadingScene
         && _activeMirrorCamera == null
         && (!_playerStatus || _playerStatus.GetIsIdle());
 
@@ -399,7 +431,7 @@ public sealed class CameraController : MonoBehaviour
 
     private IEnumerator FadeTo(CameraViewMode mode)
     {
-        if (_fadeAnimator && _fadeIn && _fadeOut)
+        if (CanPlayFadeAnimation())
         {
             _fadeAnimator.speed = _fadeSpeed;
             _fadeAnimator.Play(_fadeIn.name, 0, 0f);
@@ -408,7 +440,7 @@ public sealed class CameraController : MonoBehaviour
         _currentMode = mode;
         SnapMainToCurrentView();
         ApplyModelVisibility();
-        if (_fadeAnimator && _fadeIn && _fadeOut)
+        if (CanPlayFadeAnimation())
         {
             _fadeAnimator.Play(_fadeOut.name, 0, 0f);
             yield return new WaitForSecondsRealtime(_fadeOut.length / _fadeSpeed);
@@ -426,7 +458,7 @@ public sealed class CameraController : MonoBehaviour
 
     private void ClearFade()
     {
-        if (_fadeAnimator && _fadeAnimator.isActiveAndEnabled && _fadeAnimator.gameObject.activeInHierarchy)
+        if (CanPlayFadeAnimation() && _fadeAnimator.isActiveAndEnabled && _fadeAnimator.gameObject.activeInHierarchy)
             _fadeAnimator.Play("Idel", 0, 0f);
         if (_fadeImage)
         {
@@ -434,6 +466,14 @@ public sealed class CameraController : MonoBehaviour
             color.a = 0f;
             _fadeImage.color = color;
         }
+    }
+
+    private bool CanPlayFadeAnimation()
+    {
+        return _fadeAnimator &&
+            _fadeAnimator.runtimeAnimatorController &&
+            _fadeIn &&
+            _fadeOut;
     }
 
     private void ApplyModelVisibility()

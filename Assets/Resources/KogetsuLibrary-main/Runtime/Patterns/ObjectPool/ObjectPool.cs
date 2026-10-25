@@ -35,6 +35,8 @@ namespace Kogetsu.Library.DesignPatternCore
         #endregion
         public int InactiveCount => _queue.Count;
 
+        public bool ContainsActive(T item) => item != null && _activeItems.Contains(item);
+
         #region Documentation - XML
         /// <summary>
         /// <para> Summary : </para>

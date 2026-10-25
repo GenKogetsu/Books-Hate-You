@@ -1,4 +1,5 @@
 using Kogetsu.Library.Core;
+using Kogetsu.Library.DesignPatternCore;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -47,8 +48,14 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
             return;
         }
 
+        if (!EventBus.Instance)
+        {
+            Debug.LogError("[FinishLineSceneLoader] ไม่พบ EventBus ใน Scene", this);
+            return;
+        }
+
         _hasLoaded = true;
         _playerSceneWarpState.SetPendingTransform(_destinationPlayerTransform);
-        BasicSceneEffectController.Instance.LoadScene(_sceneBuildIndex);
+        EventBus.Instance.Publish(new LoadSceneEvent(SceneIndex: _sceneBuildIndex));
     }
 }

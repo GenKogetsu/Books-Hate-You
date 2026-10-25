@@ -45,6 +45,7 @@ public class PlayerAnimationController : LivingAnimationController
     private bool _wasCrouching;
     private float _transitionEndTime;
     private bool _isLoadingScene;
+    private bool _hasGameOver;
     private AnimationClip _currentJumpClip;
     private bool _jumpHeldAtEnd;
 
@@ -74,24 +75,42 @@ public class PlayerAnimationController : LivingAnimationController
     private void OnEnable()
     {
         if (EventBus.Instance)
+        {
             EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
+            EventBus.Instance.Subscribe<GameoverEvent>(OnGameoverEvent);
+        }
 
         _isLoadingScene = false;
 
         if (!_playerStatus) return;
 
+        _hasGameOver = _playerStatus.GetIsDead();
         _currentState = LivingAnimState.None;
         _currentJumpClip = null;
         _jumpHeldAtEnd = false;
         _transitionEndTime = 0f;
         _wasCrouching = false;
-        PlayState(LivingAnimState.Idle, true);
+        if (_animator)
+            _animator.speed = 1f;
+
+        if (_hasGameOver)
+        {
+            PlayState(LivingAnimState.Death, true);
+            FreezeCurrentAnimation();
+        }
+        else
+        {
+            PlayState(LivingAnimState.Idle, true);
+        }
     }
 
     private void OnDisable()
     {
         if (EventBus.Instance)
+        {
             EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
+            EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameoverEvent);
+        }
     }
 
     private void Update()
@@ -109,8 +128,31 @@ public class PlayerAnimationController : LivingAnimationController
     private void OnLoadSceneEvent(LoadSceneEvent _)
     {
         _isLoadingScene = true;
-        // A scene reload starts a fresh round; do not carry the previous death pose into it.
+
+        if (_hasGameOver || (_playerStatus && _playerStatus.GetIsDead()))
+        {
+            if (_currentState != LivingAnimState.Death)
+                PlayState(LivingAnimState.Death, true);
+
+            FreezeCurrentAnimation();
+            return;
+        }
+
         PlayState(LivingAnimState.Idle, true);
+    }
+
+    private void OnGameoverEvent(GameoverEvent _)
+    {
+        _hasGameOver = true;
+    }
+
+    private void FreezeCurrentAnimation()
+    {
+        if (!_animator)
+            return;
+
+        _animator.Update(0f);
+        _animator.speed = 0f;
     }
 
     public void ForceIdle()

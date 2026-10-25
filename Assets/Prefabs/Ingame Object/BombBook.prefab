@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &7924720759675426631
 Transform:
@@ -110,7 +110,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &2412999773877045347
 Transform:
@@ -344,7 +344,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1853350894723706831, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 2147483647
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1966649346497238023, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_Layer
@@ -352,7 +352,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1966649346497238023, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 2147483647
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4026405738751597475, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_Layer
@@ -360,7 +360,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4026405738751597475, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 2147483647
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4427360681522763372, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_Name
@@ -372,7 +372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4427360681522763372, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 2147483647
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6132068809420943443, guid: cfa7a42c466ea104f9181f622fd4d6c1, type: 3}
       propertyPath: m_LocalScale.x

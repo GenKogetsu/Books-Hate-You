@@ -198,24 +198,24 @@ public class KillOnHit : MonoBehaviour
         if (_returnToPoolDelay > 0f)
             yield return new WaitForSeconds(_returnToPoolDelay);
 
-        string key = this.gameObject.name;
-
-        if (ObjectPoolManager.Instance)
+        ObjectPoolManager poolManager = ObjectPoolManager.Instance;
+        if (poolManager && poolManager.TryRelease(this))
         {
             if (_debugLog)
             {
                 DebugLog.Log(DebugCategory.ObjectPool,
-                    $"คืน {name} เข้า Pool: {key}", this, _debugLog);
+                    $"คืน {name} เข้า Pool", this, _debugLog);
             }
-
-            ObjectPoolManager.Instance.Release(key, this);
         }
         else
         {
-            Debug.LogError(
-                "[KillOnHit] ไม่พบ ObjectPoolManager " +
-                "จึงไม่สามารถคืน Object เข้า Pool ได้",
-                this);
+            if (_debugLog)
+            {
+                DebugLog.Log(DebugCategory.ObjectPool,
+                    $"{name} ไม่ได้มาจาก Pool จึงทำลาย Object", this, _debugLog);
+            }
+
+            Destroy(gameObject);
         }
 
         _returnCoroutine = null;

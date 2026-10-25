@@ -2979,7 +2979,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c6081eb4e49944746bbee5407fb2f50c, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaminaBarUI
   _fullWidth: 420
   _barHeight: 18
@@ -2994,7 +2994,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.06, g: 0.83, b: 1, a: 1}
@@ -4798,6 +4798,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1336480185}
+    - target: {fileID: 3298237278474201048, guid: b34791be28d72d049909df7e1d996e94, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3573772354188173953, guid: b34791be28d72d049909df7e1d996e94, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -4860,7 +4864,7 @@ PrefabInstance:
       objectReference: {fileID: 57316019}
     - target: {fileID: 4864838129422575965, guid: b34791be28d72d049909df7e1d996e94, type: 3}
       propertyPath: m_VersionIndex
-      value: 5171
+      value: 5222
       objectReference: {fileID: 0}
     - target: {fileID: 4875001053657683723, guid: b34791be28d72d049909df7e1d996e94, type: 3}
       propertyPath: m_Mesh
@@ -5087,7 +5091,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 381228609}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4077830647823065761, guid: b34791be28d72d049909df7e1d996e94, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b34791be28d72d049909df7e1d996e94, type: 3}

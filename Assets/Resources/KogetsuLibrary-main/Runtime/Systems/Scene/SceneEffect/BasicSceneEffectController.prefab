@@ -212,7 +212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: KogetsuLibrary::Kogetsu.Library.Core.BasicSceneEffectController
   UseDontDestroyOnLoad: 1
   SceneEffectAnimator: {fileID: 2297612357713152904}
-  AnimatorSpeed: 1
+  AnimatorSpeed: 2
   LoadSceneIn: {fileID: 7400000, guid: ee2f5a6d80fe8964897b2cb2139ca9ab, type: 2}
   LoadSceneOut: {fileID: 7400000, guid: 692945290e0795c4d981e6f9c662a29d, type: 2}
   LoadSceneAudioSource: {fileID: 3752548740051479094}
