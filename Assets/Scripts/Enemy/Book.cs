@@ -16,11 +16,23 @@ public class Book : MonoBehaviour
             TryGetComponent(out _rigidbody);
     }
 
+    private bool _countsAsPlayerBook;
+    private bool _hasKilledLibrarian;
+
+    private void OnEnable()
+    {
+        _countsAsPlayerBook = false;
+        _hasKilledLibrarian = false;
+    }
+
     public void Launch(
         Vector3 direction,
         float force,
-        Collider[] ignoredColliders)
+        Collider[] ignoredColliders,
+        bool countsAsPlayerBook = false)
     {
+        _countsAsPlayerBook = countsAsPlayerBook;
+        _hasKilledLibrarian = false;
         if (!_rigidbody)
             TryGetComponent(out _rigidbody);
 
@@ -61,5 +73,14 @@ public class Book : MonoBehaviour
         _rigidbody.AddForce(
             direction.normalized * force,
             ForceMode.Impulse);
+    }
+
+    public void RecordLibrarianKillIfPlayerBook()
+    {
+        if (!_countsAsPlayerBook || _hasKilledLibrarian)
+            return;
+
+        _hasKilledLibrarian = true;
+        PlayerRunSession.RecordLibrarianKilledWithBook();
     }
 }

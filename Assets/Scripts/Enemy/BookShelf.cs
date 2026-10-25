@@ -391,7 +391,8 @@ public class BookShelf : MonoBehaviour
         book.Launch(
             direction,
             _throwForce,
-            _shelfColliders);
+            _shelfColliders,
+            countsAsPlayerBook: true);
 
         _ammoLeft--;
         _nextShotTime = Time.time + _cooldown;

@@ -32,6 +32,8 @@ public sealed class InventoryItemPickup : MonoBehaviour, IInteractable
             return;
 
         inventory.AddItem(_item, _amount);
+        if (_item == InventoryItemType.Key)
+            PlayerRunSession.RecordKeyCollected(_amount);
         PlayerRunSession.MarkPickupCollected(_pickupId);
         gameObject.SetActive(false);
     }

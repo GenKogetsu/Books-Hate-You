@@ -68,7 +68,11 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
         if (!_animator || !_tiggerClip)
             CurrentState = DoorState.Open;
 
-        if (_publishesGameClearOnOpen && EventBus.Instance)
-            EventBus.Instance.Publish(new GameClearEvent());
+        if (_publishesGameClearOnOpen)
+        {
+            PlayerRunSession.RecordWin();
+            if (EventBus.Instance)
+                EventBus.Instance.Publish(new GameClearEvent());
+        }
     }
 }

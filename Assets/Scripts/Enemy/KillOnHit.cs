@@ -134,6 +134,12 @@ public class KillOnHit : MonoBehaviour
 
         livingHpController.Kill();
 
+        if (livingHpController is EnemyHpController enemyHp && enemyHp.IsDead &&
+            playerRoot.CompareTag("Librarian") && TryGetComponent(out Book book))
+        {
+            book.RecordLibrarianKillIfPlayerBook();
+        }
+
         PlayHitEffect();
 
         if (_returnToPoolOnHit)

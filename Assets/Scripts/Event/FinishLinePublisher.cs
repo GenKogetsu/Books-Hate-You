@@ -23,6 +23,7 @@ public sealed class FinishLinePublisher : MonoBehaviour
             return;
 
         _hasPublished = true;
+        PlayerRunSession.RecordWin();
         if (EventBus.Instance)
             EventBus.Instance.Publish(new GameClearEvent());
     }

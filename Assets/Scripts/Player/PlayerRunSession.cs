@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -7,12 +8,72 @@ using UnityEngine;
 /// </summary>
 public static class PlayerRunSession
 {
+    public const string WinAchievementId = "win_game";
+    public const string BookKillAchievementId = "kill_librarian_with_book";
+    public const string AllKeysAchievementId = "collect_all_keys";
+
     private static readonly HashSet<string> CollectedPickupIds = new();
+    private static int _deathCount;
+    private static int _collectedKeyCount;
+    private static int _librariansKilledWithBooks;
+    private static bool _hasWon;
+    private static bool _hasCollectedAllKeys;
+
+    public static int DeathCount => _deathCount;
+    public static event Action<int> DeathCountChanged;
+    public static event Action<string> AchievementUnlocked;
+    public static bool HasWon => _hasWon;
+    public static bool HasKilledLibrarianWithBook => _librariansKilledWithBooks > 0;
+    public static bool HasCollectedAllKeys => _hasCollectedAllKeys;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetForNewPlaySession()
     {
         CollectedPickupIds.Clear();
+        _deathCount = 0;
+        DeathCountChanged = null;
+        _collectedKeyCount = 0;
+        _librariansKilledWithBooks = 0;
+        _hasWon = false;
+        _hasCollectedAllKeys = false;
+        AchievementUnlocked = null;
+    }
+
+    public static void RecordWin()
+    {
+        if (_hasWon)
+            return;
+
+        _hasWon = true;
+        AchievementUnlocked?.Invoke(WinAchievementId);
+    }
+
+    public static void RecordLibrarianKilledWithBook()
+    {
+        if (_librariansKilledWithBooks > 0)
+            return;
+
+        _librariansKilledWithBooks = 1;
+        AchievementUnlocked?.Invoke(BookKillAchievementId);
+    }
+
+    public static void RecordKeyCollected(int amount)
+    {
+        if (amount <= 0)
+            return;
+
+        _collectedKeyCount = Mathf.Min(5, _collectedKeyCount + amount);
+        if (_collectedKeyCount >= 5 && !_hasCollectedAllKeys)
+        {
+            _hasCollectedAllKeys = true;
+            AchievementUnlocked?.Invoke(AllKeysAchievementId);
+        }
+    }
+
+    public static void RecordDeath()
+    {
+        _deathCount++;
+        DeathCountChanged?.Invoke(_deathCount);
     }
 
     public static bool IsPickupCollected(string pickupId)
@@ -29,6 +90,7 @@ public static class PlayerRunSession
     public static void ResetRun()
     {
         CollectedPickupIds.Clear();
+        _collectedKeyCount = 0;
 
         foreach (PlayerInventoryData inventory in Resources.FindObjectsOfTypeAll<PlayerInventoryData>())
         {
