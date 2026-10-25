@@ -185,6 +185,8 @@ public class PlayerMovementController : LivingMovementController
 
     protected override void UpdateMovement()
     {
+        if (_stateMachine == null || _stateMachine.CurrentState == null)
+            ChangeState(new PlayerIdleState());
         _stateMachine?.Update();
     }
 
@@ -248,6 +250,11 @@ public class PlayerMovementController : LivingMovementController
     {
         if (_isPlayerInputLocked) return;
         if (!_playerStatus.GetCanJumpNow()) return;
+        if (!_playerStatus.CanAffordJump())
+        {
+            _playerStatus.SignalDeniedStaminaAction();
+            return;
+        }
 
         _jumpPrepareTimer = _playerStatus.GetJumpPrepareDuration();
         _playerStatus.SetIsPreparingJump(true);
@@ -257,6 +264,8 @@ public class PlayerMovementController : LivingMovementController
     {
         if (_isPlayerInputLocked) return;
         _playerStatus.SetIsRunInputHeld(true);
+        if (_playerStatus.GetIsSprintLocked())
+            _playerStatus.SignalDeniedStaminaAction();
     }
 
     private void OnRunCanceled(InputAction.CallbackContext context)
@@ -314,7 +323,8 @@ public class PlayerMovementController : LivingMovementController
     private void UpdateMoveStates()
     {
         bool isMoving = !_playerStatus.GetIsMovementLocked() && _playerStatus.GetMoveInput().sqrMagnitude > MoveThreshold;
-        bool isRunning = isMoving && _playerStatus.GetIsRunInputHeld();
+        bool wantsToSprint = isMoving && _playerStatus.GetIsRunInputHeld();
+        bool isRunning = _playerStatus.TickSprintStamina(wantsToSprint, Time.deltaTime);
 
         _playerStatus.SetIsMoving(isMoving);
         _playerStatus.SetIsRunning(isRunning);
@@ -421,6 +431,13 @@ public class PlayerMovementController : LivingMovementController
 
     private void LaunchJump()
     {
+        if (!_playerStatus.TrySpendJumpStamina())
+        {
+            _playerStatus.SetIsPreparingJump(false);
+            _playerStatus.SignalDeniedStaminaAction();
+            return;
+        }
+
         Vector3 velocity = _playerStatus.GetVelocity();
         velocity.y = Mathf.Sqrt(_playerStatus.GetJumpHeight() * -2f * _playerStatus.GetGravity());
         _playerStatus.SetVelocity(velocity);

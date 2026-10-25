@@ -22,6 +22,21 @@ public class PlayerStatus : MonoBehaviour
     [SerializeField] private float _maxHp = 100f;
     [SerializeField, ReadOnly] private float _currentHp;
 
+    [Header("Stamina")]
+    [SerializeField, Min(1f)] private float _maxStamina = 100f;
+
+    [Header("Stamina Costs")]
+    [SerializeField, Min(0f)] private float _sprintDrainPerSecond = 20f;
+    [SerializeField, Min(0f)] private float _jumpStaminaCost = 20f;
+
+    [Header("Stamina Recovery")]
+    [SerializeField, Min(0f)] private float _staminaRecoveryPerSecond = 18f;
+    [SerializeField, Min(0f)] private float _recoveryDelay = 1.2f;
+    [SerializeField, ReadOnly] private float _currentStamina;
+    [SerializeField, ReadOnly] private bool _sprintLocked;
+    private float _recoveryDelayRemaining;
+    private int _deniedStaminaFeedbackVersion;
+
     [Header("Movement (Runtime)")]
     [SerializeField, ReadOnly] private Vector2 _moveInput;
     [SerializeField, ReadOnly] private Vector3 _velocity;
@@ -52,6 +67,60 @@ public class PlayerStatus : MonoBehaviour
     {
         _currentHp = Mathf.Clamp(_startHp, 0f, _maxHp);
         _isAlive = _currentHp > 0f;
+        _currentStamina = Mathf.Max(1f, _maxStamina);
+    }
+
+    #endregion
+
+    #region Stamina
+
+    public float GetStaminaFraction() => _currentStamina / Mathf.Max(1f, _maxStamina);
+    public bool GetIsSprintLocked() => _sprintLocked;
+    public int GetDeniedStaminaFeedbackVersion() => _deniedStaminaFeedbackVersion;
+    public float GetSprintDrainPerSecond() => _sprintDrainPerSecond;
+    public float GetJumpStaminaCost() => _jumpStaminaCost;
+    public bool CanAffordJump() => !_sprintLocked && _currentStamina >= _jumpStaminaCost;
+
+    public void SignalDeniedStaminaAction() => _deniedStaminaFeedbackVersion++;
+
+    public bool TrySpendJumpStamina()
+    {
+        if (!CanAffordJump()) return false;
+        if (_jumpStaminaCost <= 0f) return true;
+
+        _currentStamina = Mathf.Max(0f, _currentStamina - _jumpStaminaCost);
+        _recoveryDelayRemaining = _recoveryDelay;
+        if (_currentStamina <= 0f)
+            _sprintLocked = true;
+        return true;
+    }
+
+    // Called once per movement tick, before movement speed and animation are evaluated.
+    public bool TickSprintStamina(bool wantsToSprint, float deltaTime)
+    {
+        if (wantsToSprint && !_sprintLocked && _currentStamina > 0f)
+        {
+            _currentStamina = Mathf.Max(0f, _currentStamina - _sprintDrainPerSecond * deltaTime);
+            _recoveryDelayRemaining = _recoveryDelay;
+            if (_currentStamina <= 0f)
+            {
+                _sprintLocked = true;
+                SignalDeniedStaminaAction();
+                return false;
+            }
+            return true;
+        }
+
+        if (_recoveryDelayRemaining > 0f)
+            _recoveryDelayRemaining = Mathf.Max(0f, _recoveryDelayRemaining - deltaTime);
+        else
+            _currentStamina = Mathf.Min(Mathf.Max(1f, _maxStamina),
+                _currentStamina + _staminaRecoveryPerSecond * deltaTime);
+
+        if (_sprintLocked && _currentStamina >= Mathf.Max(1f, _maxStamina))
+            _sprintLocked = false;
+
+        return false;
     }
 
     #endregion

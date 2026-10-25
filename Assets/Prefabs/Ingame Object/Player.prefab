@@ -368,6 +368,13 @@ MonoBehaviour:
   _startHp: 100
   _maxHp: 100
   _currentHp: 0
+  _maxStamina: 100
+  _sprintDrainPerSecond: 15
+  _jumpStaminaCost: 15
+  _staminaRecoveryPerSecond: 25
+  _recoveryDelay: 1.2
+  _currentStamina: 0
+  _sprintLocked: 0
   _moveInput: {x: 0, y: 0}
   _velocity: {x: 0, y: 0, z: 0}
   _isGrounded: 0

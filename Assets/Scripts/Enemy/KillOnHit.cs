@@ -43,11 +43,6 @@ public class KillOnHit : MonoBehaviour
         if (_livingMask.value == 0)
             _livingMask = LayerMask.GetMask("Living");
 
-        if (!_model)
-            Debug.LogWarning(
-                "[KillOnHit] ยังไม่ได้กำหนด _model",
-                this);
-
         if (_effectOnHit)
         {
             _effectOnHit.Stop(
