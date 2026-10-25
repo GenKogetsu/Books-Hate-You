@@ -89,6 +89,7 @@ public sealed class EnemyHpController : LivingHpController
             _animationController.PlayDeathAnimation();
 
         PlayDeathSound();
+        PlayerRunSession.NotifyFloorEnemyDefeated(this);
 
     }
 }

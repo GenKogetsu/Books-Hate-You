@@ -5,7 +5,7 @@ public sealed class DeathCountUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text _countText;
     [SerializeField] private string _format = "Deaths: {0}";
-    [SerializeField, Min(0.01f)] private float _blinkInterval = 0.14f;
+    [SerializeField, Min(0.1f)] private float _blinkCycleDuration = 1f;
 
     private CanvasGroup _canvasGroup;
     private Coroutine _blinkRoutine;
@@ -57,15 +57,29 @@ public sealed class DeathCountUI : MonoBehaviour
 
     private System.Collections.IEnumerator BlinkThreeTimes()
     {
+        float halfCycle = _blinkCycleDuration * 0.5f;
         for (int blink = 0; blink < 3; blink++)
         {
-            _canvasGroup.alpha = 0f;
-            yield return new WaitForSecondsRealtime(_blinkInterval);
-            _canvasGroup.alpha = 1f;
-            yield return new WaitForSecondsRealtime(_blinkInterval);
+            yield return FadeTo(0f, halfCycle);
+            yield return FadeTo(1f, halfCycle);
         }
 
         _canvasGroup.alpha = 1f;
         _blinkRoutine = null;
+    }
+
+    private System.Collections.IEnumerator FadeTo(float targetAlpha, float duration)
+    {
+        float startAlpha = _canvasGroup.alpha;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            _canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, Mathf.Clamp01(elapsed / duration));
+            yield return null;
+        }
+
+        _canvasGroup.alpha = targetAlpha;
     }
 }

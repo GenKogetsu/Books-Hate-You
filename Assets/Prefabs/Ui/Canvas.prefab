@@ -2514,6 +2514,7 @@ GameObject:
   - component: {fileID: 9003935082597467626}
   - component: {fileID: 8340822676788027998}
   - component: {fileID: 8099976329102859850}
+  - component: {fileID: 6286294854749430452}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2642,6 +2643,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4c0712c5a61d55144885e2aa8b9d2805, type: 2}
   - {fileID: 11400000, guid: 0bc4093aebd9bc04f944afc3bfd7f9f3, type: 2}
   - {fileID: 11400000, guid: 0a5209bd6fb147440821bc26004f9998, type: 2}
+  - {fileID: 11400000, guid: 0e757a3fa901d624b9d9876f704abd7b, type: 2}
+  - {fileID: 11400000, guid: 6d04db3365ed8af42a310f1fe18b166b, type: 2}
   _toast: {fileID: 6857972055813677406}
   _canvasGroup: {fileID: 8349144434480271811}
   _icon: {fileID: 200665307802101372}
@@ -2651,6 +2654,19 @@ MonoBehaviour:
   _description: {fileID: 2896168661940106243}
   _slideDuration: 0.45
   _displayDuration: 5
+--- !u!114 &6286294854749430452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812666973733859379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86c96fe100144704aeebff58dc3a47f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorEnemyClearTracker
+  _totalFloorEnemies: 8
 --- !u!1 &7813998091892192134
 GameObject:
   m_ObjectHideFlags: 0
