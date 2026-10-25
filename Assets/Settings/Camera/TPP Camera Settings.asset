@@ -44,7 +44,7 @@ MonoBehaviour:
   _maxZoomOffset: 5
   _zoomSpeed: 0.02
   _maxLookDown: 20
-  _maxLookUp: 70
+  _maxLookUp: 89
   _wallMask:
     serializedVersion: 2
     m_Bits: 7424

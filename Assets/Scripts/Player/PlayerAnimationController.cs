@@ -109,10 +109,8 @@ public class PlayerAnimationController : LivingAnimationController
     private void OnLoadSceneEvent(LoadSceneEvent _)
     {
         _isLoadingScene = true;
-        if (_playerStatus && _playerStatus.GetIsDead())
-            PlayState(LivingAnimState.Death, true);
-        else
-            ForceIdle();
+        // A scene reload starts a fresh round; do not carry the previous death pose into it.
+        PlayState(LivingAnimState.Idle, true);
     }
 
     public void ForceIdle()

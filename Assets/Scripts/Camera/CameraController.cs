@@ -58,6 +58,7 @@ public sealed class CameraController : MonoBehaviour
     private bool _backHeld;
     private bool _collisionCompressed;
     private Camera _activeMirrorCamera;
+    private bool _isGameOver;
 
     private FirstPersonCameraSettingSO FppSettings =>
         _firstPersonViewCamera ? _firstPersonViewCamera.Settings as FirstPersonCameraSettingSO : null;
@@ -112,8 +113,11 @@ public sealed class CameraController : MonoBehaviour
     private void OnEnable()
     {
         if (!Application.isPlaying) return;
+        _isGameOver = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        if (EventBus.Instance)
+            EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
         Subscribe(_firstPersonViewKey, SelectFpp);
         Subscribe(_topViewKey, SelectTop);
         Subscribe(_thirdPersonViewKey, SelectTpp);
@@ -129,6 +133,8 @@ public sealed class CameraController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         if (!Application.isPlaying) return;
+        if (EventBus.Instance)
+            EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
         Unsubscribe(_firstPersonViewKey, SelectFpp);
         Unsubscribe(_topViewKey, SelectTop);
         Unsubscribe(_thirdPersonViewKey, SelectTpp);
@@ -170,8 +176,17 @@ public sealed class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!Application.isPlaying) return;
+        if (!Application.isPlaying || _isGameOver) return;
         _stateMachine.Update();
+    }
+
+    private void OnGameover(GameoverEvent _)
+    {
+        _isGameOver = true;
+        CancelTransition();
+        _stateMachine.ChangeState(null);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void TickGameView()
@@ -354,6 +369,8 @@ public sealed class CameraController : MonoBehaviour
     {
         if (!CanChangeView() || mode == _currentMode || !AnchorFor(mode)) return;
         CancelTransition();
+        if (mode != CameraViewMode.FPP)
+            SetModelVisibility(false);
         _transitionRoutine = StartCoroutine(_animationMode == CameraAnimationMode.Animate
             ? AnimateTo(mode) : FadeTo(mode));
     }
@@ -363,7 +380,6 @@ public sealed class CameraController : MonoBehaviour
         Vector3 startPosition = _mainCamera.transform.position;
         Quaternion startRotation = _mainCamera.transform.rotation;
         _currentMode = mode;
-        ApplyModelVisibility();
         CameraSettingSO settings = SettingsFor(mode);
         float duration = settings ? settings.TransitionDuration : 0.5f;
         float elapsed = 0f;
@@ -377,6 +393,7 @@ public sealed class CameraController : MonoBehaviour
             yield return null;
         }
         SnapMainToCurrentView();
+        ApplyModelVisibility();
         _transitionRoutine = null;
     }
 
@@ -389,8 +406,8 @@ public sealed class CameraController : MonoBehaviour
             yield return new WaitForSecondsRealtime(_fadeIn.length / _fadeSpeed);
         }
         _currentMode = mode;
-        ApplyModelVisibility();
         SnapMainToCurrentView();
+        ApplyModelVisibility();
         if (_fadeAnimator && _fadeIn && _fadeOut)
         {
             _fadeAnimator.Play(_fadeOut.name, 0, 0f);
@@ -421,7 +438,11 @@ public sealed class CameraController : MonoBehaviour
 
     private void ApplyModelVisibility()
     {
-        bool firstPerson = _currentMode == CameraViewMode.FPP;
+        SetModelVisibility(_currentMode == CameraViewMode.FPP);
+    }
+
+    private void SetModelVisibility(bool firstPerson)
+    {
         if (_playerModel) _playerModel.SetActive(!firstPerson);
         if (_firstPersonModel) _firstPersonModel.SetActive(firstPerson);
     }
