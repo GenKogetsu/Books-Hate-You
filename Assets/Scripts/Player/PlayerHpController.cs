@@ -46,6 +46,8 @@ public class PlayerHpController : LivingHpController
 
     private void PublishGameover()
     {
+        PlayerRunSession.ResetRun();
+
         if (!EventBus.Instance) return;
 
         EventBus.Instance.Publish(new GameoverEvent());

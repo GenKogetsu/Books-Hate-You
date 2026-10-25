@@ -568,6 +568,7 @@ GameObject:
   - component: {fileID: 7356157592914112318}
   - component: {fileID: 5917259515806902343}
   - component: {fileID: 8045806049683159789}
+  - component: {fileID: 3491782346183357102}
   m_Layer: 5
   m_Name: RestartButton
   m_TagString: Untagged
@@ -701,6 +702,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd4727686dbd6c841bfbf676b8530c05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: KogetsuLibrary::LoadPublisher
+--- !u!114 &3491782346183357102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5822576501841375941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b36b7c1a2f544c72aaf617d23c9c4d10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRunSceneReset
 --- !u!1 &7138822912321013736
 GameObject:
   m_ObjectHideFlags: 0

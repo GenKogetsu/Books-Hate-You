@@ -10,6 +10,15 @@ public sealed class InventoryItemPickup : MonoBehaviour, IInteractable
     [SerializeField, Min(1)] private int _amount = 1;
     [SerializeField] private string _interactionPrompt = "F";
 
+    private string _pickupId;
+
+    private void Awake()
+    {
+        _pickupId = BuildPickupId();
+        if (PlayerRunSession.IsPickupCollected(_pickupId))
+            gameObject.SetActive(false);
+    }
+
     public string InteractionPrompt => _interactionPrompt;
 
     public bool CanInteract(PlayerInventory inventory)
@@ -23,6 +32,21 @@ public sealed class InventoryItemPickup : MonoBehaviour, IInteractable
             return;
 
         inventory.AddItem(_item, _amount);
+        PlayerRunSession.MarkPickupCollected(_pickupId);
         gameObject.SetActive(false);
+    }
+
+    private string BuildPickupId()
+    {
+        string id = gameObject.scene.path;
+        Transform current = transform;
+
+        while (current)
+        {
+            id = $"{current.GetSiblingIndex()}:{current.name}/{id}";
+            current = current.parent;
+        }
+
+        return id;
     }
 }

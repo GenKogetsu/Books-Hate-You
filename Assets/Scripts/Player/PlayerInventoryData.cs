@@ -59,6 +59,20 @@ public sealed class PlayerInventoryData : ScriptableObject
         return true;
     }
 
+    public void ClearRuntimeItems()
+    {
+        EnsureRuntimeItems();
+        if (_runtimeItems.Count == 0)
+            return;
+
+        InventoryItemType[] items = new InventoryItemType[_runtimeItems.Count];
+        _runtimeItems.Keys.CopyTo(items, 0);
+        _runtimeItems.Clear();
+
+        foreach (InventoryItemType item in items)
+            AmountChanged?.Invoke(item, 0);
+    }
+
     private void EnsureRuntimeItems()
     {
         if (_runtimeItems == null)
