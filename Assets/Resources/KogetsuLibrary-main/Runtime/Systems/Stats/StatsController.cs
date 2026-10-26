@@ -12,14 +12,14 @@ namespace Kogetsu.Library.Core
         [Required]
         [SerializeField] protected BaseStatsDataSO StatsData;
 
-        [ReadOnly][SerializeField] protected float CurrentMoveSpeed;
-        [ReadOnly][SerializeField] protected float CurrectJumpForce;
+        [ReadOnly, Foldout("Runtime Debug")][SerializeField] protected float CurrentMoveSpeed;
+        [ReadOnly, Foldout("Runtime Debug")][SerializeField] protected float CurrectJumpForce;
 
         #region Documentation - Notes
         // ─── HP ────────────────────────────────────────────────────────────
         #endregion
         [Header("HP")]
-        [ReadOnly][SerializeField] protected float CurrentHp;
+        [ReadOnly, Foldout("Runtime Debug")][SerializeField] protected float CurrentHp;
         [SerializeField] protected float MinHp;
 
         #region Documentation - Notes
@@ -31,7 +31,7 @@ namespace Kogetsu.Library.Core
         // ─── Stamina ───────────────────────────────────────────────────────
         #endregion
         [Header("Stamina")]
-        [ReadOnly][SerializeField] protected float CurrentStamina;
+        [ReadOnly, Foldout("Runtime Debug")][SerializeField] protected float CurrentStamina;
         [SerializeField] protected float MinStamina;
 
         #region Documentation - Notes

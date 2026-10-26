@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Kogetsu.Library.Attribute;
 using Kogetsu.Library.DesignPatternCore;
@@ -22,7 +24,7 @@ namespace Kogetsu.Library.Core
         [SerializeField] protected AudioClip LoadSceneAudioClip;
 
         private bool _isTransitioning;
-        private bool _isReloading;
+        public bool IsTransitioning => _isTransitioning;
 
 #if UNITY_EDITOR
         protected virtual void OnValidate()
@@ -53,8 +55,9 @@ namespace Kogetsu.Library.Core
         protected virtual void OnDisable()
         {
             StopLoadSceneAudio();
+            if (_isTransitioning && GameManager.Instance)
+                GameManager.Instance.SetGameState(GameState.Normal);
             _isTransitioning = false;
-            _isReloading = false;
 
             if (EventBus.Instance)
             {
@@ -70,43 +73,52 @@ namespace Kogetsu.Library.Core
 
         protected virtual IEnumerator LoadSceneRotine(int sceneBulidIndex)
         {
-            GameManager.Instance.SetGameState(GameState.Pause);
+            if (GameManager.Instance)
+                GameManager.Instance.SetGameState(GameState.Pause);
 
-            if (LoadSceneIn)
+            try
             {
-                SceneEffectAnimator.Play(LoadSceneIn.name);
-                yield return WaitForAnimationToFinish(LoadSceneIn);
-            }
+                if (SceneEffectAnimator && LoadSceneIn)
+                {
+                    SceneEffectAnimator.Play(LoadSceneIn.name);
+                    yield return WaitForAnimationToFinish(LoadSceneIn);
+                }
 
-            if (_isReloading)
+                AsyncOperation operation = SceneManager.LoadSceneAsync(sceneBulidIndex);
+                if (operation == null)
+                {
+                    Debug.LogError($"Unable to load scene index {sceneBulidIndex}.", this);
+                    yield break;
+                }
+                yield return operation;
+
+                if (SceneEffectAnimator && LoadSceneOut)
+                {
+                    SceneEffectAnimator.Play(LoadSceneOut.name);
+                    yield return WaitForAnimationToFinish(LoadSceneOut);
+                }
+            }
+            finally
             {
-                GameManager.Instance.SetGameState(GameState.Normal);
-                _isReloading = false;
+                StopLoadSceneAudio();
+                _isTransitioning = false;
+                if (GameManager.Instance)
+                    GameManager.Instance.SetGameState(GameState.Normal);
             }
-
-            SceneManager.LoadScene(sceneBulidIndex);
-
-            if (LoadSceneOut)
-            {
-                SceneEffectAnimator.Play(LoadSceneOut.name);
-                yield return WaitForAnimationToFinish(LoadSceneOut);
-            }
-
-            StopLoadSceneAudio();
-            _isTransitioning = false;
-            GameManager.Instance.SetGameState(GameState.Normal);
         }
 
-        private System.Collections.IEnumerator WaitForAnimationToFinish(AnimationClip clip)
+        private IEnumerator WaitForAnimationToFinish(AnimationClip clip)
         {
             if (!SceneEffectAnimator || !clip)
                 yield break;
 
             int stateHash = Animator.StringToHash(clip.name);
             bool hasStarted = false;
+            double deadline = Time.realtimeSinceStartupAsDouble +
+                clip.length / Mathf.Max(0.01f, SceneEffectAnimator.speed) + 1f;
             yield return null;
 
-            while (SceneEffectAnimator)
+            while (SceneEffectAnimator && Time.realtimeSinceStartupAsDouble < deadline)
             {
                 AnimatorStateInfo state = SceneEffectAnimator.GetCurrentAnimatorStateInfo(0);
                 if (state.shortNameHash == stateHash)
@@ -127,6 +139,7 @@ namespace Kogetsu.Library.Core
 
         private void OnLoadSceneEvent(LoadSceneEvent loadSceneEvent)
         {
+            if (_isTransitioning) return;
             if (loadSceneEvent.SceneName == "Reload")
             {
                 ReloadScene();
@@ -154,19 +167,23 @@ namespace Kogetsu.Library.Core
         /// <para> (EN) : Finds the scene name in Build Settings and delegates its build index to LoadScene(int). </para>
         /// </summary>
         #endregion
-        public void LoadScene(string sceneName)
+        private static int FindBuildIndex(string sceneName)
         {
             for (int index = 0; index < SceneManager.sceneCountInBuildSettings; index++)
             {
                 string path = SceneUtility.GetScenePathByBuildIndex(index);
                 if (System.IO.Path.GetFileNameWithoutExtension(path) != sceneName)
                     continue;
-
-                LoadScene(index);
-                return;
+                return index;
             }
+            return -1;
+        }
 
-            Debug.LogError($"Scene '{sceneName}' is not in Build Settings.", this);
+        public void LoadScene(string sceneName)
+        {
+            int index = FindBuildIndex(sceneName);
+            if (index >= 0) LoadScene(index);
+            else Debug.LogError($"Scene '{sceneName}' is not in Build Settings.", this);
         }
 
         #region Documentation - XML
@@ -178,14 +195,57 @@ namespace Kogetsu.Library.Core
         #endregion
         public void LoadScene(int buildIndex)
         {
-            if (_isTransitioning)
-                return;
+            TryBeginTransition(buildIndex, null, null);
+        }
+
+        public bool TryLoadSceneWithEvent(int buildIndex, Action onAccepted = null)
+        {
+            return TryBeginTransition(buildIndex,
+                new LoadSceneEvent(SceneIndex: buildIndex), onAccepted);
+        }
+
+        public bool TryLoadSceneWithEvent(string sceneName, Action onAccepted = null)
+        {
+            int index = FindBuildIndex(sceneName);
+            if (index < 0)
+            {
+                Debug.LogError($"Scene '{sceneName}' is not in Build Settings.", this);
+                return false;
+            }
+            return TryBeginTransition(index,
+                new LoadSceneEvent(SceneName: sceneName), onAccepted);
+        }
+
+        public bool TryReloadSceneWithEvent(Action onAccepted = null)
+        {
+            return TryBeginTransition(SceneManager.GetActiveScene().buildIndex,
+                new LoadSceneEvent(SceneName: "Reload"), onAccepted);
+        }
+
+        private bool TryBeginTransition(int buildIndex, LoadSceneEvent? notification, Action onAccepted)
+        {
+            if (_isTransitioning || !isActiveAndEnabled ||
+                buildIndex < 0 || buildIndex >= SceneManager.sceneCountInBuildSettings)
+                return false;
 
             _isTransitioning = true;
-            AssignComponent();
-            Time.timeScale = 1f;
-            PlayLoadSceneAudio();
-            StartCoroutine(LoadSceneRotine(buildIndex));
+            try
+            {
+                AssignComponent();
+                Time.timeScale = 1f;
+                onAccepted?.Invoke();
+                if (notification.HasValue && EventBus.Instance)
+                    EventBus.Instance.Publish(notification.Value);
+                PlayLoadSceneAudio();
+                StartCoroutine(LoadSceneRotine(buildIndex));
+                return true;
+            }
+            catch
+            {
+                _isTransitioning = false;
+                StopLoadSceneAudio();
+                throw;
+            }
         }
 
         protected virtual void PlayLoadSceneAudio()
@@ -212,10 +272,6 @@ namespace Kogetsu.Library.Core
         #endregion
         public void ReloadScene()
         {
-            if (_isTransitioning)
-                return;
-
-            _isReloading = true;
             LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 

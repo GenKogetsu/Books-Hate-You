@@ -1,12 +1,16 @@
 using UnityEngine;
+using Kogetsu.Library.Core;
 using Kogetsu.Library.DesignPatternCore;
 
 public abstract class LivingMovementController : MonoBehaviour
 {
     private bool _isLoadingScene;
+    private bool _gameCleared;
 
     protected virtual void OnEnable()
     {
+        _isLoadingScene = BasicSceneEffectController.Instance &&
+                          BasicSceneEffectController.Instance.IsTransitioning;
         if (EventBus.Instance)
         {
             EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
@@ -25,7 +29,11 @@ public abstract class LivingMovementController : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (!_isLoadingScene && CanMove())
+        bool transitionActive = BasicSceneEffectController.Instance &&
+                                BasicSceneEffectController.Instance.IsTransitioning;
+        if (_isLoadingScene && !transitionActive && !_gameCleared)
+            _isLoadingScene = false;
+        if (!_isLoadingScene && !transitionActive && CanMove())
             UpdateMovement();
     }
 
@@ -43,6 +51,7 @@ public abstract class LivingMovementController : MonoBehaviour
 
     private void OnGameClearEvent(GameClearEvent _)
     {
+        _gameCleared = true;
         _isLoadingScene = true;
         StopMovement();
     }

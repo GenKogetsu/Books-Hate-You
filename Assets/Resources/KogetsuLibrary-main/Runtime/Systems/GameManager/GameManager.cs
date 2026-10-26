@@ -6,7 +6,7 @@ namespace Kogetsu.Library.Core
     [CreateHierarchyMenu("KogetsuLibrary/Core/Manager")]
     public class GameManager : Singleton<GameManager>
     {
-        [ReadOnly]
+        [ReadOnly, Foldout("Runtime Debug")]
         [SerializeField] protected GameState CurrentGameState;
 
         public void SetGameState(GameState state)

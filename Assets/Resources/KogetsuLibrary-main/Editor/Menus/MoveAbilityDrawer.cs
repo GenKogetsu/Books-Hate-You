@@ -122,10 +122,9 @@ namespace Kogetsu.Library.Editor
             string[] parts = typeName.Split(' ');
             if (parts.Length != 2) return null;
 
-            var assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == parts[0]);
-
-            return assembly?.GetType(parts[1]);
+            // Resolve the managed-reference type directly. Enumerating AppDomain assemblies
+            // can retain unloaded editor assemblies in newer Unity versions.
+            return Type.GetType($"{parts[1]}, {parts[0]}");
         }
     }
 }

@@ -61,7 +61,7 @@ public static class MainMenuBuilder
         var controller = canvasObject.AddComponent<MainMenuController>();
         controller.name = "Main Menu Controller";
 
-        var eventSystem = Object.FindFirstObjectByType<EventSystem>();
+        var eventSystem = Object.FindAnyObjectByType<EventSystem>();
         if (eventSystem == null)
         {
             var eventSystemObject = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));

@@ -43,7 +43,7 @@ MonoBehaviour:
   _minZoomOffset: 4
   _maxZoomOffset: 5
   _zoomSpeed: 0.02
-  _maxLookDown: 20
+  _maxLookDown: 89
   _maxLookUp: 89
   _wallMask:
     serializedVersion: 2

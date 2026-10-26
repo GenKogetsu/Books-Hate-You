@@ -13,7 +13,7 @@ public sealed class EnemyHpController : LivingHpController
     [Header("Health")]
     [SerializeField, Min(0f)] private float _startHp = 100f;
     [SerializeField, Min(0f)] private float _maxHp = 100f;
-    [SerializeField, ReadOnly] private float _currentHp;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private float _currentHp;
 
     public float CurrentHp => _currentHp;
     public bool IsAlive => _currentHp > 0f;

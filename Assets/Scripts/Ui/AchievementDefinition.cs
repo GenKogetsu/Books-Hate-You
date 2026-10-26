@@ -7,7 +7,7 @@ public sealed class AchievementDefinition : ScriptableObject
     [SerializeField] private string _title;
     [SerializeField, TextArea(2, 4)] private string _description;
     [SerializeField] private Sprite _icon;
-    [SerializeField] private string _iconGlyph = "★";
+    [SerializeField] private string _iconGlyph = "*";
 
     public string Id => _id;
     public string Title => _title;

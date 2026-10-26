@@ -20,7 +20,7 @@ public class PlayerStatus : MonoBehaviour
     [Header("Health")]
     [SerializeField] private float _startHp = 100f;
     [SerializeField] private float _maxHp = 100f;
-    [SerializeField, ReadOnly] private float _currentHp;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private float _currentHp;
 
     [Header("Stamina")]
     [SerializeField, Min(1f)] private float _maxStamina = 100f;
@@ -32,32 +32,32 @@ public class PlayerStatus : MonoBehaviour
     [Header("Stamina Recovery")]
     [SerializeField, Min(0f)] private float _staminaRecoveryPerSecond = 18f;
     [SerializeField, Min(0f)] private float _recoveryDelay = 1.2f;
-    [SerializeField, ReadOnly] private float _currentStamina;
-    [SerializeField, ReadOnly] private bool _sprintLocked;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private float _currentStamina;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _sprintLocked;
     private float _recoveryDelayRemaining;
     private int _deniedStaminaFeedbackVersion;
 
     [Header("Movement (Runtime)")]
-    [SerializeField, ReadOnly] private Vector2 _moveInput;
-    [SerializeField, ReadOnly] private Vector3 _velocity;
-    [SerializeField, ReadOnly] private bool _isGrounded;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private Vector2 _moveInput;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private Vector3 _velocity;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isGrounded;
 
     [Header("Input Intent (Runtime)")]
-    [SerializeField, ReadOnly] private bool _isRunInputHeld;
-    [SerializeField, ReadOnly] private bool _isCrouchInputHeld;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isRunInputHeld;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isCrouchInputHeld;
 
     [Header("State (Runtime)")]
-    [SerializeField, ReadOnly] private bool _isAlive;
-    [SerializeField, ReadOnly] private bool _isMoving;
-    [SerializeField, ReadOnly] private bool _isRunning;
-    [SerializeField, ReadOnly] private bool _isCrouching;
-    [SerializeField, ReadOnly] private bool _isJumping;
-    [SerializeField, ReadOnly] private bool _isPreparingJump;
-    [SerializeField, ReadOnly] private bool _isLanding;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isAlive;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isMoving;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isRunning;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isCrouching;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isJumping;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isPreparingJump;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _isLanding;
 
     [Header("Abilities")]
-    [SerializeField, ReadOnly] private bool _canMove = true;
-    [SerializeField, ReadOnly] private bool _canJump = true;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _canMove = true;
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _canJump = true;
 
     #endregion
 

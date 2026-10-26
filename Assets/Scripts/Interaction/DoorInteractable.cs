@@ -16,7 +16,7 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
     [SerializeField] private bool _publishesGameClearOnOpen;
 
     [Header("Interaction Feedback")]
-    [SerializeField, TextArea(1, 3)] private string _lockedMessage = "ต้องใช้กุญแจ";
+    [SerializeField, TextArea(1, 3)] private string _lockedMessage = "A key is required";
 
     public DoorState CurrentState { get; private set; }
 
@@ -28,7 +28,7 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
 
         int amount = inventory ? inventory.GetAmount(_requiredItem) : 0;
         int missing = Mathf.Max(0, _requiredAmount - amount);
-        return $"ขาดกุญแจอีก {missing} ดอก ({amount}/{_requiredAmount})";
+        return $"Need {missing} more {(missing == 1 ? "key" : "keys")} ({amount}/{_requiredAmount})";
     }
 
     private void Reset()

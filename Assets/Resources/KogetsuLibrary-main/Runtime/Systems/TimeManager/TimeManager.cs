@@ -13,14 +13,14 @@ namespace Kogetsu.Library.Core
         [EditOnInspector, SerializeField] protected TimeScaleDataSO ScaleData;
 
         [field: Header("Calendar")]
-        [field: SerializeField, ReadOnly]
+        [field: SerializeField, ReadOnly, Foldout("Runtime Debug")]
         public string LocalGameTimeDisplay { get; protected set; }
         public DateTime LocalGameTime { get; protected set; } = new(hour: 08, minute: 00, second: 00, day: 01, month: 01, year: 2026);
 
         [Header("TimerScale")]
-        [SerializeField, ReadOnly] protected double TimePerFrame;
+        [SerializeField, ReadOnly, Foldout("Runtime Debug")] protected double TimePerFrame;
 
-        [field: SerializeField, ReadOnly]
+        [field: SerializeField, ReadOnly, Foldout("Runtime Debug")]
         public double CurrentTimeScale { get; protected set; }
 
         [field: SerializeField]
@@ -37,9 +37,9 @@ namespace Kogetsu.Library.Core
         protected StringBuilder TimeBuilder = new();
 
         [Header("Debug")]
-        [SerializeField, ReadOnly] protected string RunningTimeDisplay = $"0s 0ms";
+        [SerializeField, ReadOnly, Foldout("Runtime Debug")] protected string RunningTimeDisplay = $"0s 0ms";
 
-        [SerializeField, ReadOnly] protected string RunningGameTimeDisplay = $"0s 0ms";
+        [SerializeField, ReadOnly, Foldout("Runtime Debug")] protected string RunningGameTimeDisplay = $"0s 0ms";
 
         protected virtual void OnEnable()
         {
@@ -105,6 +105,17 @@ namespace Kogetsu.Library.Core
             CalculateAcceleratorScale();
         }
 
+        public void ResetSession()
+        {
+            RunningTime = default;
+            RunningTimeGameTime = default;
+            LocalGameTime = new DateTime(2026, 1, 1, 8, 0, 0);
+            CacheAcceleratorScale = 0f;
+            RunningTimeDisplay = "0s 0ms";
+            RunningGameTimeDisplay = "0s 0ms";
+            if (ScaleData) SetUp();
+        }
+
         protected virtual void PauseAcceleratorScale(GameStateEvent eventDate)
         {
             if (eventDate.State == GameState.Pause)
@@ -117,6 +128,7 @@ namespace Kogetsu.Library.Core
 
             else
             {
+                if (CacheAcceleratorScale == 0f) return;
                 AcceleratorScale = CacheAcceleratorScale;
                 CacheAcceleratorScale = 0f;
             }

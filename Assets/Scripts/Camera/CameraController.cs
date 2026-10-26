@@ -1,5 +1,6 @@
 using System.Collections;
 using Kogetsu.Library.DesignPatternCore;
+using Kogetsu.Library.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -44,6 +45,11 @@ public sealed class CameraController : MonoBehaviour
     [SerializeField] private InputActionReference _holdTopCameraKey;
     [SerializeField] private InputActionReference _holdBackCameraKey;
 
+    [Header("Mobile Look")]
+#if UNITY_ANDROID || UNITY_IOS
+    [SerializeField, Min(0f)] private float _mobileStickLookUnitsPerSecond = 1000f;
+#endif
+
     private readonly Kogetsu.Library.DesignPatternCore.StateMachine<CameraController> _stateMachine = new();
     private GameViewState _gameViewState;
     private MirrorViewState _mirrorViewState;
@@ -52,6 +58,7 @@ public sealed class CameraController : MonoBehaviour
     private Coroutine _transitionRoutine;
     private float _yaw;
     private float _pitch;
+    private float _topTilt;
     private float _topZoom;
     private float _thirdPersonZoom;
     private bool _topHeld;
@@ -60,6 +67,7 @@ public sealed class CameraController : MonoBehaviour
     private Camera _activeMirrorCamera;
     private bool _isGameOver;
     private bool _isLoadingScene;
+    private bool _inputActionsDisabledForLoad;
 
     private FirstPersonCameraSettingSO FppSettings =>
         _firstPersonViewCamera ? _firstPersonViewCamera.Settings as FirstPersonCameraSettingSO : null;
@@ -115,9 +123,13 @@ public sealed class CameraController : MonoBehaviour
     {
         if (!Application.isPlaying) return;
         _isGameOver = false;
-        _isLoadingScene = false;
+        _isLoadingScene = BasicSceneEffectController.Instance &&
+                          BasicSceneEffectController.Instance.IsTransitioning;
+        _inputActionsDisabledForLoad = false;
+#if !UNITY_ANDROID && !UNITY_IOS
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+#endif
         if (EventBus.Instance)
         {
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
@@ -136,8 +148,10 @@ public sealed class CameraController : MonoBehaviour
 
     private void OnDisable()
     {
+#if !UNITY_ANDROID && !UNITY_IOS
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+#endif
         if (!Application.isPlaying) return;
         if (EventBus.Instance)
         {
@@ -155,6 +169,16 @@ public sealed class CameraController : MonoBehaviour
         CancelTransition();
         _stateMachine.ChangeState(null);
     }
+
+#if UNITY_ANDROID || UNITY_IOS
+    private void OnApplicationPause(bool paused)
+    {
+        if (!paused) return;
+        _topHeld = false;
+        _backHeld = false;
+        RefreshMirror();
+    }
+#endif
 
     private static void Subscribe(InputActionReference reference, System.Action<InputAction.CallbackContext> performed,
         System.Action<InputAction.CallbackContext> canceled = null)
@@ -186,7 +210,25 @@ public sealed class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!Application.isPlaying || _isGameOver || _isLoadingScene) return;
+        bool transitioning = BasicSceneEffectController.Instance &&
+                             BasicSceneEffectController.Instance.IsTransitioning;
+        if (_isLoadingScene && !transitioning && !_isGameOver)
+        {
+            _isLoadingScene = false;
+            if (_inputActionsDisabledForLoad)
+            {
+                Subscribe(_firstPersonViewKey, SelectFpp);
+                Subscribe(_topViewKey, SelectTop);
+                Subscribe(_thirdPersonViewKey, SelectTpp);
+                Subscribe(_toggleViewKey, CyclePerformed);
+                Subscribe(_holdTopCameraKey, TopMirrorStarted, TopMirrorReleased);
+                Subscribe(_holdBackCameraKey, BackMirrorStarted, BackMirrorReleased);
+                if (_lookInput) _lookInput.action.Enable();
+                _inputActionsDisabledForLoad = false;
+            }
+            _stateMachine.ChangeState(_gameViewState);
+        }
+        if (!Application.isPlaying || _isGameOver || _isLoadingScene || transitioning) return;
         _stateMachine.Update();
     }
 
@@ -194,6 +236,7 @@ public sealed class CameraController : MonoBehaviour
     {
         _isLoadingScene = true;
         DisableInputActions();
+        _inputActionsDisabledForLoad = true;
         _topHeld = false;
         _backHeld = false;
         _activeMirrorCamera = null;
@@ -217,8 +260,10 @@ public sealed class CameraController : MonoBehaviour
         _isGameOver = true;
         CancelTransition();
         _stateMachine.ChangeState(null);
+#if !UNITY_ANDROID && !UNITY_IOS
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+#endif
     }
 
     private void OnGameClear(GameClearEvent _) => OnGameover(default);
@@ -230,11 +275,29 @@ public sealed class CameraController : MonoBehaviour
         if (_transitionRoutine == null) SnapMainToCurrentView(true);
     }
 
+    private void TickMirrorView()
+    {
+        if (_isFollowing && _followTarget) transform.position = _followTarget.position;
+        if (!_activeMirrorCamera || !_mainCamera) return;
+        Vector3 desired = _activeMirrorCamera.transform.position;
+        Vector3 safe = ResolveWallCollision(desired, true, true);
+        _mainCamera.transform.SetPositionAndRotation(safe, _activeMirrorCamera.transform.rotation);
+    }
+
     private void UpdateLook()
     {
         CameraSettingSO settings = SettingsFor(_currentMode);
-        if (settings == null || !_lookInput) return;
+        if (settings == null) return;
+#if UNITY_ANDROID || UNITY_IOS
+        // On-screen sticks create a virtual Gamepad. Reading it directly keeps
+        // touches on the HUD from also rotating the camera via <Pointer>/delta.
+        Vector2 delta = Gamepad.current != null
+            ? Gamepad.current.rightStick.ReadValue() * (_mobileStickLookUnitsPerSecond * Time.deltaTime)
+            : Vector2.zero;
+#else
+        if (!_lookInput) return;
         Vector2 delta = _lookInput.action.ReadValue<Vector2>();
+#endif
         _yaw += settings.LookX(delta.x);
         float y = settings.LookY(delta.y);
         switch (_currentMode)
@@ -243,6 +306,7 @@ public sealed class CameraController : MonoBehaviour
                 _pitch = FppSettings.ClampPitch(_pitch - y);
                 break;
             case CameraViewMode.TopView:
+                if (TopSettings) _topTilt = TopSettings.ClampTilt(_topTilt - y);
                 break;
             case CameraViewMode.TPP:
                 _pitch = TppSettings.ClampPitch(_pitch - y);
@@ -250,12 +314,24 @@ public sealed class CameraController : MonoBehaviour
         }
         transform.rotation = _initialBoxRotation * Quaternion.Euler(0f, _yaw, 0f);
 
+#if !UNITY_ANDROID && !UNITY_IOS
         if (Mouse.current == null) return;
         float scroll = Mouse.current.scroll.ReadValue().y;
         if (_currentMode == CameraViewMode.TopView && TopSettings)
             _topZoom = TopSettings.ClampZoom(_topZoom + scroll * TopSettings.ZoomSpeed);
         else if (_currentMode == CameraViewMode.TPP && TppSettings)
             _thirdPersonZoom = TppSettings.ClampZoom(_thirdPersonZoom + scroll * TppSettings.ZoomSpeed);
+#endif
+    }
+
+    public void ZoomForMobile(float direction)
+    {
+        if (!Application.isPlaying || _isGameOver || _isLoadingScene) return;
+        const float zoomStep = 0.6f;
+        if (_currentMode == CameraViewMode.TopView && TopSettings)
+            _topZoom = TopSettings.ClampZoom(_topZoom + direction * zoomStep);
+        else if (_currentMode == CameraViewMode.TPP && TppSettings)
+            _thirdPersonZoom = TppSettings.ClampZoom(_thirdPersonZoom + direction * zoomStep);
     }
 
     private CameraSettingSO SettingsFor(CameraViewMode mode) => mode switch
@@ -302,6 +378,9 @@ public sealed class CameraController : MonoBehaviour
         else if (mode == CameraViewMode.TopView)
         {
             position -= anchor.forward * _topZoom;
+            Quaternion tilt = Quaternion.AngleAxis(_topTilt, anchor.right);
+            position = LookPoint + tilt * (position - LookPoint);
+            rotation = tilt * rotation;
         }
         else
         {
@@ -314,10 +393,11 @@ public sealed class CameraController : MonoBehaviour
         return true;
     }
 
-    private Vector3 ResolveWallCollision(Vector3 desired, bool smoothReturn)
+    private Vector3 ResolveWallCollision(Vector3 desired, bool smoothReturn, bool mirror = false)
     {
         ThirdPersonCameraSettingSO settings = TppSettings;
-        if (_currentMode != CameraViewMode.TPP || !settings || settings.WallMask.value == 0) return desired;
+        if ((!mirror && _currentMode != CameraViewMode.TPP) || !settings || settings.WallMask.value == 0)
+            return desired;
         Vector3 pivot = LookPoint;
         Vector3 offset = desired - pivot;
         float distance = offset.magnitude;
@@ -371,7 +451,8 @@ public sealed class CameraController : MonoBehaviour
 
     private void RefreshMirror()
     {
-        if (_isLoadingScene) return;
+        if (_isLoadingScene || (BasicSceneEffectController.Instance &&
+                                BasicSceneEffectController.Instance.IsTransitioning)) return;
 
         Camera desired = _topHeld ? _topMirrorViewCamera : _backHeld ? _backMirrorViewCamera : null;
         if (desired == _activeMirrorCamera) return;
@@ -396,9 +477,9 @@ public sealed class CameraController : MonoBehaviour
         if (anchor && anchor.TryGetComponent(out Camera camera)) camera.enabled = false;
     }
 
-    private bool CanChangeView() => Application.isPlaying && !_isLoadingScene
-        && _activeMirrorCamera == null
-        && (!_playerStatus || _playerStatus.GetIsIdle());
+    private bool CanChangeView() => Application.isPlaying && !_isLoadingScene && !_isGameOver
+        && !(BasicSceneEffectController.Instance && BasicSceneEffectController.Instance.IsTransitioning)
+        && _activeMirrorCamera == null;
 
     private void RequestView(CameraViewMode mode)
     {
@@ -512,7 +593,7 @@ public sealed class CameraController : MonoBehaviour
 
     private sealed class MirrorViewState : BaseState<CameraController>
     {
-        public override void OnEnter() => Context.SetOutputCamera(Context._activeMirrorCamera);
-        public override void OnUpdate() => Context.TickGameView();
+        public override void OnEnter() => Context.SetOutputCamera(Context._mainCamera);
+        public override void OnUpdate() => Context.TickMirrorView();
     }
 }

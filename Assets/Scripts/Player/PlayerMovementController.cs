@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Kogetsu.Library.DesignPatternCore;
+using Kogetsu.Library.Core;
 
 [DefaultExecutionOrder(-1000)]
 [RequireComponent(typeof(CharacterController), typeof(PlayerStatus))]
@@ -100,7 +101,8 @@ public class PlayerMovementController : LivingMovementController
     protected override void OnEnable()
     {
         base.OnEnable();
-        _isPlayerInputLocked = false;
+        _isPlayerInputLocked = BasicSceneEffectController.Instance &&
+                               BasicSceneEffectController.Instance.IsTransitioning;
 
         if (_moveActionReference != null)
         {
@@ -176,9 +178,31 @@ public class PlayerMovementController : LivingMovementController
         }
     }
 
+#if UNITY_ANDROID || UNITY_IOS
+    private void OnApplicationPause(bool paused)
+    {
+        if (paused) StopMovement();
+    }
+#endif
+
     #endregion
 
     #region Main Loop
+
+    protected override void Update()
+    {
+        bool transitioning = BasicSceneEffectController.Instance &&
+                             BasicSceneEffectController.Instance.IsTransitioning;
+        if (_isPlayerInputLocked && !transitioning && enabled)
+        {
+            _isPlayerInputLocked = false;
+            _moveActionReference?.action.Enable();
+            _jumpActionReference?.action.Enable();
+            _runActionReference?.action.Enable();
+            _crouchActionReference?.action.Enable();
+        }
+        base.Update();
+    }
 
     protected override bool CanMove()
     {
@@ -371,14 +395,19 @@ public class PlayerMovementController : LivingMovementController
                        + Vector3.down * (crouchHeight * 0.5f);
         Vector3 origin = feet + Vector3.up * (crouchHeight - radius);
 
-        return !Physics.SphereCast(
-            origin,
-            radius * 0.95f,
-            Vector3.up,
-            out _,
-            checkDistance,
-            _ceilingMask,
-            QueryTriggerInteraction.Ignore);
+        if (checkDistance <= 0f) return true;
+        float checkRadius = radius * 0.9f;
+        foreach (RaycastHit hit in Physics.SphereCastAll(origin, checkRadius, Vector3.up,
+                     checkDistance, _ceilingMask, QueryTriggerInteraction.Ignore))
+            if (hit.collider && hit.collider.transform.root != transform.root)
+                return false;
+
+        Vector3 standingHead = origin + Vector3.up * checkDistance;
+        foreach (Collider collider in Physics.OverlapSphere(standingHead, checkRadius,
+                     _ceilingMask, QueryTriggerInteraction.Ignore))
+            if (collider && collider.transform.root != transform.root)
+                return false;
+        return true;
     }
 
     private Vector3 GetCameraRelativeMove()

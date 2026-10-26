@@ -128,4 +128,17 @@ public static class PlayerRunSession
                 inventory.ClearRuntimeItems();
         }
     }
+
+    public static void ResetForNewGame()
+    {
+        ResetRun();
+        DefeatedFloorEnemyIds.Clear();
+        _deathCount = 0;
+        _librariansKilledWithBooks = 0;
+        _hasWon = false;
+        _hasCollectedAllKeys = false;
+        _hasClearedAllFloorEnemies = false;
+        _hasWonWithoutDying = false;
+        DeathCountChanged?.Invoke(0);
+    }
 }

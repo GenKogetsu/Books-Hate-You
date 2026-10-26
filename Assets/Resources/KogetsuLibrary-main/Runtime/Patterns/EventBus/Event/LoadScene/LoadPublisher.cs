@@ -1,24 +1,28 @@
 using Kogetsu.Library.DesignPatternCore;
+using Kogetsu.Library.Core;
 using UnityEngine;
 
 public class LoadPublisher : MonoBehaviour
 {
     public void PublishLoadSceneEvent(int sceneBuildIndex)
     {
-        EventBus.Instance.Publish(new LoadSceneEvent(SceneIndex: sceneBuildIndex));
-        DisableButton();
+        if (BasicSceneEffectController.Instance &&
+            BasicSceneEffectController.Instance.TryLoadSceneWithEvent(sceneBuildIndex))
+            DisableButton();
     }
 
     public void PublishLoadSceneEvent(string sceneName)
     {
-        EventBus.Instance.Publish(new LoadSceneEvent(SceneName: sceneName));
-        DisableButton();
+        if (BasicSceneEffectController.Instance &&
+            BasicSceneEffectController.Instance.TryLoadSceneWithEvent(sceneName))
+            DisableButton();
     }
 
     public void ReloadSceneEvent()
     {
-        EventBus.Instance.Publish(new LoadSceneEvent(SceneName: "Reload"));
-        DisableButton();
+        if (BasicSceneEffectController.Instance &&
+            BasicSceneEffectController.Instance.TryReloadSceneWithEvent())
+            DisableButton();
     }
 
     private void DisableButton()

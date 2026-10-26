@@ -20,7 +20,7 @@ public sealed class LibrarianMovementController : LivingMovementController
     [SerializeField, EditOnInspector] private LibrarianStats _librarianStats;
 
     [Header("State (Runtime)")]
-    [SerializeField, ReadOnly] private string _currentStateName = "None";
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private string _currentStateName = "None";
 
     private Kogetsu.Library.DesignPatternCore.StateMachine<LibrarianMovementController> _stateMachine;
     private bool _isDead;
@@ -96,8 +96,10 @@ public sealed class LibrarianMovementController : LivingMovementController
         base.OnEnable();
 
         if (EventBus.Instance)
+        {
             EventBus.Instance.Subscribe<GameoverEvent>(OnGameover);
             EventBus.Instance.Subscribe<GameClearEvent>(OnGameClear);
+        }
     }
 
     protected override void OnDisable()
@@ -105,8 +107,10 @@ public sealed class LibrarianMovementController : LivingMovementController
         base.OnDisable();
 
         if (EventBus.Instance)
+        {
             EventBus.Instance.Unsubscribe<GameoverEvent>(OnGameover);
             EventBus.Instance.Unsubscribe<GameClearEvent>(OnGameClear);
+        }
     }
 
     protected override bool CanMove()

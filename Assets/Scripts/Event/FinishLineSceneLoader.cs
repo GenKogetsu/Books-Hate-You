@@ -54,8 +54,8 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
             return;
         }
 
-        _hasLoaded = true;
-        _playerSceneWarpState.SetPendingTransform(_destinationPlayerTransform);
-        EventBus.Instance.Publish(new LoadSceneEvent(SceneIndex: _sceneBuildIndex));
+        _hasLoaded = BasicSceneEffectController.Instance.TryLoadSceneWithEvent(
+            _sceneBuildIndex,
+            () => _playerSceneWarpState.SetPendingTransform(_destinationPlayerTransform));
     }
 }

@@ -23,13 +23,13 @@ namespace Kogetsu.Library.Core
         [SerializeField] protected DirectionMode DirectionMode;
 
         [Header("Debug")]
-        [ReadOnly]
+        [ReadOnly, Foldout("Runtime Debug")]
         [SerializeField] protected Vector3 CurrentDirection;
 
-        [ReadOnly]
+        [ReadOnly, Foldout("Runtime Debug")]
         [SerializeField] protected Vector3 LastFacingDirection = Vector3.down;
 
-        [ReadOnly]
+        [ReadOnly, Foldout("Runtime Debug")]
         [SerializeField] public bool IsGrounded = true;
 
         [Tooltip("จำนวนครั้งที่กระโดดได้ต่อเนื่อง (1 = กระโดดครั้งเดียว, 2 = double jump)")]

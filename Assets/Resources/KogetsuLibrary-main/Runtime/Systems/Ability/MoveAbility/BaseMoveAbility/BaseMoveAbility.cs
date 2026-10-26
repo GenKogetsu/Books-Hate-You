@@ -20,10 +20,10 @@ public abstract class BaseMoveAbility<TContext> : BaseState<TContext> , IEnterSt
     void IFixedUpdateState.OnFixedUpdate() => OnFixedUpdate();
     void IExitState.OnExit() => OnExit();
 
-    protected abstract void OnEnter();
-    protected abstract void OnFixedUpdate();
+    protected new abstract void OnEnter();
+    protected new abstract void OnFixedUpdate();
 
-    protected abstract void OnExit();
+    protected new abstract void OnExit();
 
     protected virtual void SetInput(Vector3 input) => CurrentInput = input;
 

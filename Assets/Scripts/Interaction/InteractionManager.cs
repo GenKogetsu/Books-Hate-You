@@ -56,15 +56,14 @@ public sealed class InteractionManager : MonoBehaviour
     {
         FindInteractable();
         UpdatePrompt();
-
-        if (Keyboard.current != null &&
-            Keyboard.current.fKey.wasPressedThisFrame)
-        {
-            TryInteract();
-        }
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext _)
+    {
+        TryInteract();
+    }
+
+    public void TryInteractFromMobile()
     {
         TryInteract();
     }
@@ -136,7 +135,11 @@ public sealed class InteractionManager : MonoBehaviour
         string prompt = !inRange
             ? "O"
             : conditionPassed
+#if UNITY_ANDROID || UNITY_IOS
+                ? "USE"
+#else
                 ? "F"
+#endif
                 : GetBlockedPrompt(_currentInteractable, _inventory);
         CurrentState = !inRange
             ? InteractionState.Detected

@@ -32,7 +32,7 @@
                     "id": "852140f2-7766-474d-8707-702459ba45f3",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Hold",
+                    "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
                 },
@@ -449,6 +449,17 @@
                 },
                 {
                     "name": "",
+                    "id": "f7a36f1a-3631-43ab-a477-e0565594b8ef",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Hold Top Camera (Q)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "1a7aa51a-7a90-4ba3-9f17-e1fa63e9b8f4",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -460,11 +471,33 @@
                 },
                 {
                     "name": "",
+                    "id": "6cf59eb1-48eb-4aaf-a6ab-c30155238470",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Hold Back Camera (E)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "54b87bc6-aa4a-4039-a110-3a6dff86cac3",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
+                    "action": "Change Camera View (TAP)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "81a328f6-05af-474f-a531-644330118e9a",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
                     "action": "Change Camera View (TAP)",
                     "isComposite": false,
                     "isPartOfComposite": false

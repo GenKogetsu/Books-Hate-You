@@ -284,7 +284,7 @@ public class PlayerAnimationController : LivingAnimationController
         AnimationClip clip = ResolveClip(state);
         if (!clip) return;
 
-        if (IsTransitionState(state)) _transitionEndTime = Time.time + clip.length;
+        if (IsTransitionState(state)) _transitionEndTime = Time.time + Mathf.Min(0.12f, clip.length);
 
         float blend = (instant || IsAirState(_currentState) || IsAirState(state)) ? 0f : _transitionDuration;
 
