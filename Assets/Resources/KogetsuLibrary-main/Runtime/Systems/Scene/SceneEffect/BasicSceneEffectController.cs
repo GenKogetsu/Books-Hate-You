@@ -81,21 +81,15 @@ namespace Kogetsu.Library.Core
                 if (SceneEffectAnimator && LoadSceneIn)
                 {
                     SceneEffectAnimator.Play(LoadSceneIn.name);
-                    yield return WaitForAnimationToFinish(LoadSceneIn);
+                    yield return new WaitForSecondsRealtime(GetClipPlaybackDuration(LoadSceneIn));
                 }
 
-                AsyncOperation operation = SceneManager.LoadSceneAsync(sceneBulidIndex);
-                if (operation == null)
-                {
-                    Debug.LogError($"Unable to load scene index {sceneBulidIndex}.", this);
-                    yield break;
-                }
-                yield return operation;
+                SceneManager.LoadScene(sceneBulidIndex);
 
                 if (SceneEffectAnimator && LoadSceneOut)
                 {
                     SceneEffectAnimator.Play(LoadSceneOut.name);
-                    yield return WaitForAnimationToFinish(LoadSceneOut);
+                    yield return new WaitForSecondsRealtime(GetClipPlaybackDuration(LoadSceneOut));
                 }
             }
             finally
@@ -107,34 +101,13 @@ namespace Kogetsu.Library.Core
             }
         }
 
-        private IEnumerator WaitForAnimationToFinish(AnimationClip clip)
+        private float GetClipPlaybackDuration(AnimationClip clip)
         {
-            if (!SceneEffectAnimator || !clip)
-                yield break;
+            if (!clip)
+                return 0f;
 
-            int stateHash = Animator.StringToHash(clip.name);
-            bool hasStarted = false;
-            double deadline = Time.realtimeSinceStartupAsDouble +
-                clip.length / Mathf.Max(0.01f, SceneEffectAnimator.speed) + 1f;
-            yield return null;
-
-            while (SceneEffectAnimator && Time.realtimeSinceStartupAsDouble < deadline)
-            {
-                AnimatorStateInfo state = SceneEffectAnimator.GetCurrentAnimatorStateInfo(0);
-                if (state.shortNameHash == stateHash)
-                {
-                    hasStarted = true;
-                    if (state.normalizedTime >= 1f)
-                        break;
-                }
-                else if (hasStarted)
-                {
-                    // The Animator may transition away on the frame the clip finishes.
-                    break;
-                }
-
-                yield return null;
-            }
+            float speed = SceneEffectAnimator ? Mathf.Abs(SceneEffectAnimator.speed) : Mathf.Abs(AnimatorSpeed);
+            return clip.length / Mathf.Max(speed, 0.01f);
         }
 
         private void OnLoadSceneEvent(LoadSceneEvent loadSceneEvent)
