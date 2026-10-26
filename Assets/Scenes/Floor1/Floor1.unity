@@ -936,13 +936,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2896168661940106243, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4292923844
-      objectReference: {fileID: 0}
-    - target: {fileID: 2896168661940106243, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
+    - target: {fileID: 2933447626804043269, guid: e726d81164d41a844a891ccb12541eac, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3966294448432933434, guid: e726d81164d41a844a891ccb12541eac, type: 3}
       propertyPath: m_Pivot.x
@@ -1024,45 +1020,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4774824049240043861, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008594141660577312, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4282236415
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008594141660577312, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 5201218456324257558, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 5472089412536418613, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4281579775
-      objectReference: {fileID: 0}
-    - target: {fileID: 5472089412536418613, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 5795677617871635467, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4282762495
-      objectReference: {fileID: 0}
-    - target: {fileID: 5795677617871635467, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 5866187899715457716, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4282566655
-      objectReference: {fileID: 0}
-    - target: {fileID: 5866187899715457716, guid: e726d81164d41a844a891ccb12541eac, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
+    - target: {fileID: 5423844578497813957, guid: e726d81164d41a844a891ccb12541eac, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7812666973733859379, guid: e726d81164d41a844a891ccb12541eac, type: 3}
       propertyPath: m_Name
@@ -1416,7 +1376,7 @@ PrefabInstance:
       objectReference: {fileID: 142077583}
     - target: {fileID: 6353501992270379973, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_VersionIndex
-      value: 1795
+      value: 1801
       objectReference: {fileID: 0}
     - target: {fileID: 7141639010568521062, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_Mesh
@@ -1424,7 +1384,7 @@ PrefabInstance:
       objectReference: {fileID: 844881739}
     - target: {fileID: 7141639010568521062, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_VersionIndex
-      value: 5230
+      value: 5236
       objectReference: {fileID: 0}
     - target: {fileID: 8424243151144896560, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_Mesh
@@ -1432,7 +1392,7 @@ PrefabInstance:
       objectReference: {fileID: 1913163502}
     - target: {fileID: 8424243151144896560, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_VersionIndex
-      value: 1795
+      value: 1801
       objectReference: {fileID: 0}
     - target: {fileID: 8591663762511383705, guid: 3bfce2813679e514c918ec0fdb6a8795, type: 3}
       propertyPath: m_Mesh

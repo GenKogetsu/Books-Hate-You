@@ -4915,7 +4915,7 @@ MonoBehaviour:
   _debugLog: 0
   _bookPrefab: {fileID: 5913596425806998074, guid: 27485cbff0f81af4c8588aab40b0454a, type: 3}
   _throwForce: 10
-  _ammoRange: {x: 5, y: 8}
+  _ammoRange: {x: 10, y: 20}
   _cooldown: 1.5
 --- !u!1 &5196855601952197056
 GameObject:
