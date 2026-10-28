@@ -1,0 +1,777 @@
+fileFormatVersion: 2
+guid: 64ac27b931f676147b1632b586fd3a24
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -907767961651953922
+    second: Ui_0
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Untouchable Achievement
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 945
+        width: 253
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efe314339d5f663f0800000000000000
+      internalID: -907767961651953922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: The Final Exit Achievement
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 948
+        width: 253
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 113debf1c9977c448b56548278d67237
+      internalID: -2005027722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Restart Game - Ui
+      rect:
+        serializedVersion: 2
+        x: 906
+        y: 925
+        width: 378
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c1a8f2cbaff5874f9bd13eb17c82ffa
+      internalID: -1872739027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Logo - UI
+      rect:
+        serializedVersion: 2
+        x: 1376
+        y: 589
+        width: 523
+        height: 475
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bd686f1e389fa40498bb41d2c5fd29bb
+      internalID: -1548499843
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Kill Librarian Achievement
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 784
+        width: 253
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdff5d92405a87e48a5f4cad5dffaccf
+      internalID: 942991070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Key Collector Achievement
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 773
+        width: 253
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8408ac4a655e56a4b83e06ae071ce603
+      internalID: 2046079097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Back to Main Menu Ui
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 775
+        width: 378
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df0060eaa23f8604dbc666979e70a301
+      internalID: -1277139957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Space - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 679
+        width: 137
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3876358b42aa4ed49a7a9297f5a24187
+      internalID: -1599833367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Kill All Librarian Achievement
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 631
+        width: 253
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9850d9c8ed9ade5459eacc25482ad5cf
+      internalID: 1578941942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Interactable UI
+      rect:
+        serializedVersion: 2
+        x: 1135
+        y: 568
+        width: 142
+        height: 142
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 35907e840368947488929326aec78309
+      internalID: 942745821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LeftCtrl - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 552
+        width: 137
+        height: 61
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b57991f83db1a2c4ba0d615c3e98cca1
+      internalID: -1039056920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Victory - UI
+      rect:
+        serializedVersion: 2
+        x: 1196
+        y: 121
+        width: 531
+        height: 126
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b05aff5cb87afe43a6e9a4c8832d80e
+      internalID: -364328211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 1 - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 460
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94601b3d930655440a46c02ea3f57aab
+      internalID: 1393767734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 2 - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 459
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b154fa3e91b1eb44a4f3f9b1d6c2124
+      internalID: -766752655
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 3 - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 460
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9786359b61c15e4386fb8573a10ba29
+      internalID: 1143244705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Gameover UI
+      rect:
+        serializedVersion: 2
+        x: 388
+        y: 48
+        width: 713
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96ccd2a38ddd1d641a8211ec68d400eb
+      internalID: -534616978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: W - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 375
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d252f1e2b6628f542942b22da0f16d41
+      internalID: -226342782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: D - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 372
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d415697f9ffc1734e9a67e6d2a67f616
+      internalID: -2030225964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: S - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 368
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef196ac9102d20748bfae35001849687
+      internalID: 1760519223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Key - UI
+      rect:
+        serializedVersion: 2
+        x: 1762
+        y: 83
+        width: 135
+        height: 274
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aab6f6cbcfdd1aa4d8b28f4b8e423666
+      internalID: -476166233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: A - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 280
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 535d7d775ece44b49b7e2a49f247c1aa
+      internalID: 2030733814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: F - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 279
+        width: 48
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 201b4243bc991164ca3adaeda06e6d03
+      internalID: -1982311817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tap - Button - UI
+      rect:
+        serializedVersion: 2
+        x: 75
+        y: 159
+        width: 137
+        height: 61
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91e8b9dea14dd784998166141380b2a5
+      internalID: 513114099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BookDeath Icon
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 200
+        width: 423
+        height: 362
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7d2ff176f2281349bcfc211296ae5f9
+      internalID: 1036204231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: BookHappy Icon
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 254
+        width: 474
+        height: 293
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3917ec4b4e3f6ae4085451516976975d
+      internalID: -994264163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: d3b1a73138dcdb94a8fec7a8c1a5b96b
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      1 - Button - UI: 1393767734
+      2 - Button - UI: -766752655
+      3 - Button - UI: 1143244705
+      A - Button - UI: 2030733814
+      Back to Main Menu Ui: -1277139957
+      BookDeath Icon: 1036204231
+      BookHappy Icon: -994264163
+      D - Button - UI: -2030225964
+      F - Button - UI: -1982311817
+      Gameover UI: -534616978
+      Interactable UI: 942745821
+      Key - UI: -476166233
+      Key Collector Achievement: 2046079097
+      Kill All Librarian Achievement: 1578941942
+      Kill Librarian Achievement: 942991070
+      LeftCtrl - Button - UI: -1039056920
+      Logo - UI: -1548499843
+      Restart Game - Ui: -1872739027
+      S - Button - UI: 1760519223
+      Space - Button - UI: -1599833367
+      Tap - Button - UI: 513114099
+      The Final Exit Achievement: -2005027722
+      Ui_10: -1697668262
+      Ui_11: 557059211
+      Ui_12: -20768557
+      Ui_15: 1484134690
+      Ui_16: 2085307689
+      Ui_17: -1986755244
+      Ui_18: -1086692645
+      Ui_19: 1876883033
+      Ui_20: 1437189919
+      Ui_21: -217427778
+      Ui_22: 408421881
+      Ui_23: -288941830
+      Ui_24: 23923259
+      Ui_25: 1834028842
+      Ui_27: -1071569718
+      Ui_28: -79641362
+      Ui_29: 534167028
+      Ui_30: 2027810595
+      Ui_32: 1613078413
+      Ui_33: 2054177171
+      Ui_38: 1021776495
+      Ui_39: 591975152
+      Ui_40: 809315025
+      Ui_41: 369824276
+      Ui_42: -8477510
+      Ui_43: 438828444
+      Ui_44: 1204070832
+      Ui_48: 374820095
+      Ui_49: 1886509797
+      Ui_50: 403990708
+      Ui_54: -48971250
+      Ui_55: 1047632140
+      Ui_56: 1036025385
+      Ui_57: -130759176
+      Ui_58: -719432826
+      Ui_59: -1009440573
+      Ui_60: -183926806
+      Ui_62: -1930601121
+      Ui_63: -2050752197
+      Ui_64: -1932140827
+      Ui_65: 381942949
+      Ui_66: 62631358
+      Ui_67: 1324291927
+      Ui_68: 812474123
+      Ui_69: 769094558
+      Ui_7: -156085499
+      Ui_70: 1177012147
+      Ui_71: 906492037
+      Ui_72: -145748122
+      Ui_73: -1533953164
+      Ui_74: 1445793661
+      Ui_8: 552922567
+      Untouchable Achievement: -907767961651953922
+      Victory - UI: -364328211
+      W - Button - UI: -226342782
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

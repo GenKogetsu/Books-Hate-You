@@ -15,5 +15,5 @@ MonoBehaviour:
   _id: win_without_dying
   _title: Untouched
   _description: Finish the game without dying.
-  _icon: {fileID: 0}
+  _icon: {fileID: -907767961651953922, guid: 64ac27b931f676147b1632b586fd3a24, type: 3}
   _iconGlyph: 0

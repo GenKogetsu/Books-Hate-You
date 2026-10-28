@@ -19,11 +19,13 @@ public static class PlayerRunSession
     private static bool _hasCollectedAllKeys;
     private static bool _hasClearedAllFloorEnemies;
     private static bool _hasWonWithoutDying;
+    private static bool _linkedLibrarianDead;
 
     public static int DeathCount => _deathCount;
     public static event Action<int> DeathCountChanged;
     public static event Action<string> AchievementUnlocked;
     public static event Action<EnemyHpController> FloorEnemyDefeated;
+    public static event Action<EnemyHpController> LinkedLibrarianDefeated;
     public static bool HasWon => _hasWon;
     public static bool HasKilledLibrarianWithBook => _librariansKilledWithBooks > 0;
     public static bool HasCollectedAllKeys => _hasCollectedAllKeys;
@@ -41,8 +43,10 @@ public static class PlayerRunSession
         _hasCollectedAllKeys = false;
         _hasClearedAllFloorEnemies = false;
         _hasWonWithoutDying = false;
+        _linkedLibrarianDead = false;
         AchievementUnlocked = null;
         FloorEnemyDefeated = null;
+        LinkedLibrarianDefeated = null;
     }
 
     public static void RecordWin()
@@ -90,8 +94,28 @@ public static class PlayerRunSession
 
     public static void NotifyFloorEnemyDefeated(EnemyHpController enemy)
     {
-        if (enemy)
-            FloorEnemyDefeated?.Invoke(enemy);
+        if (!enemy)
+            return;
+
+        if (IsLinkedLibrarian(enemy) && !_linkedLibrarianDead)
+        {
+            _linkedLibrarianDead = true;
+            LinkedLibrarianDefeated?.Invoke(enemy);
+        }
+
+        FloorEnemyDefeated?.Invoke(enemy);
+    }
+
+    public static bool ShouldLinkedLibrarianBeDead(EnemyHpController enemy) =>
+        _linkedLibrarianDead && IsLinkedLibrarian(enemy);
+
+    public static bool IsLinkedLibrarian(EnemyHpController enemy)
+    {
+        if (!enemy || !enemy.GetComponent<LibrarianMovementController>())
+            return false;
+
+        string sceneName = enemy.gameObject.scene.name;
+        return sceneName == "Floor1" || sceneName == "Stair";
     }
 
     public static void RecordFloorEnemyDefeated(string enemyId, int totalFloorEnemies)
@@ -139,6 +163,7 @@ public static class PlayerRunSession
         _hasCollectedAllKeys = false;
         _hasClearedAllFloorEnemies = false;
         _hasWonWithoutDying = false;
+        _linkedLibrarianDead = false;
         DeathCountChanged?.Invoke(0);
     }
 }

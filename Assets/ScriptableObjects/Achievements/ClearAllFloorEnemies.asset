@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AchievementDefinition
   _id: clear_all_floor_enemies
   _title: Floor Sweeper
-  _description: Defeat all 8 enemies across Floor 1 and Floor 2.
-  _icon: {fileID: 0}
+  _description: Defeat all 8 unique librarians across Floor 1, Stair, and Floor 2.
+  _icon: {fileID: 1578941942, guid: 64ac27b931f676147b1632b586fd3a24, type: 3}
   _iconGlyph: 8

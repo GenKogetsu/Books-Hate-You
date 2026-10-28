@@ -6,9 +6,6 @@ public sealed class WinScreenController : MonoBehaviour
 {
     [SerializeField] private GameObject _winCanvas;
     [SerializeField] private Animator _animator;
-    [SerializeField, ShowIf(nameof(HasAnimator))] private AnimationClip _winClip;
-
-    private bool HasAnimator => _animator != null;
 
     private void Awake()
     {
@@ -36,10 +33,10 @@ public sealed class WinScreenController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        if (_animator && _winClip)
+        if (_animator)
         {
-            _animator.speed = 1f / Mathf.Max(0.01f, _winClip.length);
-            _animator.CrossFade(_winClip.name, 0f);
+            _animator.speed = 1f;
+            _animator.Play("Reveal", 0, 0f);
         }
     }
 }

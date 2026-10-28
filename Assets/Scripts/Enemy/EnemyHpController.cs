@@ -44,6 +44,28 @@ public sealed class EnemyHpController : LivingHpController
 
     }
 
+    private void OnEnable()
+    {
+        PlayerRunSession.LinkedLibrarianDefeated += OnLinkedLibrarianDefeated;
+    }
+
+    private void OnDisable()
+    {
+        PlayerRunSession.LinkedLibrarianDefeated -= OnLinkedLibrarianDefeated;
+    }
+
+    private void Start()
+    {
+        if (PlayerRunSession.ShouldLinkedLibrarianBeDead(this))
+            Kill();
+    }
+
+    private void OnLinkedLibrarianDefeated(EnemyHpController defeated)
+    {
+        if (defeated != this && PlayerRunSession.IsLinkedLibrarian(this))
+            Kill();
+    }
+
     public override void TakeDamage(float damage)
     {
         if (IsDead)

@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f9a1b3c5d7e9f0a2b4c6d8e1f3a5b79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FinishLineSceneLoader
-  _sceneBuildIndex: 0
+  _sceneBuildIndex: 1
   _loadOnlyOnce: 0
   _playerSceneWarpState: {fileID: 11400000, guid: c91695ab8063445db710bef52ec0bce9, type: 2}
   _destinationPlayerTransform:

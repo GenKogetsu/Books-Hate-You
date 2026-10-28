@@ -15,5 +15,5 @@ MonoBehaviour:
   _id: kill_librarian_with_book
   _title: Bookworm
   _description: Defeat the Librarian with a thrown book.
-  _icon: {fileID: 0}
+  _icon: {fileID: 942991070, guid: 64ac27b931f676147b1632b586fd3a24, type: 3}
   _iconGlyph: B

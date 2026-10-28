@@ -15,5 +15,5 @@ MonoBehaviour:
   _id: win_game
   _title: Game Complete
   _description: You finished the game.
-  _icon: {fileID: 0}
+  _icon: {fileID: -2005027722, guid: 64ac27b931f676147b1632b586fd3a24, type: 3}
   _iconGlyph: W

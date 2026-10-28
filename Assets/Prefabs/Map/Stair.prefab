@@ -59047,7 +59047,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 881904025888546554, guid: 7458853e5f85c304e93954a33c4a7bb8, type: 3}
       propertyPath: _sceneBuildIndex
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 881904025888546554, guid: 7458853e5f85c304e93954a33c4a7bb8, type: 3}
       propertyPath: _destinationPlayerTransform._position.x
@@ -82143,7 +82143,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 881904025888546554, guid: 7458853e5f85c304e93954a33c4a7bb8, type: 3}
       propertyPath: _sceneBuildIndex
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 881904025888546554, guid: 7458853e5f85c304e93954a33c4a7bb8, type: 3}
       propertyPath: _destinationPlayerTransform._position.x

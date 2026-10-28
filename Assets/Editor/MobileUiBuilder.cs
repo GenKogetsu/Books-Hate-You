@@ -62,8 +62,8 @@ public static class MobileUiBuilder
             RectTransform death = RequireRect(canvas, "DeathCount");
             RectTransform stamina = RequireRect(canvas, "StaminaHUD");
             RectTransform toast = RequireRect(canvas, "AchievementToast");
-            RectTransform restart = RequireRect(canvas, "DeadScreenPanel/RestartButton");
-            RectTransform menu = RequireRect(canvas, "VictoryPanel/Back To Main Menu");
+            RectTransform restart = RequireRect(canvas, "DeadScreenPanel/Content/RestartButton");
+            RectTransform menu = RequireRect(canvas, "VictoryPanel/Content/Back To Main Menu");
 
             UnityEngine.UI.Image keyBacking = EnsureImage(EnsureRect(key, "MobileKeyBacking"), rounded,
                 new Color(0.035f, 0.055f, 0.09f, 0.62f), false);
@@ -106,16 +106,12 @@ public static class MobileUiBuilder
                 new Vector2(-106f, 0f), new Vector2(112f, 72f), rounded, whitePlaceholder: true);
             CreateOnScreenButton(cameraRow, "HoldBack", "BACK", "<Gamepad>/rightTrigger",
                 new Vector2(16f, 0f), new Vector2(112f, 72f), rounded, whitePlaceholder: true);
-            RectTransform zoomRow = EnsureRect(cameraRow, "ZoomButtons");
-            Anchor(zoomRow, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                new Vector2(210f, 0f), new Vector2(236f, 72f));
-            CreateZoomButton(zoomRow, "ZoomOut", "+", 1f, new Vector2(-60f, 0f), rounded);
-            CreateZoomButton(zoomRow, "ZoomIn", "-", -1f, new Vector2(60f, 0f), rounded);
-
+            Transform oldZoomButtons = cameraRow.Find("ZoomButtons");
+            if (oldZoomButtons) UnityEngine.Object.DestroyImmediate(oldZoomButtons.gameObject);
             RectTransform desktopGuide = CreateDesktopGuide(canvas, rounded);
 
             MobileControlsOverlay overlay = EnsureComponent<MobileControlsOverlay>(root);
-            overlay.Configure(controls.gameObject, interact, zoomRow.gameObject, desktopGuide.gameObject,
+            overlay.Configure(controls.gameObject, interact, desktopGuide.gameObject,
                 new[] { quest.gameObject, key.gameObject, death.gameObject,
                     stamina.gameObject, toast.gameObject });
 
@@ -249,19 +245,6 @@ public static class MobileUiBuilder
         return image.gameObject;
     }
 
-    private static void CreateZoomButton(Transform parent, string name, string label,
-        float direction, Vector2 position, Sprite rounded)
-    {
-        RectTransform rect = EnsureRect(parent, name);
-        Anchor(rect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            position, new Vector2(106f, 72f));
-        UnityEngine.UI.Image image = EnsureWhitePlaceholder(rect, true);
-        EnsureComponent<UnityEngine.UI.Button>(image.gameObject);
-        MobileZoomButton zoom = EnsureComponent<MobileZoomButton>(image.gameObject);
-        zoom.Configure(direction);
-        AddPlaceholderLabel(rect, label, 36f);
-    }
-
     private static RectTransform CreateDesktopGuide(Transform canvas, Sprite rounded)
     {
         RectTransform guide = EnsureRect(canvas, "DesktopNavigationBar");
@@ -274,8 +257,10 @@ public static class MobileUiBuilder
             ("WASD", "Move"), ("MOUSE", "Look"), ("SHIFT", "Run"),
             ("C", "Crouch"), ("SPACE", "Jump"), ("F", "Use"),
             ("1 2 3", "Views"), ("TAB", "Next view"), ("Q", "Top peek"),
-            ("E", "Back peek"), ("WHEEL", "Zoom")
+            ("E", "Back peek")
         };
+        Transform oldZoomControl = guide.Find("ZoomControl");
+        if (oldZoomControl) UnityEngine.Object.DestroyImmediate(oldZoomControl.gameObject);
         for (int i = 0; i < entries.Length; i++)
         {
             int row = i / 6;

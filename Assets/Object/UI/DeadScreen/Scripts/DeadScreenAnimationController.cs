@@ -5,7 +5,6 @@ using Kogetsu.Library.DesignPatternCore;
 public class DeadScreenAnimationController : MonoBehaviour
 {
     [SerializeField, Required] private Animator _animator;
-    [SerializeField, Required] private AnimationClip _deadScreenClip;
 
     private void OnEnable()
     {
@@ -27,7 +26,7 @@ public class DeadScreenAnimationController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        _animator.speed = 1f / _deadScreenClip.length;
-        _animator.CrossFade(_deadScreenClip.name, 0f);
+        _animator.speed = 1f;
+        _animator.Play("Reveal", 0, 0f);
     }
 }

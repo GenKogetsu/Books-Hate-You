@@ -15,5 +15,5 @@ MonoBehaviour:
   _id: collect_all_keys
   _title: Key Collector
   _description: Collect all five keys.
-  _icon: {fileID: 0}
+  _icon: {fileID: 2046079097, guid: 64ac27b931f676147b1632b586fd3a24, type: 3}
   _iconGlyph: K

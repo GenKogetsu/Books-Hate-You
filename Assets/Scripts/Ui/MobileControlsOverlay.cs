@@ -7,12 +7,10 @@ public sealed class MobileControlsOverlay : MonoBehaviour
 {
     [SerializeField] private GameObject _controlsRoot;
     [SerializeField] private GameObject _interactButton;
-    [SerializeField] private GameObject _zoomButtons;
     [SerializeField] private GameObject _desktopGuideRoot;
     [SerializeField] private GameObject[] _hudRoots;
 
     private InteractionManager _interaction;
-    private CameraController _camera;
     private bool _ended;
     private bool _subscribed;
     private bool _hudHidden;
@@ -40,11 +38,10 @@ public sealed class MobileControlsOverlay : MonoBehaviour
     }
 
     public void Configure(GameObject controlsRoot, GameObject interactButton,
-        GameObject zoomButtons, GameObject desktopGuideRoot, GameObject[] hudRoots)
+        GameObject desktopGuideRoot, GameObject[] hudRoots)
     {
         _controlsRoot = controlsRoot;
         _interactButton = interactButton;
-        _zoomButtons = zoomButtons;
         _desktopGuideRoot = desktopGuideRoot;
         _hudRoots = hudRoots;
     }
@@ -117,12 +114,6 @@ public sealed class MobileControlsOverlay : MonoBehaviour
         if (_interactButton && _interactButton.activeSelf != canInteract)
             _interactButton.SetActive(canInteract);
 
-        if (!_camera)
-            _camera = FindAnyObjectByType<CameraController>();
-        bool canZoom = _camera && _camera.isActiveAndEnabled &&
-                       _camera.CurrentViewMode != CameraViewMode.FPP;
-        if (_zoomButtons && _zoomButtons.activeSelf != canZoom)
-            _zoomButtons.SetActive(canZoom);
     }
 
     private void RefreshHud(bool mobile)
