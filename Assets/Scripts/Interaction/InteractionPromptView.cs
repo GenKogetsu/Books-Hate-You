@@ -12,29 +12,46 @@ public sealed class InteractionPromptView : MonoBehaviour
     [SerializeField] private Vector3 _offset = new(0f, 1.5f, 0f);
     [SerializeField, Min(0f)] private float _cameraOffset = 0.2f;
     private static Sprite _mobileRoundedSprite;
-    private GameObject _canvasObject;
+    [SerializeField] private Canvas _canvas;
+    [SerializeField] private UnityEngine.UI.Image _mobileBackground;
+    [SerializeField] private UnityEngine.UI.Image _promptImage;
+    [SerializeField] private TextMeshProUGUI _text;
     private RectTransform _canvasRect;
-    private UnityEngine.UI.Image _mobileBackground;
-    private TextMeshProUGUI _text;
     private bool _mobileStyled;
 
     #endregion
     #region Unity lifecycle
-    private void Awake() { CreateCanvas(); SetVisible(false); }
+    private void Awake()
+    {
+        if (_canvas != null) _canvasRect = _canvas.GetComponent<RectTransform>();
+        SetVisible(false);
+    }
     private void OnEnable() { ActiveViews.Add(this); }
     private void OnDisable() { ActiveViews.Remove(this); }
-    private void LateUpdate() { if (_canvasObject != null && _canvasObject.activeSelf) FaceCamera(); }
+    private void LateUpdate() { if (_canvas != null && _canvas.gameObject.activeSelf) FaceCamera(); }
 
     public static IEnumerable<InteractionPromptView> AllActive => ActiveViews;
 
     #endregion
     #region Public API
-    public void SetState(string value, bool visible)
+    public void SetState(string value, bool visible, bool showOutOfRangeImage = false)
     {
         if (!visible) { SetVisible(false); return; }
-        CreateCanvas();
+        if (_canvas == null || _text == null) return;
         bool mobile = MobileControlsOverlay.IsMobileUiEnabled;
         ApplyStyle(mobile, value);
+        bool showImage = showOutOfRangeImage && _promptImage != null && _promptImage.sprite != null;
+        if (_promptImage != null) _promptImage.gameObject.SetActive(showImage);
+        _text.gameObject.SetActive(!showImage);
+        if (showImage)
+        {
+            if (_mobileBackground != null) _mobileBackground.gameObject.SetActive(false);
+            if (_canvasRect != null) _canvasRect.sizeDelta = new Vector2(1.5f, 1.5f);
+            SetVisible(true);
+            FaceCamera();
+            return;
+        }
+        if (!mobile && _canvasRect != null) _canvasRect.sizeDelta = new Vector2(2f, 1f);
         // The contextual touch button already says USE. Avoid repeating it in the world.
         if (mobile && (value == "USE" || value == "F"))
         {
@@ -49,34 +66,6 @@ public sealed class InteractionPromptView : MonoBehaviour
 
     #endregion
     #region Prompt creation and presentation
-    private void CreateCanvas()
-    {
-        if (_canvasObject != null) return;
-        _canvasObject = new GameObject("InteractionPromptCanvas");
-        _canvasObject.transform.SetParent(transform, false);
-        Canvas canvas = _canvasObject.AddComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace; canvas.overrideSorting = true; canvas.sortingOrder = 1000;
-        _canvasRect = canvas.GetComponent<RectTransform>();
-        _canvasRect.sizeDelta = new Vector2(2f, 1f); _canvasRect.localScale = Vector3.one * 0.01f;
-        GameObject backgroundObject = new GameObject("MobilePromptBacking");
-        backgroundObject.transform.SetParent(_canvasObject.transform, false);
-        RectTransform backgroundRect = backgroundObject.AddComponent<RectTransform>();
-        backgroundRect.anchorMin = Vector2.zero; backgroundRect.anchorMax = Vector2.one;
-        backgroundRect.offsetMin = Vector2.zero; backgroundRect.offsetMax = Vector2.zero;
-        _mobileBackground = backgroundObject.AddComponent<UnityEngine.UI.Image>();
-        _mobileBackground.color = new Color(0.035f, 0.055f, 0.09f, 0.68f);
-        _mobileBackground.raycastTarget = false;
-        backgroundObject.SetActive(false);
-        GameObject textObject = new GameObject("PromptText");
-        textObject.transform.SetParent(_canvasObject.transform, false);
-        RectTransform textRect = textObject.AddComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero; textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = Vector2.zero; textRect.offsetMax = Vector2.zero;
-        _text = textObject.AddComponent<TextMeshProUGUI>();
-        _text.alignment = TextAlignmentOptions.Center; _text.fontSize = 72f;
-        _text.color = Color.white; _text.textWrappingMode = TextWrappingModes.NoWrap; _text.raycastTarget = false;
-    }
-
     private void ApplyStyle(bool mobile, string value)
     {
         if (!mobile)
@@ -87,11 +76,12 @@ public sealed class InteractionPromptView : MonoBehaviour
             _text.enableAutoSizing = false;
             _text.textWrappingMode = TextWrappingModes.NoWrap;
             _text.margin = Vector4.zero;
-            _mobileBackground.gameObject.SetActive(false);
+            if (_mobileBackground != null) _mobileBackground.gameObject.SetActive(false);
             _mobileStyled = false;
             return;
         }
 
+        if (_mobileBackground == null) return;
         if (!_mobileRoundedSprite) _mobileRoundedSprite = CreateRoundedSprite();
         if (_mobileBackground.sprite != _mobileRoundedSprite)
         {
@@ -142,11 +132,11 @@ public sealed class InteractionPromptView : MonoBehaviour
         Camera camera = Camera.main; if (camera == null) return;
         Vector3 position = transform.position + _offset;
         Vector3 towardCamera = (camera.transform.position - position).normalized;
-        _canvasObject.transform.position = position + towardCamera * _cameraOffset;
-        _canvasObject.transform.rotation = Quaternion.LookRotation(_canvasObject.transform.position - camera.transform.position, Vector3.up);
+        _canvas.transform.position = position + towardCamera * _cameraOffset;
+        _canvas.transform.rotation = Quaternion.LookRotation(_canvas.transform.position - camera.transform.position, Vector3.up);
     }
 
-    private void SetVisible(bool visible) { if (_canvasObject != null) _canvasObject.SetActive(visible); }
+    private void SetVisible(bool visible) { if (_canvas != null) _canvas.gameObject.SetActive(visible); }
     #endregion
 }
 #endregion

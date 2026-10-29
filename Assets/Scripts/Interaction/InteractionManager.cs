@@ -147,7 +147,7 @@ public sealed class InteractionManager : MonoBehaviour
         CurrentState = !inRange
             ? InteractionState.Detected
             : conditionPassed ? InteractionState.InRange : InteractionState.Blocked;
-        view.SetState(prompt, true);
+        view.SetState(prompt, true, !inRange && _currentInteractable is InventoryItemPickup);
     }
 
     private static string GetBlockedPrompt(IInteractable interactable, PlayerInventory inventory)
