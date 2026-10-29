@@ -3,6 +3,8 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System;
+using System.Collections.Generic;
 
 namespace Kogetsu.Library.Editor
 {
@@ -19,14 +21,24 @@ namespace Kogetsu.Library.Editor
         // เก็บสถานะ toggle / foldout ไว้ใน SessionState (อยู่รอด Enter Play Mode / Domain Reload)
         #endregion
         static string KeyBase(SerializedProperty p) =>
-            $"EditOnInspector_{p.serializedObject.targetObject.GetType().Name}_{p.propertyPath}";
+            $"EditOnInspector_{p.serializedObject.targetObject.GetEntityId()}_{p.propertyPath}";
         static string RunKey(SerializedProperty p) => KeyBase(p) + "_run";
         static string FoldKey(SerializedProperty p) => KeyBase(p) + "_fold";
 
-        System.Type GetObjType() =>
-            fieldInfo != null && typeof(ScriptableObject).IsAssignableFrom(fieldInfo.FieldType)
-                ? fieldInfo.FieldType
+        Type GetObjType()
+        {
+            Type type = fieldInfo?.FieldType;
+            while (type != null && (type.IsArray ||
+                   (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))))
+                type = type.IsArray ? type.GetElementType() : type.GetGenericArguments()[0];
+
+            return type != null && typeof(ScriptableObject).IsAssignableFrom(type)
+                ? type
                 : typeof(ScriptableObject);
+        }
+
+        static bool IsList(SerializedProperty property) =>
+            property.isArray && property.propertyType != SerializedPropertyType.String;
 
         #region Documentation - Notes
         // =====================================================================
@@ -38,6 +50,9 @@ namespace Kogetsu.Library.Editor
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
             var prop = property.Copy();
+            if (IsList(prop))
+                return CreateListGUI(prop);
+
             string runKey = RunKey(prop), foldKey = FoldKey(prop);
 
             var root = new VisualElement();
@@ -116,7 +131,7 @@ namespace Kogetsu.Library.Editor
                 content.Clear();
                 var so = prop.objectReferenceValue;
                 hasSO = so != null;
-                if (hasSO) content.Add(new InspectorElement(so)); // หน้าเดียวกับตอนคลิก SO ใน Project
+                if (hasSO && foldout.value) content.Add(new InspectorElement(so));
                 UpdateVisibility();
                 ApplyState();
             }
@@ -131,12 +146,56 @@ namespace Kogetsu.Library.Editor
             {
                 if (e.target != foldout) return;
                 SessionState.SetBool(foldKey, e.newValue);
-                UpdateVisibility();
+                Rebuild();
             });
 
             root.TrackPropertyValue(prop, _ => Rebuild());
             root.schedule.Execute(ApplyState).Every(200); // ตามสถานะ Play/Stop
 
+            Rebuild();
+            return root;
+        }
+
+        VisualElement CreateListGUI(SerializedProperty property)
+        {
+            var root = new VisualElement();
+            var foldout = new Foldout { text = property.displayName, value = property.isExpanded };
+            root.Add(foldout);
+
+            var elements = new VisualElement();
+            elements.style.marginLeft = _pad;
+            foldout.Add(elements);
+
+            void Rebuild()
+            {
+                elements.Clear();
+                if (!foldout.value) return;
+
+                var size = new IntegerField("Size") { value = property.arraySize };
+                size.RegisterValueChangedCallback(e =>
+                {
+                    property.arraySize = Mathf.Max(0, e.newValue);
+                    property.serializedObject.ApplyModifiedProperties();
+                    Rebuild();
+                });
+                elements.Add(size);
+
+                for (int i = 0; i < property.arraySize; i++)
+                {
+                    var element = property.GetArrayElementAtIndex(i).Copy();
+                    var field = new PropertyField(element, $"Element {i}");
+                    field.BindProperty(element);
+                    elements.Add(field);
+                }
+            }
+
+            foldout.RegisterValueChangedCallback(e =>
+            {
+                property.isExpanded = e.newValue;
+                property.serializedObject.ApplyModifiedProperties();
+                Rebuild();
+            });
+            root.TrackPropertyValue(property, _ => Rebuild());
             Rebuild();
             return root;
         }
@@ -148,7 +207,7 @@ namespace Kogetsu.Library.Editor
         #endregion
         SerializedObject _so;
 
-        SerializedObject GetSO(Object target)
+        SerializedObject GetSO(UnityEngine.Object target)
         {
             if (_so == null || _so.targetObject != target)
             {
@@ -164,6 +223,15 @@ namespace Kogetsu.Library.Editor
             float line = EditorGUIUtility.singleLineHeight;
             float sp = EditorGUIUtility.standardVerticalSpacing;
             float h = line;
+
+            if (IsList(property))
+            {
+                if (!property.isExpanded) return h;
+                h += sp + line;
+                for (int i = 0; i < property.arraySize; i++)
+                    h += sp + EditorGUI.GetPropertyHeight(property.GetArrayElementAtIndex(i), true);
+                return h;
+            }
 
             var obj = property.objectReferenceValue;
             if (obj == null) return h;
@@ -188,6 +256,32 @@ namespace Kogetsu.Library.Editor
             float line = EditorGUIUtility.singleLineHeight;
             float sp = EditorGUIUtility.standardVerticalSpacing;
             bool playing = EditorApplication.isPlaying;
+
+            if (IsList(property))
+            {
+                var header = new Rect(position.x, position.y, position.width, line);
+                property.isExpanded = EditorGUI.Foldout(header, property.isExpanded, label, true);
+                if (!property.isExpanded) return;
+
+                float listY = header.yMax + sp;
+                int size = EditorGUI.IntField(new Rect(position.x, listY, position.width, line), "Size", property.arraySize);
+                if (size != property.arraySize)
+                {
+                    property.arraySize = Mathf.Max(0, size);
+                    property.serializedObject.ApplyModifiedProperties();
+                }
+                listY += line;
+                for (int i = 0; i < property.arraySize; i++)
+                {
+                    var element = property.GetArrayElementAtIndex(i);
+                    float height = EditorGUI.GetPropertyHeight(element, true);
+                    listY += sp;
+                    EditorGUI.PropertyField(new Rect(position.x + _pad, listY, position.width - _pad, height),
+                        element, new GUIContent($"Element {i}"), true);
+                    listY += height;
+                }
+                return;
+            }
 
             var r = new Rect(position.x, position.y, position.width, line);
             var obj = property.objectReferenceValue;
