@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Floor2/Floor2.unity
     guid: 6f06e1b98f09e554f953ef8ea72f9490
   - enabled: 1
-    path: Assets/Scenes/EndGameCutScene.unity
+    path: Assets/Scenes/EndGameCutScene/EndGameCutScene.unity
     guid: 97075ceeb43cbc7469d412a967174fae
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
