@@ -1,8 +1,12 @@
+#region Imports
 using TMPro;
 using UnityEngine;
+#endregion
+#region DeathCountUI
 
 public sealed class DeathCountUI : MonoBehaviour
 {
+    #region Counter references and animation settings
     [SerializeField] private TMP_Text _countText;
     [SerializeField] private string _format = "Deaths: {0}";
     [SerializeField, Min(0.1f)] private float _blinkCycleDuration = 1f;
@@ -10,6 +14,8 @@ public sealed class DeathCountUI : MonoBehaviour
     private CanvasGroup _canvasGroup;
     private Coroutine _blinkRoutine;
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         if (!_countText)
@@ -34,6 +40,8 @@ public sealed class DeathCountUI : MonoBehaviour
         _blinkRoutine = null;
     }
 
+    #endregion
+    #region Count display and animation
     private void Refresh(int deathCount)
     {
         if (_countText)
@@ -82,4 +90,6 @@ public sealed class DeathCountUI : MonoBehaviour
 
         _canvasGroup.alpha = targetAlpha;
     }
+    #endregion
 }
+#endregion

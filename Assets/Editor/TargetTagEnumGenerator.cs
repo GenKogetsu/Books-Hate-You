@@ -1,9 +1,12 @@
 #if UNITY_EDITOR
+#region Imports
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using UnityEditor;
 using UnityEditorInternal;
+#endregion
+#region TargetTagEnumGenerator
 
 [InitializeOnLoad]
 public static class TargetTagEnumGenerator
@@ -41,6 +44,7 @@ public static class TargetTagEnumGenerator
         }
 
         StringBuilder builder = new();
+        builder.AppendLine("#region Target tags");
         builder.AppendLine("[System.Flags]");
         builder.AppendLine("public enum TargetTag");
         builder.AppendLine("{");
@@ -50,7 +54,9 @@ public static class TargetTagEnumGenerator
             builder.AppendLine($"    {ToEnumName(uniqueTags[i])} = 1 << {i},");
 
         builder.AppendLine("}");
+        builder.AppendLine("#endregion");
         builder.AppendLine();
+        builder.AppendLine("#region Tag matching");
         builder.AppendLine("public static class TargetTagExtensions");
         builder.AppendLine("{");
         builder.AppendLine("    public static bool MatchesUnityTag(this TargetTag targetTags, string unityTag)");
@@ -66,6 +72,7 @@ public static class TargetTagEnumGenerator
 
         builder.AppendLine("    }");
         builder.AppendLine("}");
+        builder.AppendLine("#endregion");
 
         string directory = Path.GetDirectoryName(OutputPath);
         Directory.CreateDirectory(directory);
@@ -105,4 +112,5 @@ public static class TargetTagEnumGenerator
         return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
     }
 }
+#endregion
 #endif

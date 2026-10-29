@@ -1,7 +1,11 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region Librarian chase state
 
 public sealed class ChaseState : EnemyState
 {
+    #region Chase phases and return snapshot
     private enum ChasePhase
     {
         Chasing,
@@ -33,7 +37,9 @@ public sealed class ChaseState : EnemyState
             target.localScale = LocalScale;
         }
     }
+    #endregion
 
+    #region Chase lifecycle and phase transitions
     public ChaseState() { }
 
     public override void OnEnter()
@@ -100,7 +106,9 @@ public sealed class ChaseState : EnemyState
         RestoreChaseStartTransform();
         Controller.ChangeState(new IdleState());
     }
+    #endregion
 
+    #region Destination and return path
     private void UpdateDestination(Vector3 destination)
     {
         Controller.Agent.SetDestination(destination);
@@ -129,11 +137,15 @@ public sealed class ChaseState : EnemyState
         Controller.Agent.Warp(_chaseStartTransform.Position);
         _chaseStartTransform.Restore(Controller.transform);
     }
+    #endregion
 
+    #region Chase exit
     public override void OnExit()
     {
         Controller.AudioManager?.StopAll();
         Controller.Agent.isStopped = true;
         Controller.Agent.ResetPath();
     }
+    #endregion
 }
+#endregion

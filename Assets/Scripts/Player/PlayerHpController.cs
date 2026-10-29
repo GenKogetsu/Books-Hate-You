@@ -1,11 +1,17 @@
+#region Imports
 using UnityEngine;
 using Kogetsu.Library.DesignPatternCore;
+#endregion
+#region PlayerHpController
 
 [RequireComponent(typeof(PlayerStatus))]
 public class PlayerHpController : LivingHpController
 {
+    #region Fields and configuration
     [SerializeField] private PlayerStatus _playerStatus;
 
+    #endregion
+    #region Unity lifecycle
     private void Reset()
     {
         TryGetComponent(out _playerStatus);
@@ -20,6 +26,8 @@ public class PlayerHpController : LivingHpController
 
     }
 
+    #endregion
+    #region Public API
     public override void TakeDamage(float damage)
     {
         if (_playerStatus.GetIsDead()) return;
@@ -44,6 +52,8 @@ public class PlayerHpController : LivingHpController
 
     public void KillPlayer() => Kill();
 
+    #endregion
+    #region Internal helpers
     private void PublishGameover()
     {
         PlayerRunSession.RecordDeath();
@@ -53,4 +63,6 @@ public class PlayerHpController : LivingHpController
 
         EventBus.Instance.Publish(new GameoverEvent());
     }
+    #endregion
 }
+#endregion

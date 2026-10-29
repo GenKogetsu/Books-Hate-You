@@ -1,12 +1,16 @@
+#region Imports
 using UnityEngine;
 using UnityEngine.AI;
 using NaughtyAttributes;
 using Kogetsu.Library.Attribute;
 using Kogetsu.Library.DesignPatternCore;
+#endregion
+#region LibrarianMovementController
 
 [RequireComponent(typeof(NavMeshAgent), typeof(LibrarianAudioManager))]
 public sealed class LibrarianMovementController : LivingMovementController
 {
+    #region Fields and configuration
     [Header("References")]
     [SerializeField] private NavMeshAgent _agent;
     [SerializeField] private LibrarianAnimationController _animationController;
@@ -34,6 +38,8 @@ public sealed class LibrarianMovementController : LivingMovementController
     internal bool IsChasing => _stateMachine?.CurrentState is ChaseState;
     internal LibrarianAudioManager AudioManager => _audioManager;
 
+    #endregion
+    #region Unity lifecycle
     private void Reset()
     {
         TryGetComponent(out _agent);
@@ -111,6 +117,8 @@ public sealed class LibrarianMovementController : LivingMovementController
         }
     }
 
+    #endregion
+    #region FSM and navigation
     protected override bool CanMove()
     {
         return !_isDead && !_isGameOver && _stateMachine?.CurrentState != null;
@@ -221,6 +229,8 @@ public sealed class LibrarianMovementController : LivingMovementController
     internal void PlayIdleAnimation() => _animationController?.PlayIdle();
     internal void PlayRunAnimation() => _animationController?.PlayRun();
 
+    #endregion
+    #region Game end and death
     private void OnGameover(GameoverEvent _)
     {
         _isGameOver = true;
@@ -242,4 +252,6 @@ public sealed class LibrarianMovementController : LivingMovementController
         StopMovement();
         _currentStateName = "Dead";
     }
+    #endregion
 }
+#endregion

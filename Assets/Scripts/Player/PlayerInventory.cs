@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region PlayerInventory
 
 public sealed class PlayerInventory : MonoBehaviour
 {
@@ -29,3 +32,4 @@ public sealed class PlayerInventory : MonoBehaviour
         return _data && _data.RemoveItem(item, amount);
     }
 }
+#endregion

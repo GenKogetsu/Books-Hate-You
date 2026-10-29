@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region Player transform snapshot
 
 [System.Serializable]
 public struct PlayerTransformSnapshot
@@ -21,6 +24,9 @@ public struct PlayerTransformSnapshot
     }
 }
 
+#endregion
+
+#region Player scene warp state
 [CreateAssetMenu(fileName = "PlayerSceneWarpState", menuName = "Data/Player Scene Warp State")]
 public sealed class PlayerSceneWarpState : ScriptableObject
 {
@@ -45,3 +51,4 @@ public sealed class PlayerSceneWarpState : ScriptableObject
         _pendingTransform = PlayerTransformSnapshot.Identity;
     }
 }
+#endregion

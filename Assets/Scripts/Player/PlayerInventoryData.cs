@@ -1,6 +1,9 @@
+#region Imports
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#endregion
+#region PlayerInventoryData
 
 [CreateAssetMenu(fileName = "PlayerInventoryData", menuName = "Player/Inventory Data")]
 public sealed class PlayerInventoryData : ScriptableObject
@@ -90,3 +93,4 @@ public sealed class PlayerInventoryData : ScriptableObject
     }
 }
 
+#endregion

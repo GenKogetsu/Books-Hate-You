@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region AchievementDefinition
 
 [CreateAssetMenu(fileName = "Achievement", menuName = "Game/Achievement")]
 public sealed class AchievementDefinition : ScriptableObject
@@ -15,3 +18,4 @@ public sealed class AchievementDefinition : ScriptableObject
     public Sprite Icon => _icon;
     public string IconGlyph => _iconGlyph;
 }
+#endregion

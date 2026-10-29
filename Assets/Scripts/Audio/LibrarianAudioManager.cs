@@ -1,11 +1,15 @@
+#region Imports
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+#endregion
+#region LibrarianAudioManager
 
 public sealed class LibrarianAudioManager : BaseAudioManager
 {
+    #region Audio sources and chase state
     [Header("Run SFX")]
     [SerializeField] private AudioSource _runSfxSource;
 
@@ -25,6 +29,8 @@ public sealed class LibrarianAudioManager : BaseAudioManager
         OriginalMuteStates.Clear();
     }
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         if (!_runSfxSource || !_chaseBgmSource)
@@ -39,12 +45,16 @@ public sealed class LibrarianAudioManager : BaseAudioManager
         StopAll();
     }
 
+    #endregion
+    #region Event handlers
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (ActiveChases.Contains(this))
             MuteLevelBgm();
     }
 
+    #endregion
+    #region Chase playback and mixer control
     public void PlayRunSfx() => PlayLoop(_runSfxSource);
     public void StopRunSfx() => Stop(_runSfxSource);
 
@@ -102,4 +112,6 @@ public sealed class LibrarianAudioManager : BaseAudioManager
         StopRunSfx();
         StopChaseBgm();
     }
+    #endregion
 }
+#endregion

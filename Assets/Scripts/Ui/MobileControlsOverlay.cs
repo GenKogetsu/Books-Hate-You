@@ -1,6 +1,9 @@
+#region Imports
 using Kogetsu.Library.DesignPatternCore;
 using Kogetsu.Library.Core;
 using UnityEngine;
+#endregion
+#region MobileControlsOverlay
 
 /// <summary>Shows the touch controls only while a mobile run is playable.</summary>
 public sealed class MobileControlsOverlay : MonoBehaviour
@@ -141,3 +144,4 @@ public sealed class MobileControlsOverlay : MonoBehaviour
         }
     }
 }
+#endregion

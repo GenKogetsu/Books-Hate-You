@@ -1,8 +1,12 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region StaminaBarUI
 
 [RequireComponent(typeof(UnityEngine.UI.Image))]
 public sealed class StaminaBarUI : MonoBehaviour
 {
+    #region Internal helpers
     [SerializeField, Min(1f)] private float _fullWidth = 420f;
     [SerializeField, Min(1f)] private float _barHeight = 18f;
     [SerializeField, Range(0f, 1f)] private float _lowThreshold = 0.25f;
@@ -16,6 +20,8 @@ public sealed class StaminaBarUI : MonoBehaviour
     private int _lastDeniedVersion;
     private float _shakeRemaining;
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         _image = GetComponent<UnityEngine.UI.Image>();
@@ -80,4 +86,6 @@ public sealed class StaminaBarUI : MonoBehaviour
     {
         if (_rect) _rect.anchoredPosition = _restPosition;
     }
+    #endregion
 }
+#endregion

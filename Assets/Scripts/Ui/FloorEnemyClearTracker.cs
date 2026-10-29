@@ -1,16 +1,22 @@
+#region Imports
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+#endregion
+#region FloorEnemyClearTracker
 
 public sealed class FloorEnemyClearTracker : MonoBehaviour
 {
+    #region Fields and configuration
     private const int TotalUniqueLibrarians = 8;
     private const string LinkedLibrarianId = "Floor1-Stair/Librarian";
 
     private readonly HashSet<string> _sceneEnemyIds = new();
     private Scene _floorScene;
 
+    #endregion
+    #region Unity lifecycle
     private void OnEnable()
     {
         _floorScene = gameObject.scene;
@@ -34,6 +40,8 @@ public sealed class FloorEnemyClearTracker : MonoBehaviour
         PlayerRunSession.FloorEnemyDefeated -= OnFloorEnemyDefeated;
     }
 
+    #endregion
+    #region Event handlers
     private void OnFloorEnemyDefeated(EnemyHpController enemy)
     {
         if (!enemy || enemy.gameObject.scene != _floorScene)
@@ -44,6 +52,8 @@ public sealed class FloorEnemyClearTracker : MonoBehaviour
             PlayerRunSession.RecordFloorEnemyDefeated(enemyId, TotalUniqueLibrarians);
     }
 
+    #endregion
+    #region Internal helpers
     private static string BuildEnemyId(Transform enemy)
     {
         if (PlayerRunSession.IsLinkedLibrarian(enemy.GetComponent<EnemyHpController>()))
@@ -55,4 +65,6 @@ public sealed class FloorEnemyClearTracker : MonoBehaviour
 
         return id;
     }
+    #endregion
 }
+#endregion

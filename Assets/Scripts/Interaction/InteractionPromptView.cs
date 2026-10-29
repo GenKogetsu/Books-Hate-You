@@ -1,9 +1,13 @@
+#region Imports
 using TMPro;
 using System.Collections.Generic;
 using UnityEngine;
+#endregion
+#region InteractionPromptView
 
 public sealed class InteractionPromptView : MonoBehaviour
 {
+    #region Prompt references and runtime state
     private static readonly HashSet<InteractionPromptView> ActiveViews = new();
     [SerializeField] private Vector3 _offset = new(0f, 1.5f, 0f);
     [SerializeField, Min(0f)] private float _cameraOffset = 0.2f;
@@ -14,6 +18,8 @@ public sealed class InteractionPromptView : MonoBehaviour
     private TextMeshProUGUI _text;
     private bool _mobileStyled;
 
+    #endregion
+    #region Unity lifecycle
     private void Awake() { CreateCanvas(); SetVisible(false); }
     private void OnEnable() { ActiveViews.Add(this); }
     private void OnDisable() { ActiveViews.Remove(this); }
@@ -21,6 +27,8 @@ public sealed class InteractionPromptView : MonoBehaviour
 
     public static IEnumerable<InteractionPromptView> AllActive => ActiveViews;
 
+    #endregion
+    #region Public API
     public void SetState(string value, bool visible)
     {
         if (!visible) { SetVisible(false); return; }
@@ -39,6 +47,8 @@ public sealed class InteractionPromptView : MonoBehaviour
         FaceCamera();
     }
 
+    #endregion
+    #region Prompt creation and presentation
     private void CreateCanvas()
     {
         if (_canvasObject != null) return;
@@ -137,4 +147,6 @@ public sealed class InteractionPromptView : MonoBehaviour
     }
 
     private void SetVisible(bool visible) { if (_canvasObject != null) _canvasObject.SetActive(visible); }
+    #endregion
 }
+#endregion

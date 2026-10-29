@@ -1,3 +1,4 @@
+#region Imports
 using System;
 using System.IO;
 using System.Linq;
@@ -5,6 +6,8 @@ using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
+#endregion
+#region MobileBuildSetup
 
 /// <summary>
 /// Applies the shared phone build settings without changing the desktop quality profile.
@@ -12,10 +15,13 @@ using UnityEngine;
 /// </summary>
 public static class MobileBuildSetup
 {
+    #region Fields and configuration
     private const string ProductName = "Books Hate You";
     private const string ApplicationId = "com.bookshateyou.game";
 
     [MenuItem("Tools/Books Hate You/Configure Mobile Player Settings")]
+    #endregion
+    #region Public API
     public static void ConfigureMobilePlayerSettings()
     {
         PlayerSettings.productName = ProductName;
@@ -68,4 +74,6 @@ public static class MobileBuildSetup
 
         Debug.Log($"Android APK built: {outputPath}");
     }
+    #endregion
 }
+#endregion

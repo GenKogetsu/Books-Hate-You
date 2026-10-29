@@ -1,3 +1,4 @@
+#region Librarian idle state
 public sealed class IdleState : EnemyState
 {
     public IdleState() { }
@@ -19,3 +20,4 @@ public sealed class IdleState : EnemyState
 
     public override void OnExit() { }
 }
+#endregion

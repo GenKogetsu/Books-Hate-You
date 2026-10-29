@@ -1,3 +1,4 @@
+#region StateMachine
 public sealed class StateMachine<TOwner>
 {
     private readonly TOwner _owner;
@@ -27,3 +28,4 @@ public sealed class StateMachine<TOwner>
         CurrentState = null;
     }
 }
+#endregion

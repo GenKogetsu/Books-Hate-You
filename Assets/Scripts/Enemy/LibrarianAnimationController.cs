@@ -1,5 +1,8 @@
+#region Imports
 using UnityEngine;
 using System.Collections.Generic;
+#endregion
+#region LibrarianAnimationController
 
 public sealed class LibrarianAnimationController : LivingAnimationController
 {
@@ -24,3 +27,4 @@ public sealed class LibrarianAnimationController : LivingAnimationController
 
     public override void PlayDeathAnimation() => PlayDeath();
 }
+#endregion

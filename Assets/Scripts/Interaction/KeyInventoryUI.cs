@@ -1,8 +1,12 @@
+#region Imports
 using TMPro;
 using UnityEngine;
+#endregion
+#region KeyInventoryUI
 
 public sealed class KeyInventoryUI : MonoBehaviour
 {
+    #region Inventory display references
     [SerializeField] private PlayerInventoryData _inventoryData;
     [SerializeField] private TMPro.TMP_Text _amountText;
     [SerializeField] private CanvasGroup _visibilityGroup;
@@ -10,6 +14,8 @@ public sealed class KeyInventoryUI : MonoBehaviour
     [SerializeField, Min(1)] private int _displayMaximum = 5;
     [SerializeField] private string _format = "{0}/{1}";
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         if (!_amountText)
@@ -36,6 +42,8 @@ public sealed class KeyInventoryUI : MonoBehaviour
             _inventoryData.AmountChanged -= OnAmountChanged;
     }
 
+    #endregion
+    #region Inventory display updates
     private void OnAmountChanged(InventoryItemType item, int amount)
     {
         if (item == _item)
@@ -62,4 +70,6 @@ public sealed class KeyInventoryUI : MonoBehaviour
             _visibilityGroup.blocksRaycasts = visible;
         }
     }
+    #endregion
 }
+#endregion

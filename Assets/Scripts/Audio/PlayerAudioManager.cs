@@ -1,7 +1,11 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region PlayerAudioManager
 
 public sealed class PlayerAudioManager : BaseAudioManager
 {
+    #region Fields and configuration
     [SerializeField] private AudioSource _walkSource;
     [SerializeField] private AudioSource _runSource;
     [SerializeField] private AudioSource _takeoffSource;
@@ -10,6 +14,8 @@ public sealed class PlayerAudioManager : BaseAudioManager
     private bool _wasJumping;
     private bool _wasLanding;
 
+    #endregion
+    #region Public API
     public void PlayWalk()
     {
         Stop(_runSource);
@@ -79,4 +85,6 @@ public sealed class PlayerAudioManager : BaseAudioManager
         _wasJumping = false;
         _wasLanding = false;
     }
+    #endregion
 }
+#endregion

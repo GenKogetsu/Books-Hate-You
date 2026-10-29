@@ -1,12 +1,18 @@
+#region Imports
 using Kogetsu.Library.DesignPatternCore;
 using NaughtyAttributes;
 using UnityEngine;
+#endregion
+#region WinScreenController
 
 public sealed class WinScreenController : MonoBehaviour
 {
+    #region Fields and configuration
     [SerializeField] private GameObject _winCanvas;
     [SerializeField] private Animator _animator;
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         if (_winCanvas)
@@ -25,6 +31,8 @@ public sealed class WinScreenController : MonoBehaviour
             EventBus.Instance.Unsubscribe<GameClearEvent>(OnPlayerWin);
     }
 
+    #endregion
+    #region Event handlers
     private void OnPlayerWin(GameClearEvent _)
     {
         if (_winCanvas)
@@ -40,10 +48,14 @@ public sealed class WinScreenController : MonoBehaviour
         }
     }
 
+    #endregion
+    #region Public API
     public void PublishWin()
     {
         PlayerRunSession.RecordWin();
         if (EventBus.Instance)
             EventBus.Instance.Publish(new GameClearEvent());
     }
+    #endregion
 }
+#endregion

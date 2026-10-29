@@ -1,11 +1,17 @@
+#region Imports
 using Kogetsu.Library.Core;
 using Kogetsu.Library.DesignPatternCore;
 using UnityEngine;
+#endregion
+#region FinishLineSceneLoader
 
 [RequireComponent(typeof(Collider))]
 public sealed class FinishLineSceneLoader : MonoBehaviour
 {
+    #region Fields and configuration
     [Header("Scene")]
+    #endregion
+    #region Internal helpers
     [SerializeField, Min(0)] private int _sceneBuildIndex;
     [SerializeField] private bool _loadOnlyOnce = true;
 
@@ -18,11 +24,15 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
 
     private bool _hasLoaded;
 
+    #endregion
+    #region Unity lifecycle
     private void Reset()
     {
         GetComponent<Collider>().isTrigger = true;
     }
 
+    #endregion
+    #region Event handlers
     private void OnTriggerEnter(Collider other)
     {
         if (_loadOnlyOnce && _hasLoaded)
@@ -58,4 +68,6 @@ public sealed class FinishLineSceneLoader : MonoBehaviour
             _sceneBuildIndex,
             () => _playerSceneWarpState.SetPendingTransform(_destinationPlayerTransform));
     }
+    #endregion
 }
+#endregion

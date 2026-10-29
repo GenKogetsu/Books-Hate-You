@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region FirstPersonCameraSettingSO
 
 [CreateAssetMenu(fileName = "FPP Camera Settings", menuName = "Game/Camera/FPP Settings")]
 public sealed class FirstPersonCameraSettingSO : CameraSettingSO
@@ -8,3 +11,4 @@ public sealed class FirstPersonCameraSettingSO : CameraSettingSO
 
     public float ClampPitch(float pitch) => Mathf.Clamp(pitch, -_maxLookUp, _maxLookDown);
 }
+#endregion

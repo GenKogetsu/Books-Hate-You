@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region LibrarianStats
 
 [CreateAssetMenu(fileName = "LibrarianStats", menuName = "Data/LibrarianStats")]
 public class LibrarianStats : LivingStats
@@ -14,3 +17,4 @@ public class LibrarianStats : LivingStats
     [Min(0.1f)] public float LoseTargetRange = 15f;
     public Vector3 EyeOffset = new(0f, 1.5f, 0f);
 }
+#endregion

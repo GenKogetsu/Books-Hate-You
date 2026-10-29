@@ -2,19 +2,17 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Kogetsu.Library.DesignPatternCore;
 using Kogetsu.Library.Core;
+using NaughtyAttributes;
 
 [DefaultExecutionOrder(-1000)]
 [RequireComponent(typeof(CharacterController), typeof(PlayerStatus))]
 public class PlayerMovementController : LivingMovementController
 {
-    #region Constants
+    #region Configuration and runtime data
 
     private const float MoveThreshold = 0.0001f;
     private const float GroundedStickVelocity = -2f;
 
-    #endregion
-
-    #region Serialized Fields
 
     [Header("References")]
     [SerializeField] private CameraController _cameraController;
@@ -38,9 +36,9 @@ public class PlayerMovementController : LivingMovementController
     [Header("Model Rotation")]
     [SerializeField, Min(0.1f)] private float _modelRotationSpeed = 10f;
 
-    #endregion
+    [Header("State (Runtime)")]
+    [SerializeField, ReadOnly, Foldout("Runtime Debug")] private string _currentStateName = "None";
 
-    #region Private Fields
 
     private float _standingHeight;
     private Vector3 _standingCenter;
@@ -51,7 +49,7 @@ public class PlayerMovementController : LivingMovementController
 
     #endregion
 
-    #region Setup
+    #region Unity lifecycle and input subscriptions
 
     private void Reset()
     {
@@ -91,12 +89,24 @@ public class PlayerMovementController : LivingMovementController
 
     private void Start()
     {
-        ChangeState(new PlayerIdleState());
+        ChangeState(_playerStatus.GetIsDead() ? new PlayerDeadState() : new PlayerIdleState());
     }
 
-    #endregion
+    private void ApplyPendingSceneWarp()
+    {
+        if (!_playerSceneWarpState ||
+            !_playerSceneWarpState.TryGetPendingTransform(out PlayerTransformSnapshot destination))
+            return;
 
-    #region Event Subscription
+        _characterController.enabled = false;
+        destination.ApplyTo(transform);
+        _characterController.enabled = true;
+
+        _playerSceneWarpState.ClearPendingTransform();
+        _playerStatus.ResetMovementState();
+        _animationController?.ForceIdle();
+    }
+
 
     protected override void OnEnable()
     {
@@ -185,9 +195,6 @@ public class PlayerMovementController : LivingMovementController
     }
 #endif
 
-    #endregion
-
-    #region Main Loop
 
     protected override void Update()
     {
@@ -204,6 +211,10 @@ public class PlayerMovementController : LivingMovementController
         base.Update();
     }
 
+    #endregion
+
+    #region FSM and movement tick
+
     protected override bool CanMove()
     {
         return _playerStatus;
@@ -212,7 +223,7 @@ public class PlayerMovementController : LivingMovementController
     protected override void UpdateMovement()
     {
         if (_stateMachine == null || _stateMachine.CurrentState == null)
-            ChangeState(new PlayerIdleState());
+            ChangeState(_playerStatus.GetIsDead() ? new PlayerDeadState() : new PlayerIdleState());
         _stateMachine?.Update();
     }
 
@@ -224,21 +235,6 @@ public class PlayerMovementController : LivingMovementController
         UpdateJumpPrepare();
         UpdateLanding();
         ApplyMovement();
-    }
-
-    private void ApplyPendingSceneWarp()
-    {
-        if (!_playerSceneWarpState ||
-            !_playerSceneWarpState.TryGetPendingTransform(out PlayerTransformSnapshot destination))
-            return;
-
-        _characterController.enabled = false;
-        destination.ApplyTo(transform);
-        _characterController.enabled = true;
-
-        _playerSceneWarpState.ClearPendingTransform();
-        _playerStatus.ResetMovementState();
-        _animationController?.ForceIdle();
     }
 
     internal void ChangeState(PlayerMovementState nextState)
@@ -254,6 +250,15 @@ public class PlayerMovementController : LivingMovementController
             nextState.Initialize(this);
 
         _stateMachine.ChangeState(nextState);
+        _currentStateName = nextState?.GetType().Name ?? "None";
+    }
+
+    internal void ChangeState<T>() where T : PlayerMovementState, new()
+    {
+        if (_stateMachine?.CurrentState is T)
+            return;
+
+        ChangeState(new T());
     }
 
     #endregion
@@ -314,7 +319,7 @@ public class PlayerMovementController : LivingMovementController
 
     #endregion
 
-    #region Movement
+    #region Movement, posture and jump
 
     private void ApplyMovement()
     {
@@ -493,10 +498,6 @@ public class PlayerMovementController : LivingMovementController
         _playerStatus.SetIsLanding(false);
     }
 
-    #endregion
-
-    #region Model Rotation
-
     private void RotateModelTowardsMovement(Vector3 moveDirection)
     {
         if (!_modelTransform || moveDirection.sqrMagnitude < MoveThreshold) return;
@@ -510,17 +511,24 @@ public class PlayerMovementController : LivingMovementController
 
     #endregion
 
-    #region Event Handlers
+    #region Game and scene transitions
 
     private void OnGameover(GameoverEvent gameoverEvent)
     {
         _playerStatus.ResetMovementState();
         _audioManager?.StopAll();
         StopMovement();
+        ChangeState(new PlayerDeadState());
         enabled = false;
     }
 
-    private void OnGameClear(GameClearEvent _) => OnGameover(default);
+    private void OnGameClear(GameClearEvent _)
+    {
+        _audioManager?.StopAll();
+        StopMovement();
+        _currentStateName = "GameClear";
+        enabled = false;
+    }
 
     private void OnLoadSceneEvent(LoadSceneEvent _)
     {

@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region CameraSettingSO
 
 public abstract class CameraSettingSO : ScriptableObject
 {
@@ -18,3 +21,4 @@ public abstract class CameraSettingSO : ScriptableObject
     public float EvaluateTransition(float progress) =>
         _transitionCurve == null ? Mathf.Clamp01(progress) : _transitionCurve.Evaluate(Mathf.Clamp01(progress));
 }
+#endregion

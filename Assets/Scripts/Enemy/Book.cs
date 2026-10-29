@@ -1,8 +1,12 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region Book
 
 [RequireComponent(typeof(Rigidbody))]
 public class Book : MonoBehaviour
 {
+    #region Book configuration and runtime state
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private LayerMask _bounceLayers;
     [SerializeField, Range(0.01f, 1f)] private float _bounceSpeedMultiplier = 0.25f;
@@ -12,6 +16,8 @@ public class Book : MonoBehaviour
     private bool _launchImpulsePending;
     private Vector3 _velocityBeforePhysicsStep;
     private float _lastBounceFixedTime = float.NegativeInfinity;
+    #endregion
+    #region Unity lifecycle
     private void Reset()
     {
         TryGetComponent(out _rigidbody);
@@ -54,6 +60,8 @@ public class Book : MonoBehaviour
         _velocityBeforePhysicsStep = _rigidbody.linearVelocity;
     }
 
+    #endregion
+    #region Launch
     public void Launch(
         Vector3 direction,
         float force,
@@ -109,6 +117,8 @@ public class Book : MonoBehaviour
             ForceMode.Impulse);
     }
 
+    #endregion
+    #region Collision and bounce handling
     private void OnCollisionEnter(Collision collision)
     {
         if (!_hasLaunched || !_rigidbody || collision == null || !IsBounceLayer(collision.collider.transform))
@@ -166,6 +176,8 @@ public class Book : MonoBehaviour
         _rigidbody.Sleep();
     }
 
+    #endregion
+    #region Librarian kill tracking
     public void RecordLibrarianKillIfPlayerBook()
     {
         if (!_countsAsPlayerBook || _hasKilledLibrarian)
@@ -174,4 +186,6 @@ public class Book : MonoBehaviour
         _hasKilledLibrarian = true;
         PlayerRunSession.RecordLibrarianKilledWithBook();
     }
+    #endregion
 }
+#endregion

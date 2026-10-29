@@ -1,3 +1,4 @@
+#region Dead state
 public sealed class PlayerDeadState : PlayerMovementState
 {
     public override void OnEnter() => Controller.AudioManager?.StopAll();
@@ -7,3 +8,4 @@ public sealed class PlayerDeadState : PlayerMovementState
         Controller.StopMovement();
     }
 }
+#endregion

@@ -1,3 +1,4 @@
+#region Imports
 using System;
 using System.Linq;
 using TMPro;
@@ -7,14 +8,19 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+#endregion
+#region StartupAndMenuSetup
 
 public static class StartupAndMenuSetup
 {
+    #region Setup assets and constants
     private const string Sheet = "Assets/Textures/UI/Ui.png";
     private const string CanvasPrefab = "Assets/Prefabs/Ui/Canvas.prefab";
     private const string AnimationFolder = "Assets/Object/UI/Startup";
 
     [MenuItem("Tools/Setup Startup And Menu UI")]
+    #endregion
+    #region Game and menu setup
     public static void Apply()
     {
         var sprites = AssetDatabase.LoadAllAssetsAtPath(Sheet).OfType<Sprite>().ToDictionary(x => x.name);
@@ -222,6 +228,8 @@ public static class StartupAndMenuSetup
     }
 
     [MenuItem("Tools/Refresh Startup Logo Animation")]
+    #endregion
+    #region Startup setup
     public static void RefreshStartup()
     {
         var sprites = AssetDatabase.LoadAllAssetsAtPath(Sheet).OfType<Sprite>().ToDictionary(x => x.name);
@@ -287,4 +295,6 @@ public static class StartupAndMenuSetup
         scenes.Insert(0, new EditorBuildSettingsScene(path, true));
         EditorBuildSettings.scenes = scenes.ToArray();
     }
+    #endregion
 }
+#endregion

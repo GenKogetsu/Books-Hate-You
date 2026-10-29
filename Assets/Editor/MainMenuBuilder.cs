@@ -1,3 +1,4 @@
+#region Imports
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -6,12 +7,17 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+#endregion
+#region MainMenuBuilder
 
 public static class MainMenuBuilder
 {
+    #region Fields and configuration
     private const string ScenePath = "Assets/Scenes/MainMenu.unity";
     private const string SingletonPrefabPath = "Assets/Prefabs/System/Singleton group.prefab";
 
+    #endregion
+    #region Public API
     public static void Build()
     {
         var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
@@ -82,6 +88,8 @@ public static class MainMenuBuilder
         Debug.Log("Main Menu built successfully with Canvas, TMP, Singleton group, and scene transition to build index 1.");
     }
 
+    #endregion
+    #region Internal helpers
     private static Image CreateImage(string name, Transform parent)
     {
         var go = new GameObject(name, typeof(RectTransform), typeof(Image));
@@ -120,4 +128,6 @@ public static class MainMenuBuilder
         rect.anchoredPosition = position;
         rect.sizeDelta = size;
     }
+    #endregion
 }
+#endregion

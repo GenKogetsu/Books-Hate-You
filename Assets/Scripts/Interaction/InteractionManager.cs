@@ -1,6 +1,9 @@
+#region Imports
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Kogetsu.Library.DesignPatternCore;
+#endregion
+#region InteractionManager
 
 [RequireComponent(typeof(PlayerInventory))]
 public sealed class InteractionManager : MonoBehaviour
@@ -167,3 +170,4 @@ public sealed class InteractionManager : MonoBehaviour
         Gizmos.DrawWireSphere(origin.position, _interactionRange);
     }
 }
+#endregion

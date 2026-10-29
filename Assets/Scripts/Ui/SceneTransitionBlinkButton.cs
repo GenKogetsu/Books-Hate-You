@@ -1,7 +1,10 @@
+#region Imports
 using System.Collections;
 using Kogetsu.Library.Core;
 using UnityEngine;
 using UnityEngine.UI;
+#endregion
+#region SceneTransitionBlinkButton
 
 [RequireComponent(typeof(Button), typeof(CanvasGroup))]
 public sealed class SceneTransitionBlinkButton : MonoBehaviour
@@ -79,3 +82,4 @@ public sealed class SceneTransitionBlinkButton : MonoBehaviour
         _group.alpha = target;
     }
 }
+#endregion

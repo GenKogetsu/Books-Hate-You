@@ -1,5 +1,8 @@
+#region Imports
 using TMPro;
 using UnityEngine;
+#endregion
+#region MobileMenuStartButton
 
 public sealed class MobileMenuStartButton : MonoBehaviour
 {
@@ -46,3 +49,4 @@ public sealed class MobileMenuStartButton : MonoBehaviour
 #endif
     }
 }
+#endregion

@@ -1,8 +1,12 @@
+#region Imports
 using UnityEngine;
 using NaughtyAttributes;
+#endregion
+#region EnemyHpController
 
 public sealed class EnemyHpController : LivingHpController
 {
+    #region Health configuration and references
 
     [Header("References")]
     [SerializeField] private LivingAnimationController _animationController;
@@ -19,6 +23,8 @@ public sealed class EnemyHpController : LivingHpController
     public bool IsAlive => _currentHp > 0f;
     public override bool IsDead => !IsAlive;
 
+    #endregion
+    #region Unity lifecycle
     private void Reset()
     {
         _animationController = GetComponent<LivingAnimationController>();
@@ -60,12 +66,16 @@ public sealed class EnemyHpController : LivingHpController
             Kill();
     }
 
+    #endregion
+    #region Event handlers
     private void OnLinkedLibrarianDefeated(EnemyHpController defeated)
     {
         if (defeated != this && PlayerRunSession.IsLinkedLibrarian(this))
             Kill();
     }
 
+    #endregion
+    #region Damage and death
     public override void TakeDamage(float damage)
     {
         if (IsDead)
@@ -113,4 +123,6 @@ public sealed class EnemyHpController : LivingHpController
         PlayerRunSession.NotifyFloorEnemyDefeated(this);
 
     }
+    #endregion
 }
+#endregion

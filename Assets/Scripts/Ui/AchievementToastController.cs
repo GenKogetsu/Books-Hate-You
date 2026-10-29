@@ -1,9 +1,13 @@
+#region Imports
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#endregion
+#region AchievementToastController
 
 public sealed class AchievementToastController : MonoBehaviour
 {
+    #region Toast configuration and queue state
     [SerializeField] private AchievementDefinition[] _achievements;
     [SerializeField] private RectTransform _toast;
     [SerializeField] private CanvasGroup _canvasGroup;
@@ -20,6 +24,8 @@ public sealed class AchievementToastController : MonoBehaviour
     private const string VisibleState = "Visible";
     private const string SlideOutState = "SlideOut";
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         if (!_toast)
@@ -49,6 +55,8 @@ public sealed class AchievementToastController : MonoBehaviour
         _playQueue = null;
     }
 
+    #endregion
+    #region Achievement queue and playback
     private void EnqueueAchievement(string id)
     {
         if (!_toast || _queuedOrShown.Contains(id))
@@ -106,4 +114,6 @@ public sealed class AchievementToastController : MonoBehaviour
         if (_animator && _animator.runtimeAnimatorController)
             _animator.Play($"{achievement.Id}.{state}", 0, 0f);
     }
+    #endregion
 }
+#endregion

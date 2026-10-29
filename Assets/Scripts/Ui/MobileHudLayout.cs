@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region MobileHudLayout
 
 /// <summary>Applies a compact, safe-area-aware layout to the existing HUD on phones.</summary>
 [DefaultExecutionOrder(-900)]
@@ -218,3 +221,4 @@ public sealed class MobileHudLayout : MonoBehaviour
         state.Image.type = state.Type;
     }
 }
+#endregion

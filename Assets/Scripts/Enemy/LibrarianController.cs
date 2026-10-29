@@ -1,14 +1,20 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region LibrarianController
 
 [RequireComponent(typeof(LibrarianMovementController))]
 [RequireComponent(typeof(EnemyHpController))]
 [RequireComponent(typeof(LibrarianAnimationController))]
 public sealed class LibrarianController : MonoBehaviour
 {
+    #region Fields and configuration
     [Header("References")]
     [SerializeField] private LibrarianMovementController _movementController;
     [SerializeField] private EnemyHpController _enemyHpController;
 
+    #endregion
+    #region Unity lifecycle
     private void Reset()
     {
         _movementController = GetComponent<LibrarianMovementController>();
@@ -65,8 +71,12 @@ public sealed class LibrarianController : MonoBehaviour
         }
     }
 
+    #endregion
+    #region Public API
     public void HandleDeath()
     {
         _movementController?.HandleDeath();
     }
+    #endregion
 }
+#endregion

@@ -1,8 +1,12 @@
+#region Imports
 using Kogetsu.Library.DesignPatternCore;
 using UnityEngine;
+#endregion
+#region BombBookLauncher
 
 public sealed class BombBookLauncher : MonoBehaviour
 {
+    #region Launcher configuration and runtime state
     [Header("Launch Spread")]
     [SerializeField, Range(1f, 179f)] private float _viewAngle = 60f;
     [SerializeField, Min(0.1f)] private float _launchRange = 10f;
@@ -23,6 +27,8 @@ public sealed class BombBookLauncher : MonoBehaviour
 
     public int AmmoLeft => _ammoLeft;
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         _ownColliders = GetComponentsInChildren<Collider>(true);
@@ -38,6 +44,8 @@ public sealed class BombBookLauncher : MonoBehaviour
         if (Time.time >= _nextShotTime) Fire();
     }
 
+    #endregion
+    #region Launch and collision filtering
     private void Fire()
     {
         if (!_bombBookPrefab || !ObjectPoolManager.Instance) return;
@@ -77,6 +85,8 @@ public sealed class BombBookLauncher : MonoBehaviour
         return (axisRotation * localDirection).normalized;
     }
 
+    #endregion
+    #region Event handlers
     private void OnDrawGizmosSelected()
     {
         const int sides = 8;
@@ -106,4 +116,6 @@ public sealed class BombBookLauncher : MonoBehaviour
         Gizmos.DrawRay(origin, _nextLaunchDirection * _launchRange);
     }
 
+    #endregion
 }
+#endregion

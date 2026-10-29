@@ -1,8 +1,11 @@
+#region Imports
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Kogetsu.Library.Core;
+#endregion
+#region MainMenuController
 
 public sealed class MainMenuController : MonoBehaviour
 {
@@ -115,3 +118,4 @@ public sealed class MainMenuController : MonoBehaviour
         if (TimeManager.Instance) TimeManager.Instance.ResetSession();
     }
 }
+#endregion

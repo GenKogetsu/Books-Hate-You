@@ -1,10 +1,13 @@
 #if UNITY_EDITOR
+#region Imports
 using UnityEditor;
 using UnityEngine;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Reflection;
+#endregion
+#region FileExtensionGUI
 
 [InitializeOnLoad]
 public class FileExtensionGUI
@@ -118,4 +121,5 @@ public class FileExtensionGUI
         return default(EditorWindow);
     }
 }
+#endregion
 #endif

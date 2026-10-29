@@ -1,7 +1,11 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region LivingAnimationController
 
 public abstract class LivingAnimationController : MonoBehaviour
 {
+    #region Animator configuration and references
     [Header("Animation References")]
     [SerializeField] protected Animator _animator;
 
@@ -10,6 +14,8 @@ public abstract class LivingAnimationController : MonoBehaviour
 
     protected static readonly int SpeedMultiplierHash = Animator.StringToHash("SpeedMultiplier");
 
+    #endregion
+    #region Unity lifecycle
     protected virtual void Reset()
     {
         _animator = GetComponentInChildren<Animator>();
@@ -21,6 +27,8 @@ public abstract class LivingAnimationController : MonoBehaviour
             _animator = GetComponentInChildren<Animator>();
     }
 
+    #endregion
+    #region Animation playback
     public virtual void PlayAnimation(AnimationClip clip, float blend = -1f)
     {
         if (!_animator || !clip)
@@ -45,4 +53,6 @@ public abstract class LivingAnimationController : MonoBehaviour
     }
 
     public virtual void PlayDeathAnimation() { }
+    #endregion
 }
+#endregion

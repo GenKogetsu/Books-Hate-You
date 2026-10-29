@@ -1,3 +1,4 @@
+#region DoorState
 public enum DoorState
 {
     Locked,
@@ -5,3 +6,4 @@ public enum DoorState
     Opening,
     Open
 }
+#endregion

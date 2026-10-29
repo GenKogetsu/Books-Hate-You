@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region BaseAudioManager
 
 public abstract class BaseAudioManager : MonoBehaviour
 {
@@ -24,3 +27,4 @@ public abstract class BaseAudioManager : MonoBehaviour
             source.PlayOneShot(source.clip);
     }
 }
+#endregion

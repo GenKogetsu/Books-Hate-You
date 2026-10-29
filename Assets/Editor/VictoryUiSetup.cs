@@ -1,15 +1,21 @@
+#region Imports
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+#endregion
+#region VictoryUiSetup
 
 public static class VictoryUiSetup
 {
+    #region Fields and configuration
     private const string CanvasPath = "Assets/Prefabs/Ui/Canvas.prefab";
     private const string Floor2PrefabPath = "Assets/Prefabs/Map/Floor2.prefab";
     private const string VictoryClipGuid = "9933ebee89e8e1442b9612e2a34251aa";
 
     [MenuItem("Tools/Victory UI Setup")]
+    #endregion
+    #region Public API
     public static void Apply()
     {
         ConfigureCanvasPrefab();
@@ -47,6 +53,8 @@ public static class VictoryUiSetup
         }
     }
 
+    #endregion
+    #region Internal helpers
     private static void ConfigureCanvasPrefab()
     {
         GameObject root = PrefabUtility.LoadPrefabContents(CanvasPath);
@@ -166,4 +174,6 @@ public static class VictoryUiSetup
         GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(instanceRoot);
         return source && AssetDatabase.GetAssetPath(source) == CanvasPath;
     }
+    #endregion
 }
+#endregion

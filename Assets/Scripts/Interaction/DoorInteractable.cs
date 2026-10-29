@@ -1,9 +1,13 @@
+#region Imports
 using Kogetsu.Library.DesignPatternCore;
 using Kogetsu.Library.Core;
 using UnityEngine;
+#endregion
+#region DoorInteractable
 [RequireComponent(typeof(InteractionPromptView))]
 public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractionBlockReason
 {
+    #region Door configuration and state
     [Header("Door")]
     [SerializeField] private Animator _animator;
     [SerializeField] private AnimationClip _tiggerClip;
@@ -24,6 +28,8 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
     public DoorState CurrentState { get; private set; }
 
     public string InteractionPrompt => _isOpen ? "" : "F";
+    #endregion
+    #region Interaction feedback
     public string GetInteractionBlockReason(PlayerInventory inventory)
     {
         if (!_requiresKey)
@@ -34,6 +40,8 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
         return $"Need {missing} more {(missing == 1 ? "key" : "keys")} ({amount}/{_requiredAmount})";
     }
 
+    #endregion
+    #region Unity lifecycle
     private void Reset()
     {
         _animator = GetComponentInChildren<Animator>();
@@ -44,6 +52,8 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
         CurrentState = _isOpen ? DoorState.Open : DoorState.Locked;
     }
 
+    #endregion
+    #region Door interaction
     public bool CanInteract(PlayerInventory inventory)
     {
         if (_isOpen)
@@ -82,4 +92,6 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
                 EventBus.Instance.Publish(new GameClearEvent());
         }
     }
+    #endregion
 }
+#endregion

@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region ThirdPersonCameraSettingSO
 
 [CreateAssetMenu(fileName = "TPP Camera Settings", menuName = "Game/Camera/TPP Settings")]
 public sealed class ThirdPersonCameraSettingSO : CameraSettingSO
@@ -24,3 +27,4 @@ public sealed class ThirdPersonCameraSettingSO : CameraSettingSO
         if (_wallMask.value == 0) _wallMask = LayerMask.GetMask("Wall");
     }
 }
+#endregion

@@ -13,7 +13,7 @@ namespace Kogetsu.Library.DesignPatternCore
     public sealed class ObjectPoolManager : Singleton<ObjectPoolManager>, IObjectPoolService
     {
         [Header("Pool Data Configuration")]
-        [SerializeField] private List<PoolTableDataSO> _poolTables = new();
+        [SerializeField , EditOnInspector] private List<PoolTableDataSO> _poolTables = new();
 
         private readonly Dictionary<string, ObjectPool<Transform>> _poolDictionary = new();
         private readonly HashSet<string> _dontReturnPoolOnLoad = new();

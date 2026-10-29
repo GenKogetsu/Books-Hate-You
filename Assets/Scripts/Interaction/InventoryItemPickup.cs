@@ -1,14 +1,20 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region InventoryItemPickup
 
 [RequireComponent(typeof(InteractionPromptView))]
 public sealed class InventoryItemPickup : MonoBehaviour, IInteractable
 {
+    #region Pickup configuration and runtime state
     [SerializeField] private InventoryItemType _item = InventoryItemType.Key;
     [SerializeField, Min(1)] private int _amount = 1;
     [SerializeField] private string _interactionPrompt = "F";
 
     private string _pickupId;
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         _pickupId = BuildPickupId();
@@ -18,6 +24,8 @@ public sealed class InventoryItemPickup : MonoBehaviour, IInteractable
 
     public string InteractionPrompt => _interactionPrompt;
 
+    #endregion
+    #region Public API
     public bool CanInteract(PlayerInventory inventory)
     {
         return inventory != null && _amount > 0;
@@ -35,6 +43,8 @@ public sealed class InventoryItemPickup : MonoBehaviour, IInteractable
         gameObject.SetActive(false);
     }
 
+    #endregion
+    #region Pickup identity
     private string BuildPickupId()
     {
         string id = gameObject.scene.path;
@@ -48,4 +58,6 @@ public sealed class InventoryItemPickup : MonoBehaviour, IInteractable
 
         return id;
     }
+    #endregion
 }
+#endregion

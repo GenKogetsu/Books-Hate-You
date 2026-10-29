@@ -1,3 +1,4 @@
+#region InteractionState
 public enum InteractionState
 {
     None,
@@ -5,3 +6,4 @@ public enum InteractionState
     InRange,
     Blocked
 }
+#endregion

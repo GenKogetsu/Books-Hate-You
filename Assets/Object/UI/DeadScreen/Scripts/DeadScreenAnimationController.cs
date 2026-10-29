@@ -1,12 +1,18 @@
+#region Imports
 using UnityEngine;
 using NaughtyAttributes;
 using Kogetsu.Library.DesignPatternCore;
+#endregion
+#region DeadScreenAnimationController
 
 public class DeadScreenAnimationController : MonoBehaviour
 {
+    #region Fields and configuration
     [SerializeField, Required] private Animator _animator;
     private CanvasGroup _canvasGroup;
 
+    #endregion
+    #region Unity lifecycle
     private void Awake()
     {
         if (!_animator)
@@ -39,6 +45,8 @@ public class DeadScreenAnimationController : MonoBehaviour
         }
     }
 
+    #endregion
+    #region Event handlers
     private void OnGameoverEvent(GameoverEvent e)
     {
         if (!_animator) return;
@@ -53,4 +61,6 @@ public class DeadScreenAnimationController : MonoBehaviour
         _animator.speed = 1f;
         _animator.Play("Reveal", 0, 0f);
     }
+    #endregion
 }
+#endregion

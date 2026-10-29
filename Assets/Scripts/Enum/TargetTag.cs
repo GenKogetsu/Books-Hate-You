@@ -1,4 +1,5 @@
-﻿[System.Flags]
+﻿#region Target tags
+[System.Flags]
 public enum TargetTag
 {
     None = 0,
@@ -14,7 +15,9 @@ public enum TargetTag
     BMG_Channel_KogetsuLibrary = 1 << 9,
     Voiceover_Channel_KogetsuLibrary = 1 << 10,
 }
+#endregion
 
+#region Tag matching
 public static class TargetTagExtensions
 {
     public static bool MatchesUnityTag(this TargetTag targetTags, string unityTag)
@@ -33,3 +36,4 @@ public static class TargetTagExtensions
             ((targetTags & TargetTag.Voiceover_Channel_KogetsuLibrary) != 0 && unityTag == "Voiceover_Channel.KogetsuLibrary");
     }
 }
+#endregion

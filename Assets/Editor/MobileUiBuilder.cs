@@ -1,3 +1,4 @@
+#region Imports
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,10 +8,13 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.SceneManagement;
+#endregion
+#region MobileUiBuilder
 
 /// <summary>Creates the shared phone controls and menu start button without replacing existing UI.</summary>
 public static class MobileUiBuilder
 {
+    #region Fields and configuration
     private const string CanvasPath = "Assets/Prefabs/Ui/Canvas.prefab";
     private const string MainMenuPath = "Assets/Scenes/MainMenu.unity";
     private const string RoundedSpritePath = "Assets/Art/UI/MobileRoundedPanel.png";
@@ -18,6 +22,8 @@ public static class MobileUiBuilder
     private static readonly Color Face = new(0.025f, 0.055f, 0.09f, 0.42f);
 
     [MenuItem("Tools/Mobile/Build Touch UI")]
+    #endregion
+    #region Public API
     public static void Apply()
     {
         Sprite rounded = EnsureRoundedSprite();
@@ -27,6 +33,8 @@ public static class MobileUiBuilder
         Debug.Log("Mobile touch UI built for shared gameplay Canvas and MainMenu.");
     }
 
+    #endregion
+    #region Internal helpers
     private static Sprite EnsureRoundedSprite()
     {
         string diskPath = Path.Combine(Application.dataPath, "Art", "UI", "MobileRoundedPanel.png");
@@ -384,4 +392,6 @@ public static class MobileUiBuilder
         rect.anchoredPosition = position;
         rect.sizeDelta = size;
     }
+    #endregion
 }
+#endregion

@@ -1,5 +1,8 @@
+#region Imports
 using Kogetsu.Library.DesignPatternCore;
 using UnityEngine;
+#endregion
+#region PlayerRunSceneReset
 
 public sealed class PlayerRunSceneReset : MonoBehaviour
 {
@@ -21,3 +24,4 @@ public sealed class PlayerRunSceneReset : MonoBehaviour
             PlayerRunSession.ResetRun();
     }
 }
+#endregion

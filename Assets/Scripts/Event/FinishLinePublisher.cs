@@ -1,5 +1,8 @@
+#region Imports
 using Kogetsu.Library.DesignPatternCore;
 using UnityEngine;
+#endregion
+#region FinishLinePublisher
 
 [RequireComponent(typeof(Collider))]
 public sealed class FinishLinePublisher : MonoBehaviour
@@ -28,3 +31,4 @@ public sealed class FinishLinePublisher : MonoBehaviour
             EventBus.Instance.Publish(new GameClearEvent());
     }
 }
+#endregion

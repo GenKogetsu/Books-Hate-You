@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region MobileSafeAreaFitter
 
 [RequireComponent(typeof(RectTransform))]
 public sealed class MobileSafeAreaFitter : MonoBehaviour
@@ -30,3 +33,4 @@ public sealed class MobileSafeAreaFitter : MonoBehaviour
         _lastScreenSize = new Vector2Int(Screen.width, Screen.height);
     }
 }
+#endregion

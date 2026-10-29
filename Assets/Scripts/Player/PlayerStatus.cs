@@ -31,6 +31,8 @@ public class PlayerStatus : MonoBehaviour
 
     [Header("Stamina Recovery")]
     [SerializeField, Min(0f)] private float _staminaRecoveryPerSecond = 18f;
+    [Tooltip("Stamina recovery while crouching relative to normal recovery.")]
+    [SerializeField, Min(1f)] private float _crouchStaminaRecoveryMultiplier = 1.5f;
     [SerializeField, Min(0f)] private float _recoveryDelay = 1.2f;
     [SerializeField, ReadOnly, Foldout("Runtime Debug")] private float _currentStamina;
     [SerializeField, ReadOnly, Foldout("Runtime Debug")] private bool _sprintLocked;
@@ -114,7 +116,8 @@ public class PlayerStatus : MonoBehaviour
             _recoveryDelayRemaining = Mathf.Max(0f, _recoveryDelayRemaining - deltaTime);
         else
             _currentStamina = Mathf.Min(Mathf.Max(1f, _maxStamina),
-                _currentStamina + _staminaRecoveryPerSecond * deltaTime);
+                _currentStamina + _staminaRecoveryPerSecond *
+                (_isCrouching ? _crouchStaminaRecoveryMultiplier : 1f) * deltaTime);
 
         if (_sprintLocked && _currentStamina >= Mathf.Max(1f, _maxStamina))
             _sprintLocked = false;

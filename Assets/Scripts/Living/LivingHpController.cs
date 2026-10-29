@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region LivingHpController
 
 public abstract class LivingHpController : MonoBehaviour
 {
@@ -21,3 +24,4 @@ public abstract class LivingHpController : MonoBehaviour
             _deathAudioSource.PlayOneShot(_deathAudioClip);
     }
 }
+#endregion

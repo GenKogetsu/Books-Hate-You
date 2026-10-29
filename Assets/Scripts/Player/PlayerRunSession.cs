@@ -1,9 +1,13 @@
+#region Imports
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+#endregion
+#region PlayerRunSession
 
 public static class PlayerRunSession
 {
+    #region Fields and configuration
     public const string WinAchievementId = "win_game";
     public const string BookKillAchievementId = "kill_librarian_with_book";
     public const string AllKeysAchievementId = "collect_all_keys";
@@ -31,6 +35,8 @@ public static class PlayerRunSession
     public static bool HasCollectedAllKeys => _hasCollectedAllKeys;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    #endregion
+    #region Internal helpers
     private static void ResetForNewPlaySession()
     {
         CollectedPickupIds.Clear();
@@ -49,6 +55,8 @@ public static class PlayerRunSession
         LinkedLibrarianDefeated = null;
     }
 
+    #endregion
+    #region Public API
     public static void RecordWin()
     {
         if (_hasWon)
@@ -166,4 +174,6 @@ public static class PlayerRunSession
         _linkedLibrarianDead = false;
         DeathCountChanged?.Invoke(0);
     }
+    #endregion
 }
+#endregion

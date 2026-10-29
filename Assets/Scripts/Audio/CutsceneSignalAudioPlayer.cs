@@ -1,4 +1,7 @@
+#region Imports
 using UnityEngine;
+#endregion
+#region CutsceneSignalAudioPlayer
 
 public sealed class CutsceneSignalAudioPlayer : MonoBehaviour
 {
@@ -17,3 +20,4 @@ public sealed class CutsceneSignalAudioPlayer : MonoBehaviour
             _bgmSource.Play();
     }
 }
+#endregion

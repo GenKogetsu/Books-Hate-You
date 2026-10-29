@@ -1,9 +1,12 @@
+#region Imports
 using System.Collections;
 using Kogetsu.Library.DesignPatternCore;
 using Kogetsu.Library.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+#endregion
+#region CameraController
 
 [ExecuteAlways]
 public sealed class CameraController : MonoBehaviour
@@ -326,7 +329,6 @@ public sealed class CameraController : MonoBehaviour
                 _pitch = FppSettings.ClampPitch(_pitch - y);
                 break;
             case CameraViewMode.TopView:
-                // This view stays directly above the player; only yaw changes.
                 break;
             case CameraViewMode.TPP:
                 _pitch = ClampTppOrbitPitch(_pitch - y);
@@ -390,7 +392,6 @@ public sealed class CameraController : MonoBehaviour
         }
         else if (mode == CameraViewMode.TopView)
         {
-            // Use the top anchor's fixed 90-degree orientation.
         }
         else
         {
@@ -612,3 +613,4 @@ public sealed class CameraController : MonoBehaviour
         public override void OnUpdate() => Context.TickMirrorView();
     }
 }
+#endregion
