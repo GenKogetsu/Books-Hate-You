@@ -36,6 +36,12 @@ public sealed class SceneTransitionBlinkButton : MonoBehaviour
             publisher.PublishLoadSceneEvent(0);
         if (!BasicSceneEffectController.Instance.IsTransitioning) return;
 
+        if (_destination == Destination.MainMenu)
+        {
+            foreach (PlayerStatus player in FindObjectsByType<PlayerStatus>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                player.SetCurrentHp(player.GetMaxHp());
+        }
+
         _pressed = true;
         Canvas canvas = GetComponent<Canvas>();
         if (canvas)

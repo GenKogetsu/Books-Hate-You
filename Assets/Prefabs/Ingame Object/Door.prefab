@@ -89,8 +89,9 @@ MonoBehaviour:
   _isOpen: 0
   _requiresKey: 1
   _requiredItem: 0
-  _requiredAmount: 1
+  _requiredAmount: 5
   _consumeItem: 1
+  _publishesGameClearOnOpen: 1
   _lockedMessage: Need Key
 --- !u!1 &4657894390148550539
 GameObject:
@@ -109,7 +110,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1892633693387789138
 Transform:

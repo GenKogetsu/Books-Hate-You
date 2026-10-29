@@ -13,9 +13,7 @@ public sealed class LibrarianMovementController : LivingMovementController
     [SerializeField] private Transform _eyePoint;
     [SerializeField] private LibrarianAudioManager _audioManager;
 
-    [Tooltip("ตรวจเฉพาะ Collider ใน Layer Living ที่มี Tag Player")]
     [SerializeField] private LayerMask _livingMask;
-    [Tooltip("เลือก Layer ของกำแพง/สิ่งกีดขวางที่บังการมองเห็น เช่น Block")]
     [SerializeField] private LayerMask _visionBlockMask;
     [SerializeField, EditOnInspector] private LibrarianStats _librarianStats;
 
@@ -227,6 +225,8 @@ public sealed class LibrarianMovementController : LivingMovementController
     {
         _isGameOver = true;
         StopMovement();
+        _audioManager?.StopAll();
+        PlayIdleAnimation();
         _currentStateName = "GameOver";
     }
 

@@ -39,4 +39,11 @@ public sealed class WinScreenController : MonoBehaviour
             _animator.Play("Reveal", 0, 0f);
         }
     }
+
+    public void PublishWin()
+    {
+        PlayerRunSession.RecordWin();
+        if (EventBus.Instance)
+            EventBus.Instance.Publish(new GameClearEvent());
+    }
 }

@@ -1,4 +1,5 @@
 using Kogetsu.Library.DesignPatternCore;
+using Kogetsu.Library.Core;
 using UnityEngine;
 [RequireComponent(typeof(InteractionPromptView))]
 public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractionBlockReason
@@ -14,6 +15,8 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
     [SerializeField, Min(1)] private int _requiredAmount = 1;
     [SerializeField] private bool _consumeItem = true;
     [SerializeField] private bool _publishesGameClearOnOpen;
+    [SerializeField] private bool _loadsCutsceneOnOpen;
+    [SerializeField] private string _cutsceneSceneName = "EndGameCutScene";
 
     [Header("Interaction Feedback")]
     [SerializeField, TextArea(1, 3)] private string _lockedMessage = "A key is required";
@@ -57,6 +60,10 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
         if (!CanInteract(inventory))
             return;
 
+        if (_loadsCutsceneOnOpen && (!BasicSceneEffectController.Instance ||
+            !BasicSceneEffectController.Instance.TryLoadSceneWithEvent(_cutsceneSceneName)))
+            return;
+
         if (_requiresKey && _consumeItem)
             inventory.RemoveItem(_requiredItem, _requiredAmount);
 
@@ -68,7 +75,7 @@ public sealed class DoorInteractable : MonoBehaviour, IInteractable, IInteractio
         if (!_animator || !_tiggerClip)
             CurrentState = DoorState.Open;
 
-        if (_publishesGameClearOnOpen)
+        if (_publishesGameClearOnOpen && !_loadsCutsceneOnOpen)
         {
             PlayerRunSession.RecordWin();
             if (EventBus.Instance)
