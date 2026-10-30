@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+
 using Kogetsu.Library.Attribute;
 using Kogetsu.Library.DesignPatternCore;
 
@@ -48,6 +50,7 @@ namespace Kogetsu.Library.Core
             if (EventBus.Instance)
             {
                 EventBus.Instance.Subscribe<LoadSceneEvent>(OnLoadSceneEvent);
+                EventBus.Instance.Subscribe<OutGameEvent>(OnOutGameEvent);
             }
 
         }
@@ -62,6 +65,7 @@ namespace Kogetsu.Library.Core
             if (EventBus.Instance)
             {
                 EventBus.Instance.Unsubscribe<LoadSceneEvent>(OnLoadSceneEvent);
+                EventBus.Instance.Unsubscribe<OutGameEvent>(OnOutGameEvent);
             }
         }
 
@@ -94,6 +98,54 @@ namespace Kogetsu.Library.Core
             }
             finally
             {
+                StopLoadSceneAudio();
+                _isTransitioning = false;
+                if (GameManager.Instance)
+                    GameManager.Instance.SetGameState(GameState.Normal);
+            }
+        }
+
+        private void OnOutGameEvent(OutGameEvent outGameEvent)
+        {
+            OutGame();
+        }
+
+        public void OutGame()
+        {
+            if (_isTransitioning || !isActiveAndEnabled) return;
+            AssignComponent();
+            if (!SceneEffectAnimator || !LoadSceneIn)
+            {
+                Debug.LogError("Cannot exit: the Fade-in animation state is missing.", this);
+                return;
+            }
+            _isTransitioning = true;
+            Time.timeScale = 1f;
+            PlayLoadSceneAudio();
+            StartCoroutine(OutGameRoutine());
+        }
+
+        private IEnumerator OutGameRoutine()
+        {
+
+            if (GameManager.Instance)
+                GameManager.Instance.SetGameState(GameState.Pause);
+            try
+            {
+                if (SceneEffectAnimator && LoadSceneIn)
+                {
+                    SceneEffectAnimator.Play(LoadSceneIn.name);
+                    yield return new WaitForSecondsRealtime(GetClipPlaybackDuration(LoadSceneIn));
+                }
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            }
+            finally
+            {
+
                 StopLoadSceneAudio();
                 _isTransitioning = false;
                 if (GameManager.Instance)

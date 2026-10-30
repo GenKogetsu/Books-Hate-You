@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class LoadPublisher : MonoBehaviour
 {
+    public void PublishOutGameEvent()
+    {
+        if (!EventBus.Instance || !BasicSceneEffectController.Instance ||
+            BasicSceneEffectController.Instance.IsTransitioning)
+            return;
+
+        EventBus.Instance.Publish(new OutGameEvent());
+        if (BasicSceneEffectController.Instance.IsTransitioning)
+            DisableButton();
+    }
+
     public void PublishLoadSceneEvent(int sceneBuildIndex)
     {
         if (BasicSceneEffectController.Instance &&

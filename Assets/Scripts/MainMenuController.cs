@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Kogetsu.Library.Core;
+using Kogetsu.Library.DesignPatternCore;
 #endregion
 #region MainMenuController
 
@@ -41,6 +42,14 @@ public sealed class MainMenuController : MonoBehaviour
 
     private void Update()
     {
+        if (Keyboard.current != null && Keyboard.current.escapeKey.isPressed)
+        {
+            if (Keyboard.current.escapeKey.wasPressedThisFrame && !isStarting &&
+                !sceneTransitionStarted && EventBus.Instance)
+                EventBus.Instance.Publish(new OutGameEvent());
+            return;
+        }
+
 #if UNITY_ANDROID || UNITY_IOS
         bool anyTouch = Touchscreen.current != null &&
                         Touchscreen.current.primaryTouch.press.wasPressedThisFrame;
@@ -69,7 +78,8 @@ public sealed class MainMenuController : MonoBehaviour
 
     public void StartGame()
     {
-        if (isStarting || sceneTransitionStarted) return;
+        if (isStarting || sceneTransitionStarted ||
+            (BasicSceneEffectController.Instance && BasicSceneEffectController.Instance.IsTransitioning)) return;
         if (BasicSceneEffectController.Instance == null)
         {
             Debug.LogError("BasicSceneEffectController is missing from the Main Menu scene.");
